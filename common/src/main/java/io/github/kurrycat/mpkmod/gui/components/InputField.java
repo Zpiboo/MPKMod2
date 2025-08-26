@@ -83,22 +83,27 @@ public class InputField extends Component implements KeyInputListener, MouseInpu
         highlightEnd = MathUtil.constrain(highlightEnd, 0, content.length());
 
         FontRenderer.drawString(
-                content,
+                content.substring(0, highlightStart),
                 rectPos.add(2, 2),
                 Color.WHITE, false
         );
-        if (highlightStart != highlightEnd) {
+        if (highlightStart != highlightEnd)
             Renderer2D.drawRect(
                     rectPos.add(2 + FontRenderer.getStringSize(content.substring(0, highlightStart)).getX(), 2),
                     new Vector2D(FontRenderer.getStringSize(content.substring(highlightStart, highlightEnd)).getX(), rectSize.getY() - 4),
                     highlightColor
             );
-            FontRenderer.drawString(
-                    content.substring(highlightStart, highlightEnd),
-                    rectPos.add(2 + FontRenderer.getStringSize(content.substring(0, highlightStart)).getX(), 2),
-                    Color.BLACK, false
-            );
-        }
+        FontRenderer.drawString(
+                content.substring(highlightStart, highlightEnd),
+                rectPos.add(2 + FontRenderer.getStringSize(content.substring(0, highlightStart)).getX(), 2),
+                Color.BLACK, false
+        );
+        FontRenderer.drawString(
+                content.substring(highlightEnd),
+                rectPos.add(2 + FontRenderer.getStringSize(content.substring(0, highlightEnd)).getX(), 2),
+                Color.WHITE, false
+        );
+
 
         if (isFocused && highlightStart == highlightEnd)
             Renderer2D.drawRect(
