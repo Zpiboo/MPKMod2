@@ -1,8 +1,8 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
-import io.github.kurrycat.mpkmod.compatibility.fabric_1_21.mixin.KeyBindingAccessor;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5.mixin.KeyBindingAccessor;
 import io.github.kurrycat.mpkmod.ticks.ButtonMS;
 import io.github.kurrycat.mpkmod.ticks.ButtonMSList;
 import io.github.kurrycat.mpkmod.util.BoundingBox3D;
@@ -24,7 +24,7 @@ public class EventHandler {
     private static final ButtonMSList timeQueue = new ButtonMSList();
 
     /**
-     * @param key      The GLFW key code. See {@link net.minecraft.client.util.InputUtil}.
+     * @param key      The GLFW key code. See {@link InputUtil}.
      * @param scanCode
      * @param action   The action, where 0 = unpressed, 1 = pressed, 2 = held.
      */
@@ -75,8 +75,8 @@ public class EventHandler {
     public void onRenderWorldOverlay(MatrixStack matrixStack, float tickDelta) {
         MPKMod.INSTANCE.matrixStack = matrixStack;
         matrixStack.push();
-        Vec3d pos = MinecraftClient.getInstance().gameRenderer.getCamera().getPos();
-        MPKMod.INSTANCE.matrixStack.translate(-pos.x, -pos.y, -pos.z);
+        Vec3d pos = MinecraftClient.getInstance().gameRenderer.getCamera().getPos().negate();
+        MPKMod.INSTANCE.matrixStack.translate(pos);
         API.Events.onRenderWorldOverlay(tickDelta);
         matrixStack.pop();
     }
@@ -94,7 +94,7 @@ public class EventHandler {
             Box playerBB = mcPlayer.getBoundingBox();
             new Player()
                     .setPos(new Vector3D(mcPlayer.getX(), mcPlayer.getY(), mcPlayer.getZ()))
-                    .setLastPos(new Vector3D(mcPlayer.prevX, mcPlayer.prevY, mcPlayer.prevZ))
+                    .setLastPos(new Vector3D(mcPlayer.lastX, mcPlayer.lastY, mcPlayer.lastZ))
                     .setMotion(new Vector3D(mcPlayer.getVelocity().x, mcPlayer.getVelocity().y, mcPlayer.getVelocity().z))
                     .setRotation(mcPlayer.getRotationClient().y, mcPlayer.getRotationClient().x)
                     .setOnGround(mcPlayer.isOnGround())
