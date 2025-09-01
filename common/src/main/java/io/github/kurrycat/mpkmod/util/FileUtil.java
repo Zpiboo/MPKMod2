@@ -1,5 +1,7 @@
 package io.github.kurrycat.mpkmod.util;
 
+import io.github.kurrycat.mpkmod.compatibility.API;
+
 import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -35,5 +37,28 @@ public class FileUtil {
         if (n.indexOf('.') != -1)
             n = n.substring(0, n.lastIndexOf('.'));
         return n;
+    }
+
+    public static void createFile(String filePath, String defaultContent) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            try {
+                if (file.createNewFile()) {
+                    API.LOGGER.info(API.CONFIG_MARKER, "Created new file: {}", filePath);
+                } else {
+                    API.LOGGER.warn(API.CONFIG_MARKER, "Failed to create file: {}", filePath);
+                }
+            } catch (Exception e) {
+                API.LOGGER.error(API.CONFIG_MARKER, "Error creating file: {}", filePath, e);
+            }
+        }
+        // Optionally write default content to the file
+        if (defaultContent != null && !defaultContent.isEmpty()) {
+            try (java.io.FileWriter writer = new java.io.FileWriter(file)) {
+                writer.write(defaultContent);
+            } catch (Exception e) {
+                API.LOGGER.error(API.CONFIG_MARKER, "Error writing default content to file: {}", filePath, e);
+            }
+        }
     }
 }

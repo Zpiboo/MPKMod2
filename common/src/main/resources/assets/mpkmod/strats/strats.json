@@ -42,6 +42,19 @@
       "WP!G"
     ]
   },
+  "bwpessi": {
+    "format": {
+      "a==1": "Max ",
+      "default": "BWPessi",
+      "a!=1": " -{a}t",
+      "a_ms": " ({a_ms}ms}"
+    },
+    "timingEntries": [
+      "a{1,1}:J",
+      "a:!G",
+      "S!G"
+    ]
+  },
   "a7hh": {
     "format": {
       "default": "A7HH"
@@ -134,6 +147,29 @@
       "s{1,1}:WAPJ",
       "s:WAP!G",
       "WP!G"
+    ]
+  },
+  "mark": {
+    "format": {
+      "default": "{a}t Mark",
+      "r!=1": " Run {r}t"
+    },
+    "timingEntries": [
+      "DJ",
+      "a{1,}:D!G",
+      "b:WDP!G",
+      "r{1,}:WDPG"
+    ]
+  },
+  "delayedhh": {
+    "format": {
+      "default": "Delayed HH",
+      "x!=1": " {x}t",
+      "x_ms": " ({x_ms}ms}"
+    },
+    "timingEntries": [
+      "x{1,}:W",
+      "WPJ"
     ]
   }
 }

@@ -104,6 +104,7 @@ public class InputField extends Component implements KeyInputListener, MouseInpu
                 Color.WHITE, false
         );
 
+
         if (isFocused && highlightStart == highlightEnd)
             Renderer2D.drawRect(
                     new Vector2D(rectPos.getX() + getCursorX(), rectPos.getY() + 1),

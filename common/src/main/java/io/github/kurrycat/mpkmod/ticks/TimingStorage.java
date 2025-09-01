@@ -6,6 +6,9 @@ import io.github.kurrycat.mpkmod.gui.screens.options_gui.Option;
 import io.github.kurrycat.mpkmod.save.Serializer;
 import io.github.kurrycat.mpkmod.util.FileUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TimingStorage {
-    private final static String stratFileName = "/assets/mpkmod/strats/strats.json";
+    private final static String defaultStratFileName = "/assets/mpkmod/strats/strats.json";
+    private final static String stratFileName = "config/mpk/config/strats.json";
     public static Map<String, Timing> patterns = new HashMap<>();
 
     @Option.Field(
@@ -24,11 +28,18 @@ public class TimingStorage {
     public static boolean renderLastTimingMS = false;
 
     public static void init() {
-        InputStream stratFile = FileUtil.getResource(stratFileName);
-        if (stratFile == null) return;
-
+        InputStream stratFile = FileUtil.getResource(defaultStratFileName);
         patterns = Serializer.deserializeAny(stratFile, new TypeReference<HashMap<String, Timing>>() {
         });
+
+        File file = new File(stratFileName);
+        if (!file.exists()) {
+            //Make an empty json file if it doesn't exist
+            FileUtil.createFile(stratFileName, "{}");
+        }
+
+        //TODO: Fix potential null pointer issue
+        patterns.putAll(Serializer.deserializeAny(file, new TypeReference<HashMap<String, Timing>>() {}));
         if (patterns == null) return;
 
         API.LOGGER.info(API.CONFIG_MARKER, "{} Timings loaded from {}", patterns.size(), stratFileName);

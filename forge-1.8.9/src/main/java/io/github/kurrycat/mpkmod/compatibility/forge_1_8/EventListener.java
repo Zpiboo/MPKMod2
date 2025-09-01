@@ -77,12 +77,13 @@ public class EventListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
+        if (mc.isGamePaused() || mc.theWorld == null) return;
         EntityPlayerSP mcPlayer = mc.thePlayer;
 
         if (e.type != TickEvent.Type.CLIENT) return;
         if (e.side != Side.CLIENT) return;
 
-        if (mcPlayer != null && e.phase == TickEvent.Phase.START) {
+        if (mcPlayer != null && e.phase == TickEvent.Phase.END) {
             AxisAlignedBB playerBB = mcPlayer.getEntityBoundingBox();
             new Player()
                     .setPos(new Vector3D(mcPlayer.posX, mcPlayer.posY, mcPlayer.posZ))
