@@ -1,0 +1,40 @@
+name: Publish
+on: [workflow_dispatch]
+
+permissions:
+  contents: read
+
+env:
+  VERSION: 2.0.0
+  RELEASE_NAME: mpkmod-${{ env.VERSION }}
+  MODRINTH_TOKEN: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Environment Variables
+        run: env
+
+      - name: Build
+        uses: ./.github/workflows/build.yml
+
+      - name: Publish (CurseForge/Modrinth/GitHub)
+        uses: Kir-Antipov/mc-publish@v3.3.0
+        with:
+          modrinth-id: 412tAvWq
+          modrinth-token: "${{env.MODRINTH_TOKEN}}"
+
+          github-tag: "v${{env.VERSION}}"
+          github-token: "${{env.GITHUB_TOKEN}}"
+
+          name: "${{env.RELEASE_NAME}}"
+          version: "${{env.VERSION}}"
+          version-type: release
+          github-generate-changelog: true
+
+          loaders: forge,fabric
+          game-versions: "1.8.9,1.19.4,1.20.4,1.20.6,1.21,1.21.3,1.21.5,1.21.6,1.21.8" #TODO: Clean this up
+          game-version-filter: "releases"
+          java: "1.8,17"
