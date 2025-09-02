@@ -16,6 +16,9 @@ jobs:
       - name: Check Environment Variables
         run: env
 
+      - name: Checkout
+        uses: actions/checkout@v5.0.0
+
       - name: Build
         uses: ./.github/workflows/build.yml
 
