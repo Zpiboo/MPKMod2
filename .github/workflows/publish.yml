@@ -4,14 +4,14 @@ on: [workflow_dispatch]
 permissions:
   contents: read
 
+env:
+  VERSION: 2.0.0
+  MODRINTH_TOKEN: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
+  GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
+
 jobs:
   publish:
     runs-on: ubuntu-latest
-    env:
-      VERSION: 2.0.0
-      RELEASE_NAME: mpkmod-${{ env.VERSION }}
-      MODRINTH_TOKEN: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
-      GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
     steps:
       - name: Check Environment Variables
         run: env
@@ -28,7 +28,7 @@ jobs:
           github-tag: "v${{env.VERSION}}"
           github-token: "${{env.GITHUB_TOKEN}}"
 
-          name: "${{env.RELEASE_NAME}}"
+          name: "mpkmod-${{env.VERSION}}"
           version: "${{env.VERSION}}"
           version-type: release
           github-generate-changelog: true
