@@ -22,16 +22,8 @@ plugins {
 }
 
 include("common")
-include("network-api:common")
 
 if (System.getenv("JITPACK") == null) {
     include("forge-1.8.9")
-    include("fabric-1.19.4")
-    include("fabric-1.20.4")
-    include("fabric-1.20.6")
-    include("fabric-1.21")
-    include("fabric-1.21.3")
-    include("fabric-1.21.5")
     include("fabric-1.21.6")
-    include("fabric-1.21.8")
 }

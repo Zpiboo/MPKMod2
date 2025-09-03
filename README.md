@@ -32,12 +32,10 @@ If you think that mpkmod should have a specific feature, encounter any bugs or i
 * [Forge](https://files.minecraftforge.net/)
     - 1.8.9
 * [Fabric](https://fabricmc.net/)
-    - 1.19.4
-    - 1.20.4
-    - 1.20.6
-    - 1.21
-    - 1.21.3
-    - 1.21.5
+    - 1.21.6-8
+
+I aim to keep the mod updated for the latest version of minecraft. <br>
+To use the mod with other versions please check out the [ViaFabricPlus](github.com/ViaVersion/ViaFabricPlus) project.
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5.mixin",
+  "package": "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],
