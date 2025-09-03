@@ -8,6 +8,7 @@ import io.github.kurrycat.mpkmod.util.BoundingBox3D;
 import io.github.kurrycat.mpkmod.util.Debug;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 import io.github.kurrycat.mpkmod.util.Vector3D;
+import io.github.kurrycat.mpkmod.util.ScissorBox;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -48,6 +49,7 @@ public class FunctionCompatibility implements FunctionHolder,
         Profiler.Interface {
     public static final Set<Integer> pressedButtons = new HashSet<>();
     public MatrixStack matrixStack = new MatrixStack();
+    private static final Stack<ScissorBox> scissorStack = new Stack<>();
 
     public void playButtonSound() {
         MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_BUTTON_CLICK, 1.0F));
@@ -253,19 +255,49 @@ public class FunctionCompatibility implements FunctionHolder,
     }
 
     public void enableScissor(double x, double y, double w, double h) {
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        Window r = MinecraftClient.getInstance().getWindow();
-
-        double scaleFactor = r.getScaleFactor();
-        double posX = x * scaleFactor;
-        double posY = r.getFramebufferHeight() - (y + h) * scaleFactor;
-        double width = w * scaleFactor;
-        double height = h * scaleFactor;
-        GL11.glScissor((int) posX, (int) posY, Math.max(0, (int) width), Math.max(0, (int) height));
+        ScissorBox box;
+        if (scissorStack.isEmpty()) box = new ScissorBox(x, y, w, h);
+        else {
+            ScissorBox prev = scissorStack.peek();
+            double bx = Math.max(prev.x, x), by = Math.max(prev.y, y);
+            box = new ScissorBox(bx, by,
+                    Math.min(x + w, prev.x + prev.w) - bx,
+                    Math.min(y + h, prev.y + prev.h) - by
+            );
+        }
+        scissorStack.push(box);
+        setScissor(box);
     }
 
     public void disableScissor() {
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        if (!scissorStack.isEmpty()) scissorStack.pop();
+        if (scissorStack.isEmpty()) setScissor(null);
+        else setScissor(scissorStack.peek());
+    }
+
+    public void clearScissors() {
+        scissorStack.clear();
+        setScissor(null);
+    }
+
+    private void setScissor(ScissorBox box) {
+        if (box == null) {
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        } else {
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            Window r = MinecraftClient.getInstance().getWindow();
+
+            double scaleFactor = r.getScaleFactor();
+            double posX = box.x * scaleFactor;
+            double posY = r.getFramebufferHeight() - (box.y + box.h) * scaleFactor;
+            double width = box.w * scaleFactor;
+            double height = box.h * scaleFactor;
+            GL11.glScissor((int) posX, (int) posY, Math.max(0, (int) width), Math.max(0, (int) height));
+        }
+    }
+
+    public boolean scissorContains(Vector2D point) {
+        return scissorStack.isEmpty() || scissorStack.peek().contains(point);
     }
 
     public void drawString(String text, double x, double y, Color color, double fontSize, boolean shadow) {
