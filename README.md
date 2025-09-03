@@ -35,7 +35,7 @@ If you think that mpkmod should have a specific feature, encounter any bugs or i
     - 1.21.6-8
 
 I aim to keep the mod updated for the latest version of minecraft. <br>
-To use the mod with other versions please check out the [ViaFabricPlus](github.com/ViaVersion/ViaFabricPlus) project.
+To use the mod with other versions please check out the [ViaFabricPlus](https://github.com/ViaVersion/ViaFabricPlus) project.
 
 ---
 
