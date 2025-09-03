@@ -1,6 +1,6 @@
 # MPK Mod
 
-[![Latest Build](https://github.com/kurrycat2004/MPKMod_2/actions/workflows/gradle.yml/badge.svg)](#snapshots)
+[![Latest Build](https://github.com/MPKMod/MPKMod2/actions/workflows/build.yml/badge.svg)](#snapshots)
 ![](/img/banner.webp)
 
 <div align="center">
