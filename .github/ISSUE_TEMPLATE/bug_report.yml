@@ -1,0 +1,43 @@
+name: Bug Report
+description: Report a bug in ViaFabricPlus
+labels: [ S-needs-review, T-bug ]
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before reporting a bug, please see if using latest build from https://github.com/MPKMod/MPKMod2/actions?query=is%3Asuccess fixes your issue.**
+        Whenever you see fit, you can upload images or videos to any of the text fields.
+
+  - type: textarea
+    attributes:
+      label: Bug Description
+      description: |
+        Describe the unexpected behavior.
+        If you want to attach screenshots, use the comment field at the bottom of the page.
+      placeholder: |
+        Example: "Creating a new landing block crashes the game."
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Steps to Reproduce
+      description: |
+        List the steps on how we can reproduce the issue. Make sure I can easily understand what you mean with each step.
+      placeholder: |
+        Example:
+        1. Create a new landing block
+        2. Game crashes
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: |
+        Describe what exactly you expected to happen.
+      placeholder: |
+        Example: "the game should not crash when I create a landing block."
+    validations:
+      required: true

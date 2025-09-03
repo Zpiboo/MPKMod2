@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Dev builds
+    url: https://github.com/MPKMod/MPKMod2/actions
+    about: Before reporting a bug, please check if using a dev build fixes your issue.
+  - name: MPKMod Discord
+    url: https://discord.gg/rSzmsdXsvW
+    about: For smaller issues or questions, you can also join our Discord server.
