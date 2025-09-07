@@ -291,7 +291,7 @@ public class Player {
                 wadStart = false;
             }
         } else if (wadStart && keyInput.isMovingSideways()) {
-            sidestep = airtime == 1 ? "WAD" : "WAD " + airtime + "t";
+            sidestep = prev.airtime == 1 ? "WAD" : "WAD " + prev.airtime + "t";
             wadStart = false;
         }
 
