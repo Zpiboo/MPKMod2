@@ -219,7 +219,7 @@ public class Player {
     @SuppressWarnings("UnusedReturnValue")
     public Player buildAndSave() {
         Player prev = getLatest();
-        Player pprev = getBeforeLatest();
+
         Player.savePlayerState(this);
         if (prev == null) {
             Player.updateDisplayInstance();
@@ -267,11 +267,6 @@ public class Player {
         }
 
         lastTiming = TimingStorage.match(getInputHistory());
-
-        if (pprev == null) {
-            Player.updateDisplayInstance();
-            return this;
-        }
 
         //Blip
         lastBlip = prev.lastBlip;
