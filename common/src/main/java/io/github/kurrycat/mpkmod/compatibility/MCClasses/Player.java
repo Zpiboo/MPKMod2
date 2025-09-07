@@ -225,7 +225,7 @@ public class Player {
             Player.updateDisplayInstance();
             return this;
         }
-        if (prev.onGround) airtime = 0;
+        if (prev.onGround || Minecraft.isFlying()) airtime = 0;
         else airtime = prev.airtime + 1;
         if (prev.onGround && !onGround) airtime = 1;
 

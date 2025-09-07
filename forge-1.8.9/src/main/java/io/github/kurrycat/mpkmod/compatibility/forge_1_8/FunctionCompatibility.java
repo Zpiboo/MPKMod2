@@ -381,6 +381,10 @@ public class FunctionCompatibility implements FunctionHolder,
         return Minecraft.getMinecraft().gameSettings.showDebugInfo;
     }
 
+    public boolean isFlying() {
+        return Minecraft.getMinecraft().thePlayer.capabilities.isFlying;
+    }
+
     public void sendPacket(MPKPacket packet) {
         MPKMod.FORGE_NETWORKING.sendPacket(packet);
     }
