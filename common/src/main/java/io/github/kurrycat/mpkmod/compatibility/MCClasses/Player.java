@@ -52,7 +52,7 @@ public class Player {
     public String lastTiming = "None";
     public boolean sprinting = false;
     public BoundingBox3D boundingBox = null;
-    public String sidestep = "None";
+    public int sidestep = 0;
     public boolean wadStart = false;
 
     @InfoString.Getter
@@ -278,20 +278,20 @@ public class Player {
         }
 
         //Sidestep
-        sidestep = prev.sidestep;
         wadStart = prev.wadStart;
         if (jumpTick) {
-            if (prev.keyInput.isMovingSideways() && keyInput.isMovingSideways() && prev.keyInput.hasSwappedDirection(keyInput)) {
-                sidestep = "WDWA";
-            } else if (prev.keyInput.isMovingSideways() && !keyInput.isMovingSideways()) {
-                sidestep = "None";
-                wadStart = true;
+            wadStart = !keyInput.isMovingSideways();
+            if (wadStart) {
+                sidestep = prev.keyInput.isMovingSideways()
+                        ? 0  // Keep old value
+                        : -2;  // None
             } else {
-                sidestep = "None";
-                wadStart = false;
+                sidestep = prev.keyInput.hasSwappedDirection(keyInput)
+                        ? -1  // WDWA
+                        : -2;  // None
             }
-        } else if (wadStart && keyInput.isMovingSideways()) {
-            sidestep = prev.airtime == 1 ? "WAD" : "WAD " + prev.airtime + "t";
+        } else if (wadStart && keyInput.isMovingSideways() && prev.airtime > 0) {
+            sidestep = prev.airtime;  // WAD
             wadStart = false;
         }
 
@@ -382,8 +382,13 @@ public class Player {
     }
 
     @InfoString.Getter
-    public String getSidestep() {
-        return sidestep;
+    public String getLastSidestep() {
+        switch (sidestep) {
+            case 0: case -2: return "None";
+            case -1: return "WDWA";
+            case 1: return "WAD";
+            default: return "WAD " + sidestep + "t";
+        }
     }
 
     @InfoString.DataClass
@@ -506,7 +511,9 @@ public class Player {
         }
 
         public boolean hasSwappedDirection(KeyInput other) {
-            return (this.left && other.right) || (this.right && other.left);
+            int sidewaysMovement = getMovementVector().getYI();
+            return sidewaysMovement != 0
+                    && sidewaysMovement == -other.getMovementVector().getYI();
         }
     }
 }
