@@ -356,12 +356,6 @@ public class FunctionCompatibility implements FunctionHolder,
         return MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud();
     }
 
-    public boolean isFlying() {
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null) return false;
-        return player.getAbilities().flying;
-    }
-
     public void sendPacket(MPKPacket packet) {
         ClientPlayNetworking.send(new DataCustomPayload(packet.getData()));
     }
