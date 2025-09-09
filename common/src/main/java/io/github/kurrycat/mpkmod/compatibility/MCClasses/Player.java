@@ -52,7 +52,7 @@ public class Player {
     public String lastTiming = "None";
     public boolean sprinting = false;
     public BoundingBox3D boundingBox = null;
-    public int sidestep = 0;
+    public int sidestep = -1;
     public boolean wadStart = false;
 
     @InfoString.Getter
@@ -225,9 +225,10 @@ public class Player {
             Player.updateDisplayInstance();
             return this;
         }
-        if (prev.onGround) airtime = 0;
-        else airtime = prev.airtime + 1;
-        if (prev.onGround && !onGround) airtime = 1;
+        if (prev.onGround)
+            airtime = onGround ? prev.airtime : 1;
+        else
+            airtime = prev.airtime + 1;
 
         landTick = (!prev.onGround && onGround);
         jumpTick = !onGround && prev.onGround && keyInput.jump;
@@ -278,19 +279,19 @@ public class Player {
         }
 
         //Sidestep
+        sidestep = prev.sidestep;
         wadStart = prev.wadStart;
         if (jumpTick) {
-            wadStart = !keyInput.isMovingSideways();
-            if (wadStart) {
-                sidestep = prev.keyInput.isMovingSideways()
-                        ? 0  // Keep old value
-                        : -2;  // None
+            //noinspection AssignmentUsedAsCondition
+            if (wadStart = !keyInput.isMovingSideways()) {
+                if (!prev.keyInput.isMovingSideways())
+                    sidestep = -1;  // None
             } else {
                 sidestep = prev.keyInput.hasSwappedDirection(keyInput)
-                        ? -1  // WDWA
-                        : -2;  // None
+                        ? 0  // WDWA
+                        : -1;  // None
             }
-        } else if (wadStart && keyInput.isMovingSideways() && prev.airtime > 0) {
+        } else if (wadStart && keyInput.isMovingSideways() && prev.airtime != airtime) {
             sidestep = prev.airtime;  // WAD
             wadStart = false;
         }
@@ -322,8 +323,6 @@ public class Player {
                 f.setAccessible(true);
                 Object o = f.get(getLatest());
                 if (o == null) continue;
-                if (o instanceof Integer && (Integer) o == 0) continue;
-                /*if (o instanceof Float && (Float) o == 0F) continue;*/
 
                 if (o instanceof Vector3D) f.set(displayInstance, ((Vector3D) o).copy());
                 else if (o instanceof Copyable) f.set(displayInstance, ((Copyable<?>) o).copy());
@@ -384,8 +383,8 @@ public class Player {
     @InfoString.Getter
     public String getLastSidestep() {
         switch (sidestep) {
-            case 0: case -2: return "None";
-            case -1: return "WDWA";
+            case -1: return "None";
+            case 0: return "WDWA";
             case 1: return "WAD";
             default: return "WAD " + sidestep + "t";
         }
