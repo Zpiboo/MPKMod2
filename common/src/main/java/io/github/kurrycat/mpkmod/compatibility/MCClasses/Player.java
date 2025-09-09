@@ -52,7 +52,7 @@ public class Player {
     public String lastTiming = "None";
     public boolean sprinting = false;
     public BoundingBox3D boundingBox = null;
-    public String sidestep = "None";
+    public int sidestep = -1;
     public boolean wadStart = false;
     public boolean flying = false;
 
@@ -220,15 +220,17 @@ public class Player {
     @SuppressWarnings("UnusedReturnValue")
     public Player buildAndSave() {
         Player prev = getLatest();
-        Player pprev = getBeforeLatest();
+
         Player.savePlayerState(this);
         if (prev == null) {
             Player.updateDisplayInstance();
             return this;
         }
-        if (prev.onGround || flying) airtime = 0;
-        else airtime = prev.airtime + 1;
-        if (prev.onGround && !onGround) airtime = 1;
+      
+        if (prev.onGround)
+            airtime = onGround ? prev.airtime : 1;
+        else
+            airtime = prev.airtime + 1;
 
         landTick = (!prev.onGround && onGround);
         jumpTick = !onGround && prev.onGround && keyInput.jump;
@@ -269,11 +271,6 @@ public class Player {
 
         lastTiming = TimingStorage.match(getInputHistory());
 
-        if (pprev == null) {
-            Player.updateDisplayInstance();
-            return this;
-        }
-
         //Blip
         lastBlip = prev.lastBlip;
         if (onGround && !prev.onGround && pos.getY() == prev.pos.getY() && !prev.jumpTick) {
@@ -287,17 +284,17 @@ public class Player {
         sidestep = prev.sidestep;
         wadStart = prev.wadStart;
         if (jumpTick) {
-            if (prev.keyInput.isMovingSideways() && keyInput.isMovingSideways() && prev.keyInput.hasSwappedDirection(keyInput)) {
-                sidestep = "WDWA";
-            } else if (prev.keyInput.isMovingSideways() && !keyInput.isMovingSideways()) {
-                sidestep = "None";
-                wadStart = true;
+            //noinspection AssignmentUsedAsCondition
+            if (wadStart = !keyInput.isMovingSideways()) {
+                if (!prev.keyInput.isMovingSideways())
+                    sidestep = -1;  // None
             } else {
-                sidestep = "None";
-                wadStart = false;
+                sidestep = prev.keyInput.hasSwappedDirection(keyInput)
+                        ? 0  // WDWA
+                        : -1;  // None
             }
-        } else if (wadStart && keyInput.isMovingSideways()) {
-            sidestep = airtime == 1 ? "WAD" : "WAD " + airtime + "t";
+        } else if (wadStart && keyInput.isMovingSideways() && prev.airtime != airtime) {
+            sidestep = prev.airtime;  // WAD
             wadStart = false;
         }
 
@@ -328,8 +325,6 @@ public class Player {
                 f.setAccessible(true);
                 Object o = f.get(getLatest());
                 if (o == null) continue;
-                if (o instanceof Integer && (Integer) o == 0) continue;
-                /*if (o instanceof Float && (Float) o == 0F) continue;*/
 
                 if (o instanceof Vector3D) f.set(displayInstance, ((Vector3D) o).copy());
                 else if (o instanceof Copyable) f.set(displayInstance, ((Copyable<?>) o).copy());
@@ -388,8 +383,13 @@ public class Player {
     }
 
     @InfoString.Getter
-    public String getSidestep() {
-        return sidestep;
+    public String getLastSidestep() {
+        switch (sidestep) {
+            case -1: return "None";
+            case 0: return "WDWA";
+            case 1: return "WAD";
+            default: return "WAD " + sidestep + "t";
+        }
     }
 
     @InfoString.Getter
@@ -522,7 +522,9 @@ public class Player {
         }
 
         public boolean hasSwappedDirection(KeyInput other) {
-            return (this.left && other.right) || (this.right && other.left);
+            int sidewaysMovement = getMovementVector().getYI();
+            return sidewaysMovement != 0
+                    && sidewaysMovement == -other.getMovementVector().getYI();
         }
     }
 }
