@@ -54,6 +54,7 @@ public class Player {
     public BoundingBox3D boundingBox = null;
     public int sidestep = -1;
     public boolean wadStart = false;
+    public boolean flying = false;
 
     @InfoString.Getter
     public static LandingBlock getLatestLB() {
@@ -225,6 +226,7 @@ public class Player {
             Player.updateDisplayInstance();
             return this;
         }
+      
         if (prev.onGround)
             airtime = onGround ? prev.airtime : 1;
         else
@@ -388,6 +390,16 @@ public class Player {
             case 1: return "WAD";
             default: return "WAD " + sidestep + "t";
         }
+    }
+
+    @InfoString.Getter
+    public boolean isFlying() {
+        return flying;
+    }
+
+    public Player setFlying(boolean flying) {
+        this.flying = flying;
+        return this;
     }
 
     @InfoString.DataClass
