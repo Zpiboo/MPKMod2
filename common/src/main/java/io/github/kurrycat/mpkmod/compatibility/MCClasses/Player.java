@@ -226,11 +226,9 @@ public class Player {
             Player.updateDisplayInstance();
             return this;
         }
-      
-        if (prev.onGround)
-            airtime = onGround ? prev.airtime : 1;
-        else
-            airtime = prev.airtime + 1;
+        if (prev.onGround || flying) airtime = prev.airtime;
+        else airtime = prev.airtime + 1;
+        if (prev.onGround && !onGround) airtime = 1;
 
         landTick = (!prev.onGround && onGround);
         jumpTick = !onGround && prev.onGround && keyInput.jump;
