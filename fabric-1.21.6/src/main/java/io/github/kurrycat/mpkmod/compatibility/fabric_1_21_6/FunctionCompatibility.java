@@ -227,7 +227,7 @@ public class FunctionCompatibility implements FunctionHolder,
         if (drawContext == null) return;
         var matrixStack = drawContext.getMatrices();
         matrixStack.pushMatrix();
-        matrixStack.translate((float) x, (float) y);
+        matrixStack.translate((int) x, (int) y);
         double scale = fontSize / MinecraftClient.getInstance().textRenderer.fontHeight;
         matrixStack.scale((float) scale, (float) scale);
         drawContext.drawText(
