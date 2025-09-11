@@ -5,12 +5,9 @@ import io.github.kurrycat.mpkmod.gui.ComponentScreen;
 import io.github.kurrycat.mpkmod.gui.components.Anchor;
 import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.components.ScrollableList;
-import io.github.kurrycat.mpkmod.save.Serializer;
-import io.github.kurrycat.mpkmod.util.JSONConfig;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class OptionsGuiScreen extends ComponentScreen {
     private OptionList optionList;
@@ -25,7 +22,7 @@ public class OptionsGuiScreen extends ComponentScreen {
         super.onGuiInit();
         optionList = new OptionList(
                 new Vector2D(0, 16),
-                new Vector2D(3 / 5D, -40),
+                new Vector2D(0.60, -40),
                 new ArrayList<>(API.optionsMap.values())
         );
         addChild(optionList, PERCENT.SIZE_X, Anchor.TOP_CENTER);

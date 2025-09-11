@@ -5,8 +5,8 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.WorldInteraction;
 import io.github.kurrycat.mpkmod.gui.ComponentScreen;
-import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.components.*;
+import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
 import io.github.kurrycat.mpkmod.landingblock.LandingBlock;
@@ -43,8 +43,8 @@ public class LandingBlockGuiScreen extends ComponentScreen {
         super.onGuiInit();
 
         lbList = new LBList(
-                new Vector2D(0, 0.05),
-                new Vector2D(3 / 5D, 0.9)
+                new Vector2D(0.00, 0.05),
+                new Vector2D(0.60, 0.90)
         );
         addChild(lbList, PERCENT.ALL, Anchor.TOP_CENTER);
         lbList.topCover.addChild(
@@ -134,10 +134,12 @@ public class LandingBlockGuiScreen extends ComponentScreen {
         public LBListItem(ScrollableList<LBListItem> parent, LandingBlock landingBlock) {
             super(parent);
             this.landingBlock = landingBlock;
-            enabled = new CheckButton(Vector2D.ZERO, checked -> {
+            enabled = new CheckButton(new Vector2D(1 / 16D, 0), checked -> {
                 landingBlock.enabled = checked;
             });
             enabled.setChecked(landingBlock.enabled);
+            addChild(enabled, PERCENT.POS_X, Anchor.CENTER_RIGHT, Anchor.CENTER_LEFT);
+
             minX = new InputField(String.valueOf(landingBlock.boundingBox.getMin().getX()), Vector2D.OFFSCREEN, 25, true)
                     .setName("minX: ")
                     .setOnContentChange(c -> {
@@ -170,10 +172,16 @@ public class LandingBlockGuiScreen extends ComponentScreen {
                     });
 
             fields = new InputField[]{minX, minY, minZ, maxX, maxY, maxZ};
+            for (InputField field : fields) {
+                addChild(field);
+                field.setWidth(1 / 3D, true);
+            }
 
             collapseButton = new Button("v", Vector2D.OFFSCREEN, new Vector2D(11, 11), mouseButton -> {
                 if (mouseButton == Mouse.Button.LEFT) collapsed = !collapsed;
             });
+            addChild(collapseButton, PERCENT.POS, Anchor.CENTER_LEFT, Anchor.TOP_RIGHT);
+
             deleteButton = new Button("x", Vector2D.OFFSCREEN, new Vector2D(11, 11), mouseButton -> {
                 if (mouseButton == Mouse.Button.LEFT) {
                     LandingBlockGuiScreen.lbs.remove(landingBlock);
@@ -182,8 +190,9 @@ public class LandingBlockGuiScreen extends ComponentScreen {
             });
             deleteButton.textColor = Color.RED;
             deleteButton.pressedTextColor = Color.RED;
+            addChild(deleteButton, PERCENT.POS, Anchor.CENTER_LEFT, Anchor.TOP_RIGHT);
 
-            landingModeButton = new Button("", Vector2D.OFFSCREEN, Vector2D.ZERO, mouseButton -> {
+            landingModeButton = new Button("", new Vector2D(1 / 8D, 2 / 3D), Vector2D.ZERO, mouseButton -> {
                 if (mouseButton == Mouse.Button.LEFT) {
                     landingBlock.landingMode = landingBlock.landingMode.getNext();
                 } else if (Mouse.Button.RIGHT.equals(mouseButton)) {
@@ -201,6 +210,7 @@ public class LandingBlockGuiScreen extends ComponentScreen {
                     }
                 }
             });
+            addChild(landingModeButton, PERCENT.POS, Anchor.CENTER_LEFT, Anchor.TOP_RIGHT);
         }
 
         public int getHeight() {
@@ -210,7 +220,7 @@ public class LandingBlockGuiScreen extends ComponentScreen {
         public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
             Renderer2D.drawRectWithEdge(pos, size, 1, lbListColorBg, lbListColorItemEdge);
 
-            if (collapsed)
+            if (collapsed) {
                 FontRenderer.drawString(
                         landingBlock.boundingBox.getMin() + " - " + landingBlock.boundingBox.getMax(),
                         pos.add(size.div(2))
@@ -220,32 +230,32 @@ public class LandingBlockGuiScreen extends ComponentScreen {
                         Color.WHITE,
                         false
                 );
-            else
+            } else {
                 for (int i = 0; i < fields.length; i++) {
-                    fields[i].setPos(pos.add(
-                            size.getX() / 12 + size.getX() / 5 * 2 * (((int) (i / 3))),
-                            size.getY() / 4 * (1 + (i % 3)) - fields[i].getDisplayedSize().getY() / 2
+                    InputField field = fields[i];
+
+                    field.setPos(new Vector2D(
+                            size.getX() * (1 / 12D) + size.getX() * 0.4 * (int) (i / 3),
+                            size.getY() * 0.25 * (1 + (i % 3)) - fields[i].getDisplayedSize().getY() * 0.5
                     ));
-                    fields[i].setWidth(size.getX() / 3, false);
-                    fields[i].render(mouse);
+                    field.render(mouse);
                 }
 
-            enabled.setPos(pos.add(size.getX() / 16 - enabled.getDisplayedSize().getX(), size.getY() / 2 - 5.5).round());
+                landingModeButton.setSize(new Vector2D(size.getX() / 16 + collapseButton.getDisplayedSize().getX(), 11));
+                landingModeButton.enabled = !collapsed;
+                landingModeButton.setText(landingBlock.landingMode.toString());
+                landingModeButton.render(mouse);
+            }
+
             enabled.render(mouse);
 
             collapseButton.setText(collapsed ? "v" : "^");
             collapseButton.textOffset = collapsed ? Vector2D.ZERO : new Vector2D(0, 3);
-            collapseButton.setPos(pos.add(size.getX() - size.getX() / 16, size.getY() / (collapsed ? 2 : 3) - 5.5).round());
+            collapseButton.setPos(new Vector2D(1 / 16D, collapsed ? 1 / 2D : 1 / 3D));
             collapseButton.render(mouse);
 
-            deleteButton.setPos(pos.add(size.getX() - size.getX() / 8, size.getY() / (collapsed ? 2 : 3) - 5.5).round());
+            deleteButton.setPos(new Vector2D(1 / 8D, collapsed ? 1 / 2D : 1 / 3D));
             deleteButton.render(mouse);
-
-            landingModeButton.setPos(pos.add(size.getX() - size.getX() / 8, size.getY() / 3 * 2 - 5.5).round());
-            landingModeButton.setSize(new Vector2D(size.getX() / 16 + collapseButton.getDisplayedSize().getX(), 11));
-            landingModeButton.enabled = !collapsed;
-            landingModeButton.setText(landingBlock.landingMode.toString());
-            if (!collapsed) landingModeButton.render(mouse);
         }
 
         public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
