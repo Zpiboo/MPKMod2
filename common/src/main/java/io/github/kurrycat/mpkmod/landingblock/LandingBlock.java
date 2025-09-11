@@ -40,7 +40,7 @@ public class LandingBlock {
 
     @InfoString.Getter
     public Vector3D getOffset() {
-        if (offsets.size() == 0) return null;
+        if (offsets.isEmpty()) return null;
         return offsets.get(offsets.size() - 1);
     }
 
