@@ -36,7 +36,8 @@ public class MPKPacketListenerClientImpl implements MPKPacketListenerClient {
     @Override
     public void handleSetLandingBlock(MPKPacketSetLandingBlock packet) {
         LandingBlockGuiScreen.lbs.add(new LandingBlock(
-                BoundingBox3D.asBlockPos(new Vector3D(packet.getX(), packet.getY(), packet.getZ()))
+                BoundingBox3D.asBlockPos(new Vector3D(packet.getX(), packet.getY(), packet.getZ())),
+                LandingBlock.LandingMode.values()[packet.getLandingModeId()]
         ));
     }
 
