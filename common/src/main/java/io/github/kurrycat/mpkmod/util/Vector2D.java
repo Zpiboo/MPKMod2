@@ -177,6 +177,12 @@ public class Vector2D implements Copyable<Vector2D>, FormatDecimals {
         return x * other.x + y * other.y;
     }
 
+    public Vector2D normalize() {
+        double len = length();
+        if (len == 0) return ZERO;
+        return new Vector2D(x / len, y / len);
+    }
+
     /**
      * @param pos1 top left corner
      * @param pos2 bottom right corner

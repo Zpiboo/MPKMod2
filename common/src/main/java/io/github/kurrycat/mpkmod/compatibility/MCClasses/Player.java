@@ -47,6 +47,7 @@ public class Player {
     public int[] deltaMouseY = null;
     public int airtime = 0;
     public Float last45 = null;
+    public int grinds = 0;
     public boolean jumpTick = false;
     public boolean landTick = false;
     public String lastTiming = "None";
@@ -217,6 +218,11 @@ public class Player {
         return lastTiming;
     }
 
+    @InfoString.Getter
+    public int getGrinds() {
+        return grinds;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     public Player buildAndSave() {
         Player prev = getLatest();
@@ -268,6 +274,15 @@ public class Player {
         }
 
         lastTiming = TimingStorage.match(getInputHistory());
+
+        //Grinds
+        grinds = prev.grinds;
+        if (jumpTick && pos.getY() == prev.pos.getY() && motion.getY() == 0) {
+            grinds++;
+        } else if (landTick) {
+            //If requested we could have a variable that keeps track of grinds until next attempt
+            grinds = 0;
+        }
 
         //Blip
         lastBlip = prev.lastBlip;
