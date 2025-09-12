@@ -1,17 +1,22 @@
 package io.github.kurrycat.mpkmod.gui.screens.main_gui;
 
 import io.github.kurrycat.mpkmod.gui.ComponentScreen;
-import io.github.kurrycat.mpkmod.gui.components.Anchor;
-import io.github.kurrycat.mpkmod.gui.components.Button;
-import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.*;
+import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
 
-public class MainGuiScreen extends ComponentScreen {
+public class MainGuiScreen extends ComponentScreen implements MessageReceiver {
     public OptionsPane optionsPane = null;
     public LoadConfigPane loadConfigPane = null;
     public SaveConfigPane saveConfigPane = null;
+
+    public void postMessage(String receiverID, String content, boolean highlighted) {
+        MessageQueue q = MessageQueue.getReceiverFor(receiverID, ItrUtil.getAllOfType(MessageQueue.class, movableComponents));
+        if (q != null)
+            q.postMessage(content, highlighted);
+    }
 
     @Override
     public boolean shouldCreateKeyBind() {

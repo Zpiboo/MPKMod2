@@ -20,9 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder, MouseInputListener, MouseScrollListener, KeyInputListener, MessageReceiver {
-    public ArrayList<Pane<?>> openPanes = new ArrayList<>();
-
+public abstract class ComponentScreen extends MPKGuiScreen implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public ArrayList<Component> movableComponents = new ArrayList<>();
     public Set<Component> selected = new HashSet<>();
     public Set<Component> holding = new HashSet<>();
@@ -31,12 +29,6 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
     private Vector2D lastClickedPos = null;
     private Component lastClicked = null;
     private Vector2D holdingSetPosOffset = null;
-
-    public void postMessage(String receiverID, String content, boolean highlighted) {
-        MessageQueue q = MessageQueue.getReceiverFor(receiverID, ItrUtil.getAllOfType(MessageQueue.class, movableComponents));
-        if (q != null)
-            q.postMessage(content, highlighted);
-    }
 
     public void onGuiInit() {
         super.onGuiInit();
@@ -132,7 +124,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
                             )
                     );
                 }
-            } else if (selected.size() > 0) {
+            } else if (!selected.isEmpty()) {
                 highlighted.addAll(selected);
                 selected.clear();
                 PopupMenu menu = new PopupMenu();
@@ -269,6 +261,8 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         if (openPanes.isEmpty() || openPanes.get(openPanes.size() - 1) instanceof PopupMenu) drawDefaultBackground();
         Vector2D hoverMousePos = openPanes.isEmpty() ? mouse : new Vector2D(-1, -1);
 
+        super.render(hoverMousePos, partialTicks);
+
         movableComponents.forEach(c -> c.setSelected(selected.contains(c)));
         movableComponents.forEach(c -> c.setHighlighted(highlighted.contains(c)));
 
@@ -280,8 +274,6 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
                 component.setRenderOffset(offset);
             } else component.render(hoverMousePos);
         }
-
-        for (Component b : components) b.render(hoverMousePos);
 
         if (!holding.isEmpty()) {
             BoundingBox2D containingHolding = boundingBoxContainingAll(new ArrayList<>(holding));
@@ -347,22 +339,17 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         return containPos.get(0);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T extends PaneHolder> void openPane(Pane<T> p, Vector2D pos) {
-        openPanes.add(p);
-        p.setPaneHolder((T) this);
-        p.setLoaded(true);
-        p.setPos(pos);
-
+    @Override
+    public <T extends PaneHolder> void openPane(Pane<T> p) {
+        super.openPane(p);
         cleanupScreen();
     }
 
     public <T extends PaneHolder> void closePane(Pane<T> p) {
-        openPanes.remove(p);
+        super.closePane(p);
         if (openPanes.isEmpty()) {
             highlighted.clear();
         }
-        p.setLoaded(false);
     }
 
     public void removeComponent(Component c) {
@@ -410,20 +397,5 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
             if (p2.getY() > max.getY()) max.setY(p2.getY());
         }
         return new BoundingBox2D(min, max);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T extends PaneHolder> void openPane(Pane<T> p) {
-        openPanes.add(p);
-        p.setPaneHolder((T) this);
-        p.setLoaded(true);
-
-        cleanupScreen();
-    }
-
-    public final void closeAllPanes() {
-        for (int i = openPanes.size() - 1; i >= 0; i--) {
-            openPanes.get(i).close();
-        }
     }
 }

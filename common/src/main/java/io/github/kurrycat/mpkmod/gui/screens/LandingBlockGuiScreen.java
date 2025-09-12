@@ -5,6 +5,7 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.WorldInteraction;
 import io.github.kurrycat.mpkmod.gui.ComponentScreen;
+import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
@@ -16,7 +17,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LandingBlockGuiScreen extends ComponentScreen {
+public class LandingBlockGuiScreen extends MPKGuiScreen {
     public static List<LandingBlock> lbs = new ArrayList<>();
     public static Color lbListColorItemEdge = new Color(255, 255, 255, 95);
     public static Color lbListColorBg = new Color(31, 31, 31, 150);
@@ -63,10 +64,6 @@ public class LandingBlockGuiScreen extends ComponentScreen {
         super.onGuiClosed();
         for (LBListItem item : lbList.getItems())
             item.landingBlock.highlight = false;
-    }
-
-    public void render(Vector2D mouse, float partialTicks) {
-        super.render(mouse, partialTicks);
     }
 
     public static class LBList extends ScrollableList<LBListItem> {

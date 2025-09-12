@@ -2,13 +2,19 @@ package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
+import io.github.kurrycat.mpkmod.gui.components.Component;
 import io.github.kurrycat.mpkmod.gui.components.ComponentHolder;
+import io.github.kurrycat.mpkmod.gui.components.Pane;
+import io.github.kurrycat.mpkmod.gui.components.PaneHolder;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public abstract class MPKGuiScreen extends ComponentHolder {
+public abstract class MPKGuiScreen extends ComponentHolder implements PaneHolder {
+    public ArrayList<Pane<?>> openPanes = new ArrayList<>();
+
     private boolean initialized = false;
     private String id = null;
 
@@ -83,6 +89,7 @@ public abstract class MPKGuiScreen extends ComponentHolder {
     }
 
     public void render(Vector2D mouse, float partialTicks) {
+        for (Component c : components) c.render(mouse);
     }
 
     public final void drawDefaultBackground() {
@@ -99,5 +106,25 @@ public abstract class MPKGuiScreen extends ComponentHolder {
 
     public final void close() {
         Minecraft.displayGuiScreen(null);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T extends PaneHolder> void openPane(Pane<T> p) {
+        openPanes.add(p);
+        p.setPaneHolder((T) this);
+        p.setLoaded(true);
+    }
+
+    @Override
+    public <T extends PaneHolder> void closePane(Pane<T> p) {
+        openPanes.remove(p);
+        p.setLoaded(false);
+    }
+
+    public final void closeAllPanes() {
+        for (int i = openPanes.size() - 1; i >= 0; i--) {
+            openPanes.get(i).close();
+        }
     }
 }
