@@ -48,6 +48,7 @@ public class Player {
     public int airtime = 0;
     public Float last45 = null;
     public int grinds = 0;
+    public boolean grindTick = false;
     public boolean jumpTick = false;
     public boolean landTick = false;
     public String lastTiming = "None";
@@ -277,11 +278,13 @@ public class Player {
 
         //Grinds
         grinds = prev.grinds;
-        if (jumpTick && pos.getY() == prev.pos.getY() && motion.getY() == 0) {
-            grinds++;
-        } else if (landTick) {
-            //If requested we could have a variable that keeps track of grinds until next attempt
-            grinds = 0;
+        grindTick = jumpTick && pos.getY() == prev.pos.getY() && motion.getY() == (-0.08 * 0.98F);
+
+        if (grindTick) {
+            if (prev.getPrevious().grindTick)
+                grinds++;
+            else
+                grinds = 1;
         }
 
         //Blip
