@@ -1,8 +1,8 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
-import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5.mixin.KeyBindingAccessor;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.KeyBindingAccessor;
 import io.github.kurrycat.mpkmod.ticks.ButtonMS;
 import io.github.kurrycat.mpkmod.ticks.ButtonMSList;
 import io.github.kurrycat.mpkmod.util.BoundingBox3D;

@@ -1,4 +1,4 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5.network;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.network;
 
 import io.github.kurrycat.mpknetapi.common.MPKNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;

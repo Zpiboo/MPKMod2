@@ -6,11 +6,11 @@
   "mixins": [
   ],
   "client": [
-      "GameRendererMixin",
-      "KeyBindingAccessor",
-      "KeyboardMixin",
-      "MinecraftClientMixin",
-      "MouseMixin"
+    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.GameRendererMixin",
+    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.KeyBindingAccessor",
+    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.KeyboardMixin",
+    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.MinecraftClientMixin",
+    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.MouseMixin"
   ],
   "injectors": {
     "defaultRequire": 1
