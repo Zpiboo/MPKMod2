@@ -1,10 +1,8 @@
 plugins {
-    id 'fabric-loom' version "1.11-SNAPSHOT"
-
-    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
+    id 'fabric-loom' version '1.11-SNAPSHOT'
 }
 
-loom.runs.client.runDir = "../runs/run"
+loom.runs.client.runDir = '../runs/run'
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
@@ -17,27 +15,9 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property 'version', project.version
 
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
+    filesMatching('fabric.mod.json') {
+        expand 'version': project.version
     }
-}
-
-publishMods {
-    file = remapJar.archiveFile
-    changelog = ""
-    type = STABLE
-    modLoaders.add("fabric")
-
-    modrinth {
-        projectId = "412tAvWq"
-        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add("1.21.6+")
-    }
-    /*github {
-        repository = "MPKMod/MPKMod2"
-        accessToken = providers.environmentVariable("GITHUB_TOKEN")
-        commitish = "main"
-    }*/
 }
