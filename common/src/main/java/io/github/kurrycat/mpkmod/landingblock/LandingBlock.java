@@ -38,9 +38,14 @@ public class LandingBlock {
         this.boundingBox = boundingBox;
     }
 
+    public LandingBlock(BoundingBox3D boundingBox, LandingMode landingMode) {
+        this.boundingBox = boundingBox;
+        this.landingMode = landingMode;
+    }
+
     @InfoString.Getter
     public Vector3D getOffset() {
-        if (offsets.size() == 0) return null;
+        if (offsets.isEmpty()) return null;
         return offsets.get(offsets.size() - 1);
     }
 

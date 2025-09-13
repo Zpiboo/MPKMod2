@@ -47,12 +47,16 @@ public class Player {
     public int[] deltaMouseY = null;
     public int airtime = 0;
     public Float last45 = null;
+    public int grinds = 0;
+    public boolean grindTick = false;
     public boolean jumpTick = false;
     public boolean landTick = false;
     public String lastTiming = "None";
     public boolean sprinting = false;
     public BoundingBox3D boundingBox = null;
-
+    public int sidestep = -1;
+    public boolean wadStart = false;
+    public boolean flying = false;
 
     @InfoString.Getter
     public static LandingBlock getLatestLB() {
@@ -66,7 +70,7 @@ public class Player {
     public static List<String> compressedInputHistory() {
         return getInputHistory().stream()
                 .reduce(new ArrayList<Tuple<Integer, TimingInput>>(), (l, t) -> {
-                    if (l.size() == 0) {
+                    if (l.isEmpty()) {
                         l.add(new Tuple<>(1, t));
                         return l;
                     }
@@ -215,16 +219,21 @@ public class Player {
         return lastTiming;
     }
 
+    @InfoString.Getter
+    public int getGrinds() {
+        return grinds;
+    }
+
     @SuppressWarnings("UnusedReturnValue")
     public Player buildAndSave() {
         Player prev = getLatest();
-        Player pprev = getBeforeLatest();
+
         Player.savePlayerState(this);
         if (prev == null) {
             Player.updateDisplayInstance();
             return this;
         }
-        if (prev.onGround) airtime = 0;
+        if (prev.onGround || flying) airtime = prev.airtime;
         else airtime = prev.airtime + 1;
         if (prev.onGround && !onGround) airtime = 1;
 
@@ -267,17 +276,42 @@ public class Player {
 
         lastTiming = TimingStorage.match(getInputHistory());
 
-        if (pprev == null) {
-            Player.updateDisplayInstance();
-            return this;
+        //Grinds
+        grinds = prev.grinds;
+        grindTick = jumpTick && pos.getY() == prev.pos.getY() && motion.getY() == (-0.08 * 0.98F);
+
+        if (grindTick) {
+            if (prev.getPrevious().grindTick)
+                grinds++;
+            else
+                grinds = 1;
         }
 
+        //Blip
         lastBlip = prev.lastBlip;
         if (onGround && !prev.onGround && pos.getY() == prev.pos.getY() && !prev.jumpTick) {
             if (lastBlip == null) lastBlip = new Blip(1, pos);
             else lastBlip = new Blip(lastBlip.chainedBlips + 1, pos);
         } else if (onGround) {
             if (lastBlip != null) lastBlip = new Blip(0, lastBlip.lastChainedBlips, lastBlip.pos);
+        }
+
+        //Sidestep
+        sidestep = prev.sidestep;
+        wadStart = prev.wadStart;
+        if (jumpTick) {
+            //noinspection AssignmentUsedAsCondition
+            if (wadStart = !keyInput.isMovingSideways()) {
+                if (!prev.keyInput.isMovingSideways())
+                    sidestep = -1;  // None
+            } else {
+                sidestep = prev.keyInput.hasSwappedDirection(keyInput)
+                        ? 0  // WDWA
+                        : -1;  // None
+            }
+        } else if (wadStart && keyInput.isMovingSideways() && prev.airtime != airtime) {
+            sidestep = prev.airtime;  // WAD
+            wadStart = false;
         }
 
         Player.updateDisplayInstance();
@@ -307,8 +341,6 @@ public class Player {
                 f.setAccessible(true);
                 Object o = f.get(getLatest());
                 if (o == null) continue;
-                if (o instanceof Integer && (Integer) o == 0) continue;
-                /*if (o instanceof Float && (Float) o == 0F) continue;*/
 
                 if (o instanceof Vector3D) f.set(displayInstance, ((Vector3D) o).copy());
                 else if (o instanceof Copyable) f.set(displayInstance, ((Copyable<?>) o).copy());
@@ -363,6 +395,26 @@ public class Player {
 
     public Player setLastPos(Vector3D lastPos) {
         this.lastPos = lastPos;
+        return this;
+    }
+
+    @InfoString.Getter
+    public String getLastSidestep() {
+        switch (sidestep) {
+            case -1: return "None";
+            case 0: return "WDWA";
+            case 1: return "WAD";
+            default: return "WAD " + sidestep + "t";
+        }
+    }
+
+    @InfoString.Getter
+    public boolean isFlying() {
+        return flying;
+    }
+
+    public Player setFlying(boolean flying) {
+        this.flying = flying;
         return this;
     }
 
@@ -483,6 +535,12 @@ public class Player {
 
         public boolean isMovingSideways() {
             return left ^ right;
+        }
+
+        public boolean hasSwappedDirection(KeyInput other) {
+            int sidewaysMovement = getMovementVector().getYI();
+            return sidewaysMovement != 0
+                    && sidewaysMovement == -other.getMovementVector().getYI();
         }
     }
 }

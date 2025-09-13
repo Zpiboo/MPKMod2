@@ -1,5 +1,7 @@
 plugins {
     id 'xyz.wagyourtail.unimined' version '1.2.6'
+
+    id "me.modmuss50.mod-publish-plugin" version "0.8.4"
 }
 
 unimined.useGlobalCache = false
@@ -23,6 +25,7 @@ unimined.minecraft {
 }
 
 dependencies {
+    implementation "com.github.MPKMod.MPKNetworkAPI:common:${project.networkApiVersion}"
 }
 
 processResources {
@@ -34,4 +37,22 @@ processResources {
     filesMatching("mcmod.info") {
         expand "version": project.version
     }
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = ""
+    type = STABLE
+    modLoaders.add("forge")
+
+    modrinth {
+        projectId = "412tAvWq"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add("1.8.9")
+    }
+    /*github {
+        repository = "MPKMod/MPKMod2"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = "main"
+    }*/
 }
