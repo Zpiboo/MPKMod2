@@ -65,6 +65,7 @@ configure(
             //destinationDirectory = rootProject.buildDir
             doFirst {
                 archiveClassifier = project.name
+                archiveAppendix = 'integration'
             }
         }
 
