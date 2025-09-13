@@ -99,9 +99,10 @@ public class EventHandler {
                     .setOnGround(mcPlayer.isOnGround())
                     .setSprinting(mcPlayer.isSprinting())
                     .setBoundingBox(new BoundingBox3D(
-                        new Vector3D(playerBB.minX, playerBB.minY, playerBB.minZ),
-                        new Vector3D(playerBB.maxX, playerBB.maxY, playerBB.maxZ)
+                            new Vector3D(playerBB.minX, playerBB.minY, playerBB.minZ),
+                            new Vector3D(playerBB.maxX, playerBB.maxY, playerBB.maxZ)
                     ))
+                    .setFlying(mcPlayer.getAbilities().flying)
                     .constructKeyInput()
                     .setKeyMSList(timeQueue)
                     .buildAndSave();
