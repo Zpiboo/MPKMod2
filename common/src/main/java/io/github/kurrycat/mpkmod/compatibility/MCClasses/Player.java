@@ -271,7 +271,7 @@ public class Player {
             timingInput.msList.addAll(keyMSList);
 
         if (prev.jumpTick && !prev.keyInput.isMovingSideways() && keyInput.isMovingSideways()) {
-            last45 = prev.deltaYaw;
+            last45 = deltaYaw;
         }
 
         lastTiming = TimingStorage.match(getInputHistory());
