@@ -7,6 +7,7 @@ import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.screens.options_gui.Option;
 import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
+import io.github.kurrycat.mpkmod.util.WorldToFile;
 
 import java.awt.*;
 
@@ -31,6 +32,37 @@ public class OptionsPane extends Pane<MainGuiScreen> {
                 new Vector2D(0.9, 0.8)
         );
         addChild(optionList, PERCENT.ALL, Anchor.CENTER);
+
+        OptionItem pkcOption = new OptionItem(optionList);
+        pkcOption.setHeight(20);
+        TextRectangle radiusText = new TextRectangle(
+                new Vector2D(0, 0),
+                new Vector2D(45, 1),
+                "Radius:",
+                new Color(0, 0, 0, 0),
+                Color.WHITE
+        );
+        pkcOption.addChild(radiusText, PERCENT.SIZE_Y);
+        Div pkcContent = new Div(new Vector2D(0, 0), new Vector2D(-2, -2));
+        pkcOption.addChild(pkcContent, PERCENT.NONE, Anchor.CENTER);
+        pkcOption.stretchXBetween(pkcContent, radiusText, null);
+        NumberSlider pkcFileRadius = new NumberSlider(
+                1, 20, 1, 5,
+                new Vector2D(0, 0),
+                new Vector2D(0.45D, 1),
+                v -> {
+                }
+        );
+        pkcContent.addChild(pkcFileRadius, PERCENT.ALL);
+        pkcContent.addChild(
+                new Button("Save as PKC File",
+                        new Vector2D(1 / 2D, 0),
+                        new Vector2D(1 / 2D, 1),
+                        mouseButton -> WorldToFile.parseWorld((int) pkcFileRadius.getValue())
+                ), PERCENT.ALL
+        );
+
+        optionList.addItem(pkcOption);
 
         OptionItem fontSizeOption = new OptionItem(optionList);
         fontSizeOption.setHeight(20);
