@@ -63,7 +63,7 @@ public class Player {
     public static LandingBlock getLatestLB() {
         return LandingBlockGuiScreen.lbs.stream()
                 .filter(lb -> lb.pb != null)
-                .min(Comparator.comparing(o -> o.lastTimeOffsetSaved))
+                .max(Comparator.comparing(o -> o.lastTimeOffsetSaved))
                 .orElse(new LandingBlock(BoundingBox3D.ZERO));
     }
 
