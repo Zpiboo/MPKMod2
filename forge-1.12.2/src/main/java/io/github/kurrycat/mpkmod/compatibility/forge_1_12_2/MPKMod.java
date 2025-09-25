@@ -5,6 +5,7 @@ import io.github.kurrycat.mpkmod.compatibility.forge_1_12_2.network.MPKForgeNetw
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
@@ -55,7 +56,7 @@ public class MPKMod {
         MinecraftForge.EVENT_BUS.register(this);
 
         registerKeyBindings();
-        API.init(Minecraft.getSessionInfo().get("X-Minecraft-Version"));
+        API.init(ForgeVersion.mcVersion);
     }
 
     public static void registerKeyBinding(String id) {

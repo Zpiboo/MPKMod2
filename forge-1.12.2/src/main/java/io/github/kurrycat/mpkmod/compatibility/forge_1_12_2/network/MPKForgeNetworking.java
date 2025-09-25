@@ -35,7 +35,7 @@ public class MPKForgeNetworking {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onServerPacket(FMLNetworkEvent.ClientCustomPacketEvent event) {
-        MPKPacket packet = MPKPacket.handle(API.PACKET_LISTENER_CLIENT, event.packet.payload().array(), null);
+        MPKPacket packet = MPKPacket.handle(API.PACKET_LISTENER_CLIENT, event.getPacket().payload().array(), null);
         if (packet != null) {
             API.Events.onPluginMessage(packet);
         }

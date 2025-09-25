@@ -11,7 +11,7 @@ import io.github.kurrycat.mpkmod.util.Vector3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -65,10 +65,10 @@ public class EventListener {
     @SubscribeEvent
     public void onMouseEvent(MouseEvent event) {
         API.Events.onMouseInput(
-                Mouse.Button.fromInt(event.button),
-                event.button == -1 ? Mouse.State.NONE : (event.buttonstate ? Mouse.State.DOWN : Mouse.State.UP),
-                event.x, event.y, event.dx, event.dy,
-                event.dwheel, event.nanoseconds
+                Mouse.Button.fromInt(event.getButton()),
+                event.getButton() == -1 ? Mouse.State.NONE : (event.isButtonstate() ? Mouse.State.DOWN : Mouse.State.UP),
+                event.getX(), event.getY(), event.getDx(), event.getDy(),
+                event.getDwheel(), event.getNanoseconds()
         );
     }
 
@@ -77,8 +77,8 @@ public class EventListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (mc.isGamePaused() || mc.theWorld == null) return;
-        EntityPlayerSP mcPlayer = mc.thePlayer;
+        if (mc.isGamePaused() || mc.world == null) return;
+        EntityPlayerSP mcPlayer = mc.player;
 
         if (e.type != TickEvent.Type.CLIENT) return;
         if (e.side != Side.CLIENT) return;
@@ -111,20 +111,20 @@ public class EventListener {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent e) {
-        if (e.type == RenderGameOverlayEvent.ElementType.TEXT && e instanceof RenderGameOverlayEvent.Text)
+        if (e.getType() == RenderGameOverlayEvent.ElementType.TEXT && e instanceof RenderGameOverlayEvent.Text)
             API.Events.onRenderOverlay();
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
     public void onRenderWorld(RenderWorldLastEvent e) {
-        API.Events.onRenderWorldOverlay(e.partialTicks);
+        API.Events.onRenderWorldOverlay(e.getPartialTicks());
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent e) {
-        API.Events.onServerConnect(e.isLocal);
+        API.Events.onServerConnect(e.isLocal());
     }
 
     @SideOnly(Side.CLIENT)

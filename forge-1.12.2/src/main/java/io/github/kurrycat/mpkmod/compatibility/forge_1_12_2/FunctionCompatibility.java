@@ -3,7 +3,6 @@ package io.github.kurrycat.mpkmod.compatibility.forge_1_12_2;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.*;
 import io.github.kurrycat.mpkmod.util.*;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
-import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -12,17 +11,17 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.multiplayer.ServerData;
+import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import org.lwjgl.input.Keyboard;
@@ -50,7 +49,7 @@ public class FunctionCompatibility implements FunctionHolder,
      * Is called in {@link SoundManager.Interface}
      */
     public void playButtonSound() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
     /**
@@ -58,11 +57,11 @@ public class FunctionCompatibility implements FunctionHolder,
      */
     public List<BoundingBox3D> getCollisionBoundingBoxes(Vector3D blockPosVec) {
         BlockPos blockPos = new BlockPos(blockPosVec.getX(), blockPosVec.getY(), blockPosVec.getZ());
-        World world = Minecraft.getMinecraft().theWorld;
+        World world = Minecraft.getMinecraft().world;
         IBlockState blockState = world.getBlockState(blockPos);
         AxisAlignedBB mask = new AxisAlignedBB(blockPosVec.getX() - 1, blockPosVec.getY() - 1, blockPosVec.getZ() - 1, blockPosVec.getX() + 1, blockPosVec.getY() + 1, blockPosVec.getZ() + 1);
         ArrayList<AxisAlignedBB> result = new ArrayList<>();
-        blockState.getBlock().addCollisionBoxesToList(world, blockPos, blockState, mask, result, null);
+        blockState.addCollisionBoxToList(world, blockPos, mask, result, null, false);
 
         return result.stream().map((aabb) -> new BoundingBox3D(new Vector3D(aabb.minX, aabb.minY, aabb.minZ), new Vector3D(aabb.maxX, aabb.maxY, aabb.maxZ))).collect(Collectors.toList());
     }
@@ -71,7 +70,7 @@ public class FunctionCompatibility implements FunctionHolder,
      * Is called in {@link WorldInteraction.Interface}
      */
     public Vector3D getLookingAt() {
-        BlockPos blockPos = Minecraft.getMinecraft().thePlayer.rayTrace(20, 0).getBlockPos();
+        BlockPos blockPos = Minecraft.getMinecraft().player.rayTrace(20, 0).getBlockPos();
         if (blockPos == null) return null;
         return new Vector3D(blockPos.getX(), blockPos.getY(), blockPos.getZ());
     }
@@ -83,11 +82,11 @@ public class FunctionCompatibility implements FunctionHolder,
         String blockName = "";
         //if (Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && Minecraft.getMinecraft().objectMouseOver.getBlockPos() != null && !(Minecraft.getMinecraft().thePlayer.hasReducedDebug() || Minecraft.getMinecraft().gameSettings.reducedDebugInfo)) {
         BlockPos blockpos = new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-        IBlockState iblockstate = Minecraft.getMinecraft().theWorld.getBlockState(blockpos);
-        if (Minecraft.getMinecraft().theWorld.getWorldType() != WorldType.DEBUG_WORLD) {
-            iblockstate = iblockstate.getBlock().getActualState(iblockstate, Minecraft.getMinecraft().theWorld, blockpos);
+        IBlockState iblockstate = Minecraft.getMinecraft().world.getBlockState(blockpos);
+        if (Minecraft.getMinecraft().world.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
+            iblockstate = iblockstate.getBlock().getActualState(iblockstate, Minecraft.getMinecraft().world, blockpos);
         }
-        blockName = String.valueOf(Block.blockRegistry.getNameForObject(iblockstate.getBlock()));
+        blockName = String.valueOf(iblockstate.getBlock().getLocalizedName());
         //}
         return blockName;
     }
@@ -95,12 +94,12 @@ public class FunctionCompatibility implements FunctionHolder,
     public HashMap<String, String> getBlockProperties(Vector3D blockPos) {
         HashMap<String, String> properties = new HashMap<>();
         BlockPos blockpos = new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-        IBlockState iblockstate = Minecraft.getMinecraft().theWorld.getBlockState(blockpos);
-        if (Minecraft.getMinecraft().theWorld.getWorldType() != WorldType.DEBUG_WORLD) {
-            iblockstate = iblockstate.getBlock().getActualState(iblockstate, Minecraft.getMinecraft().theWorld, blockpos);
+        IBlockState iblockstate = Minecraft.getMinecraft().world.getBlockState(blockpos);
+        if (Minecraft.getMinecraft().world.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
+            iblockstate = iblockstate.getBlock().getActualState(iblockstate, Minecraft.getMinecraft().world, blockpos);
         }
-        //noinspection rawtypes
-        for (Map.Entry<IProperty, Comparable> e : iblockstate.getProperties().entrySet()) {
+
+        for (Map.Entry<IProperty<?>, Comparable<?>> e : iblockstate.getProperties().entrySet()) {
             properties.put(e.getKey().getName(), e.getValue().toString());
         }
         return properties;
@@ -120,7 +119,7 @@ public class FunctionCompatibility implements FunctionHolder,
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
 
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer wr = tessellator.getWorldRenderer();
+        BufferBuilder wr = tessellator.getBuffer();
 
         Entity entity = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -180,7 +179,7 @@ public class FunctionCompatibility implements FunctionHolder,
         double x = pos.getX(), y = pos.getY(), w = size.getX(), h = size.getY();
 
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer wr = tessellator.getWorldRenderer();
+        BufferBuilder wr = tessellator.getBuffer();
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
         //GlStateManager.shadeModel(GL11.GL_SMOOTH); // - for gradients
@@ -213,7 +212,7 @@ public class FunctionCompatibility implements FunctionHolder,
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
 
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer wr = tessellator.getWorldRenderer();
+        BufferBuilder wr = tessellator.getBuffer();
 
         wr.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
@@ -301,9 +300,9 @@ public class FunctionCompatibility implements FunctionHolder,
         GlStateManager.enableBlend();
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, 0);
-        double scale = fontSize / (Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT * 1F);
+        double scale = fontSize / (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 1F);
         GlStateManager.scale(scale, scale, 1);
-        Minecraft.getMinecraft().fontRendererObj.drawString(
+        Minecraft.getMinecraft().fontRenderer.drawString(
                 text, 0, 0, color.getRGB(), shadow);
         GlStateManager.popMatrix();
         GlStateManager.disableBlend();
@@ -313,9 +312,9 @@ public class FunctionCompatibility implements FunctionHolder,
      * Is called in {@link FontRenderer.Interface}
      */
     public Vector2D getStringSize(String text, double fontSize) {
-        double scale = fontSize / (Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT * 1F);
+        double scale = fontSize / (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 1F);
         return new Vector2D(
-                Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) * scale,
+                Minecraft.getMinecraft().fontRenderer.getStringWidth(text) * scale,
                 fontSize
         );
     }
@@ -363,8 +362,8 @@ public class FunctionCompatibility implements FunctionHolder,
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.Interface Minecraft.Interface}
      */
     public String getUserName() {
-        if (Minecraft.getMinecraft().thePlayer == null) return null;
-        return Minecraft.getMinecraft().thePlayer.getName();
+        if (Minecraft.getMinecraft().player == null) return null;
+        return Minecraft.getMinecraft().player.getName();
     }
 
     public void copyToClipboard(String content) {
@@ -383,7 +382,7 @@ public class FunctionCompatibility implements FunctionHolder,
 
     public boolean setInputs(Float yaw, boolean relYaw, Float pitch, boolean relPitch, int pressedInputs, int releasedInputs, int L, int R) {
         if (!io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.isSingleplayer()) return false;
-        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+        EntityPlayerSP player = Minecraft.getMinecraft().player;
         GameSettings gs = Minecraft.getMinecraft().gameSettings;
 
         float prevPitch = player.rotationPitch;
@@ -395,7 +394,7 @@ public class FunctionCompatibility implements FunctionHolder,
         }
         if (pitch != null) {
             player.rotationPitch = relPitch ? (float) ((double) player.rotationPitch - (double) pitch) : pitch;
-            player.rotationPitch = MathHelper.clamp_float(player.rotationPitch, -90.0F, 90.0F);
+            player.rotationPitch = MathHelper.clamp(player.rotationPitch, -90.0F, 90.0F);
             player.prevRotationPitch += player.rotationPitch - prevPitch;
         }
 
@@ -445,20 +444,20 @@ public class FunctionCompatibility implements FunctionHolder,
      * Is called in {@link Profiler.Interface}
      */
     public void startSection(String name) {
-        Minecraft.getMinecraft().mcProfiler.startSection(name);
+        Minecraft.getMinecraft().profiler.startSection(name);
     }
 
     /**
      * Is called in {@link Profiler.Interface}
      */
     public void endStartSection(String name) {
-        Minecraft.getMinecraft().mcProfiler.endStartSection(name);
+        Minecraft.getMinecraft().profiler.endStartSection(name);
     }
 
     /**
      * Is called in {@link Profiler.Interface}
      */
     public void endSection() {
-        Minecraft.getMinecraft().mcProfiler.endSection();
+        Minecraft.getMinecraft().profiler.endSection();
     }
 }
