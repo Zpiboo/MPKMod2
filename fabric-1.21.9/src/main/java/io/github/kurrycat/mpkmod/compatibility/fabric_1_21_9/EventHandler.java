@@ -10,6 +10,7 @@ import io.github.kurrycat.mpkmod.util.Vector3D;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
@@ -24,15 +25,14 @@ public class EventHandler {
     private static final ButtonMSList timeQueue = new ButtonMSList();
 
     /**
-     * @param key      The GLFW key code. See {@link InputUtil}.
-     * @param scanCode
+     * @param keyInput The Minecraft {@link KeyInput} object.
      * @param action   The action, where 0 = unpressed, 1 = pressed, 2 = held.
      */
-    public void onKey(int key, int scanCode, int action) {
+    public void onKey(KeyInput keyInput, int action) {
         GameOptions options = MinecraftClient.getInstance().options;
         long eventNanos = Util.getMeasuringTimeNano();
 
-        InputUtil.Key inputKey = InputUtil.fromKeyCode(key, scanCode);
+        InputUtil.Key inputKey = InputUtil.fromKeyCode(new KeyInput(keyInput.key(), keyInput.scancode(), keyInput.modifiers()));
 
         int[] keys = {
                 ((KeyBindingAccessor) options.forwardKey).getBoundKey().getCode(),
@@ -45,7 +45,7 @@ public class EventHandler {
         };
 
         for (int i = 0; i < keys.length; i++) {
-            if (key == keys[i]) {
+            if (keyInput.key() == keys[i]) {
                 timeQueue.add(ButtonMS.of(ButtonMS.Button.values()[i], eventNanos, action == 1));
             }
         }
@@ -56,7 +56,7 @@ public class EventHandler {
             FunctionCompatibility.pressedButtons.remove(inputKey.getCode());
         }
 
-        API.Events.onKeyInput(key, inputKey.getLocalizedText().getString(), action == 1);
+        API.Events.onKeyInput(keyInput.key(), inputKey.getLocalizedText().getString(), action == 1);
 
         MPKMod.keyBindingMap.forEach((id, keyBinding) -> {
             if (keyBinding.isPressed()) {
