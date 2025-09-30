@@ -5,8 +5,11 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Profiler;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.text.Text;
 
 public class MPKGuiScreen extends Screen {
@@ -17,6 +20,7 @@ public class MPKGuiScreen extends Screen {
         eventReceiver = screen;
     }
 
+    @Override
     public void init() {
         eventReceiver.onInit();
     }
@@ -27,6 +31,7 @@ public class MPKGuiScreen extends Screen {
         eventReceiver.onResize(width, height);
     }
 
+    @Override
     public void render(DrawContext drawContext, int mouseX, int mouseY, float delta) {
         drawContext.getMatrices().pushMatrix();
         API.<FunctionCompatibility>getFunctionHolder().drawContext = drawContext;
@@ -40,39 +45,45 @@ public class MPKGuiScreen extends Screen {
         drawContext.getMatrices().popMatrix();
     }
 
+    @Override
     public void close() {
         super.close();
         eventReceiver.onGuiClosed();
     }
 
+    @Override
     public boolean shouldPause() {
         return false;
     }
 
-    public boolean mouseClicked(double mouseX, double mouseY, int state) {
-        eventReceiver.onMouseClicked(new Vector2D(mouseX, mouseY), state);
-        return super.mouseClicked(mouseX, mouseY, state);
-    }
-
-    public boolean mouseReleased(double mouseX, double mouseY, int state) {
-        eventReceiver.onMouseReleased(new Vector2D(mouseX, mouseY), state);
-        return super.mouseReleased(mouseX, mouseY, state);
-    }
-
-    public boolean mouseDragged(double mouseX, double mouseY, int clickedMouseButton, double moveX, double moveY) {
-        eventReceiver.onMouseClickMove(new Vector2D(mouseX, mouseY), clickedMouseButton, 0);
-        return super.mouseDragged(mouseX, mouseY, clickedMouseButton, moveX, moveY);
-    }
-
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        eventReceiver.onKeyEvent(keyCode, scanCode, modifiers, false);
-        return super.keyPressed(keyCode, scanCode, modifiers);
+    @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        eventReceiver.onMouseClicked(new Vector2D(click.x(), click.y()), click.button());
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
-    public boolean charTyped(char c, int modifiers) {
-        eventReceiver.onKeyEvent(c, 0, modifiers, true);
-        return super.charTyped(c, modifiers);
+    public boolean mouseReleased(Click click) {
+        eventReceiver.onMouseReleased(new Vector2D(click.x(), click.y()), click.button());
+        return super.mouseReleased(click);
+    }
+
+    @Override
+    public boolean mouseDragged(Click click, double offsetX, double offsetY) {
+        eventReceiver.onMouseClickMove(new Vector2D(click.x(), click.y()), click.button(), 0);
+        return super.mouseDragged(click, offsetX, offsetY);
+    }
+
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        eventReceiver.onKeyEvent(input.key(), input.scancode(), input.modifiers(), false);
+        return super.keyPressed(input);
+    }
+
+    @Override
+    public boolean charTyped(CharInput input) {
+        eventReceiver.onKeyEvent(input.codepoint(), 0, input.modifiers(), true);
+        return super.charTyped(input);
     }
 
     @Override
