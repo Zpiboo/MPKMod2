@@ -3,6 +3,7 @@ package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.mixin;
 import io.github.kurrycat.mpkmod.compatibility.API;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
+import net.minecraft.client.input.MouseInput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -43,10 +44,10 @@ public class MouseMixin {
     }
 
     @Inject(method = "onMouseButton", at = @At(value = "TAIL"))
-    private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
+    private void onMouseButton(long window, MouseInput input, int action, CallbackInfo ci) {
         API.Events.onMouseInput(
-                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(button),
-                button == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
+                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(input.button()),
+                input.button() == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
                         (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
                 (int) x, (int) y, 0, 0,
                 0, System.nanoTime()
