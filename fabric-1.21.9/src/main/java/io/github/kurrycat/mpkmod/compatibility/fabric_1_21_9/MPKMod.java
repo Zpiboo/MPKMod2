@@ -12,7 +12,9 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.option.KeyBinding.Category;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +24,7 @@ public class MPKMod implements ModInitializer {
     public static Map<String, net.minecraft.client.option.KeyBinding> keyBindingMap = new HashMap<>();
     public final EventHandler eventHandler = new EventHandler();
     public MatrixStack matrixStack;
+    public static final Category KEYBINDING_CATEGORY = Category.create(Identifier.of(API.MODID, "mpkmod_2"));
 
     @Override
     public void onInitialize() {
@@ -60,7 +63,7 @@ public class MPKMod implements ModInitializer {
         net.minecraft.client.option.KeyBinding keyBinding = new net.minecraft.client.option.KeyBinding(
                 API.MODID + ".key." + id + ".desc",
                 -1,
-                API.KEYBINDING_CATEGORY
+                KEYBINDING_CATEGORY
         );
 
         keyBindingMap.put(id, keyBinding);
@@ -81,7 +84,7 @@ public class MPKMod implements ModInitializer {
         for (net.minecraft.client.option.KeyBinding k : MinecraftClient.getInstance().options.allKeys) {
             new KeyBinding(
                     () -> k.getBoundKeyLocalizedText().getString(),
-                    k.getTranslationKey(),
+                    k.getId(),
                     k::isPressed
             );
         }

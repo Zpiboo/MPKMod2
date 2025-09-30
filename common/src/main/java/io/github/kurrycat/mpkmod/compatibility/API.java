@@ -39,7 +39,7 @@ public class API {
 
     public static final String NAME = "MPK Mod";
     public static final String VERSION = "2.0";
-    public static final String KEYBINDING_CATEGORY = NAME;
+    public static final String KEYBINDING_CATEGORY = "mpkmod.key.category";
     public static final String packageName = "io.github.kurrycat.mpkmod";
     public static Instant gameStartedInstant;
     /**
