@@ -21,7 +21,7 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-        "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.MPKMod"
+        "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.MPKMod"
     ]
   },
   "mixins": [

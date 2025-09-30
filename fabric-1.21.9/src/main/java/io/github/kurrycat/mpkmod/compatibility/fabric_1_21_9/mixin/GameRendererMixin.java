@@ -1,6 +1,6 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.mixin;
 
-import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.MPKMod;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.MPKMod;
 import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;

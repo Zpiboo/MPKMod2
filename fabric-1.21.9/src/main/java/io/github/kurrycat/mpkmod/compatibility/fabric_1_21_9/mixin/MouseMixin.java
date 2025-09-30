@@ -1,4 +1,4 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.mixin;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 import net.minecraft.client.MinecraftClient;

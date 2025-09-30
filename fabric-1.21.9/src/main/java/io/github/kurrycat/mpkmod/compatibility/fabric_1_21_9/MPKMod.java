@@ -1,8 +1,8 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding;
-import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.network.DataCustomPayload;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.network.DataCustomPayload;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
