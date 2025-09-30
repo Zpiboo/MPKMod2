@@ -350,7 +350,7 @@ public class FunctionCompatibility implements FunctionHolder,
     }
 
     public boolean isF3Enabled() {
-        return MinecraftClient.getInstance().getDebugHud().shouldShowDebugHud();
+        return MinecraftClient.getInstance().debugHudEntryList.isF3Enabled();
     }
 
     public void sendPacket(MPKPacket packet) {
