@@ -386,7 +386,7 @@ public class FunctionCompatibility implements FunctionHolder,
         }
 
         @Override
-        public void setupVertices(VertexConsumer consumer, float depth) {
+        public void setupVertices(VertexConsumer consumer) {
             for (Vector2D p : this.points) {
                 consumer.vertex((float) p.getX(), (float) p.getY(), 0).color(r, g, b, a);
             }
