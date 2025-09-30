@@ -255,10 +255,7 @@ public class FunctionCompatibility implements FunctionHolder,
     }
 
     public String getFPS() {
-        String[] split = MinecraftClient.getInstance().fpsDebugString.split(" ");
-        if (split.length == 0)
-            return "Error";
-        return split[0];
+        return String.valueOf(MinecraftClient.getInstance().getCurrentFps());
     }
 
     public void displayGuiScreen(MPKGuiScreen screen) {
