@@ -31,6 +31,7 @@ If you think that mpkmod should have a specific feature, encounter any bugs or i
 
 * [Forge](https://files.minecraftforge.net/)
     - 1.8.9
+    - 1.12.2
 * [Fabric](https://fabricmc.net/)
     - 1.21.9
 
@@ -42,7 +43,7 @@ To use the mod with other versions please check out the [ViaFabricPlus](https://
 ### Installation
 
 Download the version you want from [releases](https://github.com/kurrycat2004/MPKMod_2/releases). (See [snapshots](#snapshots) for how to download a snapshot version) <br>
-Then move the mod file (for example `mpkmod-2.0.0-pre.9-forge-1.8.9.jar`) into your [.minecraft](https://minecraft.fandom.com/wiki/.minecraft#Locating_.minecraft)/mods folder and start the game to use it. <br>
+Then move the mod file (for example `mpkmod-2.0.0-pre.9-forge-1.8.9.jar`) into your [.minecraft](https://minecraft.wiki/w/.minecraft#Locating)/mods folder and start the game to use it. <br>
 
 ---
 
