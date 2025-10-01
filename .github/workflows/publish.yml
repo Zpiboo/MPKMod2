@@ -5,7 +5,6 @@ permissions:
   contents: read
 
 env:
-  VERSION: 2.1.0
   MODRINTH_TOKEN: ${{ secrets.PUBLISH_MODRINTH_TOKEN }}
   GITHUB_TOKEN: ${{ secrets.PUBLISH_GITHUB_TOKEN }}
 

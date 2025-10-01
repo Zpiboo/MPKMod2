@@ -28,12 +28,13 @@ publishMods {
     file = remapJar.archiveFile
     changelog = ""
     type = STABLE
+    version = project.version
     modLoaders.add("fabric")
 
     modrinth {
         projectId = "412tAvWq"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add("1.21.6+")
+        minecraftVersions.add("1.21.9")
     }
     /*github {
         repository = "MPKMod/MPKMod2"

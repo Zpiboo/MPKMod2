@@ -43,6 +43,7 @@ publishMods {
     file = remapJar.archiveFile
     changelog = ""
     type = STABLE
+    version = project.version
     modLoaders.add("forge")
 
     modrinth {
