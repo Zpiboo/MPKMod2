@@ -34,6 +34,8 @@ public class EventListener {
     @SideOnly(Side.CLIENT)
     @SubscribeEvent(priority = EventPriority.NORMAL, receiveCanceled = true)
     public void onEvent(InputEvent.KeyInputEvent event) {
+        if (Minecraft.getMinecraft().currentScreen != null) return;
+
         int keyCode = Keyboard.getEventKey();
         String key = Keyboard.getKeyName(keyCode);
         boolean pressed = Keyboard.getEventKeyState();
