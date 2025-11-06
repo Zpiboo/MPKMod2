@@ -113,6 +113,7 @@ public class Minecraft {
 
     public static void toggleSprint() {
         sprintToggled = !sprintToggled;
+        setSprinting(sprintToggled);
     }
 
     public static void setSprinting(boolean sprinting) {
