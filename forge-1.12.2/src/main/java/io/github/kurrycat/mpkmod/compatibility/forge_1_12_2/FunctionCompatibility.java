@@ -429,6 +429,12 @@ public class FunctionCompatibility implements FunctionHolder,
         return true;
     }
 
+    @Override
+    public void setSprinting(boolean sprinting) {
+        int sprintKey = Minecraft.getMinecraft().gameSettings.keyBindSprint.getKeyCode();
+        KeyBinding.setKeyBindState(sprintKey, sprinting);
+    }
+
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Keyboard.Interface Keyboard.Interface}
      */

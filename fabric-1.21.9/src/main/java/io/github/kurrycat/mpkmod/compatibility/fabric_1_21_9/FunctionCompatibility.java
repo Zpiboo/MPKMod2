@@ -349,6 +349,11 @@ public class FunctionCompatibility implements FunctionHolder,
         return true;
     }
 
+    public void setSprinting(boolean sprinting) {
+        KeyBinding sprintKey = MinecraftClient.getInstance().options.sprintKey;
+        sprintKey.setPressed(sprinting);
+    }
+
     public boolean isF3Enabled() {
         return MinecraftClient.getInstance().debugHudEntryList.isF3Enabled();
     }

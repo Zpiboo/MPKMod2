@@ -17,6 +17,7 @@ public class Minecraft {
     public static String version;
     public static WorldState worldState = WorldState.MENU;
     public static PlayState playState = PlayState.ACTIVE;
+    public static boolean sprintToggled = false;
 
     @InfoString.Getter
     public static String getIp() {
@@ -105,6 +106,19 @@ public class Minecraft {
         return Interface.get().get().setInputs(yaw, relYaw, pitch, relPitch, pressedInputs, releasedInputs, L, R);
     }
 
+    @InfoString.Getter
+    public static String getSprintToggled() {
+        return sprintToggled ? "Toggled" : "Off";
+    }
+
+    public static void toggleSprint() {
+        sprintToggled = !sprintToggled;
+    }
+
+    public static void setSprinting(boolean sprinting) {
+        Interface.get().ifPresent(i -> i.setSprinting(sprinting));
+    }
+
     public static boolean isF3Enabled() {
         return Interface.get().map(Interface::isF3Enabled).orElse(false);
     }
@@ -139,6 +153,8 @@ public class Minecraft {
         void copyToClipboard(String content);
 
         boolean setInputs(Float yaw, boolean relYaw, Float pitch, boolean relPitch, int pressedInputs, int releasedInputs, int L, int R);
+
+        void setSprinting(boolean sprinting);
 
         boolean isF3Enabled();
 
