@@ -1,6 +1,7 @@
 package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.mixin;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.MPKMod;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.Mouse;
 import net.minecraft.client.input.MouseInput;
@@ -44,13 +45,16 @@ public class MouseMixin {
     }
 
     @Inject(method = "onMouseButton", at = @At(value = "TAIL"))
-    private void onMouseButton(long window, MouseInput input, int action, CallbackInfo ci) {
+    private void onMouseButton(long window, MouseInput mouseInput, int action, CallbackInfo ci) {
         API.Events.onMouseInput(
-                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(input.button()),
-                input.button() == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
+                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(mouseInput.button()),
+                mouseInput.button() == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
                         (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
                 (int) x, (int) y, 0, 0,
                 0, System.nanoTime()
         );
+
+        if (action == 1)
+            MPKMod.INSTANCE.eventHandler.checkKeyBinding(mouseInput.getKeycode());
     }
 }

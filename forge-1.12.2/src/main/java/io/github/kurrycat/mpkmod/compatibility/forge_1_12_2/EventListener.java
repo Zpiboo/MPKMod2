@@ -11,6 +11,7 @@ import io.github.kurrycat.mpkmod.util.Vector3D;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -23,6 +24,8 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
+
+import java.util.Map;
 
 @SuppressWarnings("unused")
 public class EventListener {
@@ -54,11 +57,7 @@ public class EventListener {
 
         API.Events.onKeyInput(InputConstants.convert(keyCode), key, pressed);
 
-        MPKMod.keyBindingMap.forEach((id, keyBinding) -> {
-            if (keyBinding.isPressed()) {
-                API.Events.onKeybind(id);
-            }
-        });
+        checkKeyBinding(keyCode);
     }
 
     @SideOnly(Side.CLIENT)
@@ -70,6 +69,21 @@ public class EventListener {
                 event.getX(), event.getY(), event.getDx(), event.getDy(),
                 event.getDwheel(), event.getNanoseconds()
         );
+
+        if (event.isButtonstate())
+            checkKeyBinding(event.getButton() - 100);
+    }
+
+    public void checkKeyBinding(int keyCode) {
+        for (Map.Entry<String, KeyBinding> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
+            KeyBinding keyBinding = keyBindingEntry.getValue();
+            String keyBindingId = keyBindingEntry.getKey();
+
+            if (keyBinding.getKeyCode() == keyCode) {
+                API.Events.onKeybind(keyBindingId);
+                return;
+            }
+        }
     }
 
 
