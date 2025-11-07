@@ -62,17 +62,16 @@ public class EventHandler {
 
         API.Events.onKeyInput(keyInput.key(), inputKey.getLocalizedText().getString(), action == 1);
 
-        if (action != 0)
-            checkKeyBinding(keyInput.getKeycode());
+        checkKeyBinding(keyInput.getKeycode());
     }
 
     public void checkKeyBinding(int keyCode) {
         for (Map.Entry<String, KeyBinding> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
-            InputUtil.Key boundKey = ((KeyBindingAccessor) keyBindingEntry.getValue()).getBoundKey();
-            String keyBindId = keyBindingEntry.getKey();
+            KeyBinding keyBinding = keyBindingEntry.getValue();
+            String keyBindingId = keyBindingEntry.getKey();
 
-            if (boundKey.getCode() == keyCode) {
-                API.Events.onKeybind(keyBindId);
+            if (((KeyBindingAccessor) keyBinding).getBoundKey().getCode() == keyCode) {
+                API.Events.onKeybind(keyBindingId);
                 return;
             }
         }

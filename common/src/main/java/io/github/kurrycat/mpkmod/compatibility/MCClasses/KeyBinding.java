@@ -7,9 +7,11 @@ public class KeyBinding {
     private static final HashMap<String, KeyBinding> keyMap = new HashMap<>();
     private final String name;
     private final Supplier<Boolean> isKeyDown;
+    private final Supplier<Integer> keyCode;
     private final Supplier<String> displayName;
 
-    public KeyBinding(Supplier<String> displayName, String name, Supplier<Boolean> isKeyDown) {
+    public KeyBinding(Supplier<Integer> keyCode, Supplier<String> displayName, String name, Supplier<Boolean> isKeyDown) {
+        this.keyCode = keyCode;
         this.displayName = displayName;
         this.name = name;
         this.isKeyDown = isKeyDown;
@@ -24,6 +26,10 @@ public class KeyBinding {
 
     public static HashMap<String, KeyBinding> getKeyMap() {
         return keyMap;
+    }
+
+    public int getKeyCode() {
+        return keyCode.get();
     }
 
     public String getDisplayName() {

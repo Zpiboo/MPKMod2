@@ -204,12 +204,21 @@ public class Main implements MPKModule {
                 EventAPI.EventListener.onTickEnd(
                         e -> {
                             Profiler.startSection("togglesprint");
-
-                            if (Minecraft.sprintToggled)
-                                Minecraft.setSprinting(true);
-
+                            Minecraft.updateToggleSprint();
                             Profiler.endSection();
                         }
+                )
+        );
+
+        final KeyBinding sprintKey = KeyBinding.getByName("key.sprint");
+        EventAPI.addListener(
+                new EventAPI.EventListener<OnKeyInputEvent>(
+                        e -> {
+                            if (e.keyCode == sprintKey.getKeyCode() && !e.pressed) {
+                                API.LOGGER.info("Sprint key release detected!");
+                                Minecraft.updateToggleSprint();
+                            }
+                        }, Event.EventType.KEY_INPUT
                 )
         );
 

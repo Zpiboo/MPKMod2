@@ -116,6 +116,11 @@ public class Minecraft {
         setSprinting(sprintToggled);
     }
 
+    public static void updateToggleSprint() {
+        if (sprintToggled)
+            setSprinting(true);
+    }
+
     public static void setSprinting(boolean sprinting) {
         Interface.get().ifPresent(i -> i.setSprinting(sprinting));
     }

@@ -2,6 +2,7 @@ package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.mixin.KeyBindingAccessor;
 import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_9.network.DataCustomPayload;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 import net.fabricmc.api.ModInitializer;
@@ -83,6 +84,7 @@ public class MPKMod implements ModInitializer {
     private void registerKeyBindings() {
         for (net.minecraft.client.option.KeyBinding k : MinecraftClient.getInstance().options.allKeys) {
             new KeyBinding(
+                    () -> ((KeyBindingAccessor) k).getBoundKey().getCode(),
                     () -> k.getBoundKeyLocalizedText().getString(),
                     k.getId(),
                     k::isPressed

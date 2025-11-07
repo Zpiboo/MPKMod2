@@ -72,6 +72,7 @@ public class MPKMod {
     private void registerKeyBindings() {
         for (KeyBinding k : Minecraft.getMinecraft().gameSettings.keyBindings) {
             new io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding(
+                    k::getKeyCode,
                     () -> GameSettings.getKeyDisplayString(k.getKeyCode()),
                     k.getKeyDescription(),
                     k::isKeyDown

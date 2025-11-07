@@ -72,8 +72,7 @@ public class EventListener {
                 event.getDwheel(), event.getNanoseconds()
         );
 
-        if (event.isButtonstate())
-            checkKeyBinding(event.getButton() - 100);
+        checkKeyBinding(event.getButton() - 100);
     }
 
     public void checkKeyBinding(int keyCode) {
