@@ -32,15 +32,17 @@ public class TimingStorage {
         patterns = Serializer.deserializeAny(stratFile, new TypeReference<HashMap<String, Timing>>() {
         });
 
+        if (patterns == null) return;
+
         File file = new File(stratFileName);
         if (!file.exists()) {
             //Make an empty json file if it doesn't exist
             FileUtil.createFile(stratFileName, "{}");
         }
 
-        //TODO: Fix potential null pointer issue
-        patterns.putAll(Serializer.deserializeAny(file, new TypeReference<HashMap<String, Timing>>() {}));
-        if (patterns == null) return;
+        HashMap<String, Timing> timingMap = Serializer.deserializeAny(file, new TypeReference<HashMap<String, Timing>>() {});
+        if (timingMap != null)
+            patterns.putAll(timingMap);
 
         API.LOGGER.info(API.CONFIG_MARKER, "{} Timings loaded from {}", patterns.size(), stratFileName);
     }
