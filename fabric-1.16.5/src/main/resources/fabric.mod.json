@@ -21,7 +21,7 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-      "io.github.kurrycat.mpkmod.compatibility.fabric_1_19_4.MPKMod"
+      "io.github.kurrycat.mpkmod.compatibility.fabric_1_16_5.MPKMod"
     ]
   },
   "mixins": [
@@ -29,10 +29,10 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.15.11",
-    "fabric-api": "*",
-    "minecraft": "~1.19.4",
-    "java": ">=17"
+    "fabricloader": ">=0.17.3",
+    "fabric": "*",
+    "minecraft": "=1.16.5",
+    "java": "=8"
   },
   "suggests": {}
 }

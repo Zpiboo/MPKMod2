@@ -1,6 +1,6 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_19_4.mixin;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_16_5.mixin;
 
-import io.github.kurrycat.mpkmod.compatibility.fabric_1_19_4.MPKMod;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_16_5.MPKMod;
 import net.minecraft.client.Keyboard;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
