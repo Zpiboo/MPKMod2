@@ -45,7 +45,8 @@ public class MPKGuiScreen extends Screen {
         eventReceiver.onGuiClosed();
     }
 
-    public boolean shouldPause() {
+    @Override
+    public boolean isPauseScreen() {
         return false;
     }
 
