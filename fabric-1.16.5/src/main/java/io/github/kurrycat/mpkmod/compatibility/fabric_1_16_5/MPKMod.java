@@ -21,7 +21,7 @@ public class MPKMod implements ModInitializer {
 	public static Map<String, net.minecraft.client.option.KeyBinding> keyBindingMap = new HashMap<>();
 	public static final MPKMod INSTANCE = new MPKMod();
 	public final EventHandler eventHandler = new EventHandler();
-	public static final Identifier NETWORKING_IDENTIFIER = Identifier.of(MPKNetworking.CHANNEL_NAMESPACE, MPKNetworking.CHANNEL_PATH);
+	public static final Identifier NETWORKING_IDENTIFIER = new Identifier(MPKNetworking.CHANNEL_NAMESPACE, MPKNetworking.CHANNEL_PATH);
 
 	@Override
 	public void onInitialize() {
@@ -67,7 +67,7 @@ public class MPKMod implements ModInitializer {
 	}
 
 	private void registerKeyBindings() {
-		for(net.minecraft.client.option.KeyBinding k : MinecraftClient.getInstance().options.allKeys) {
+		for(net.minecraft.client.option.KeyBinding k : MinecraftClient.getInstance().options.keysAll) {
 			new io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding(
 					() -> k.getBoundKeyLocalizedText().getString(),
 					k.getTranslationKey(),

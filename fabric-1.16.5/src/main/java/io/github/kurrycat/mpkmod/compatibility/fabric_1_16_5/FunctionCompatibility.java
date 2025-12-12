@@ -90,9 +90,9 @@ public class FunctionCompatibility implements FunctionHolder,
         if (MinecraftClient.getInstance().world == null)
             return null;
 
-        return Registries.BLOCK.getKey(
+        return Registry.BLOCK.getId(
                 MinecraftClient.getInstance().world.getBlockState(blockpos).getBlock()
-        ).get().getValue().toString();
+        ).toString();
     }
 
     @Override
@@ -118,9 +118,12 @@ public class FunctionCompatibility implements FunctionHolder,
 
         HitResult hitResult = MinecraftClient.getInstance().getCameraEntity().raycast(20, 0, false);
         if (hitResult.getType() == HitResult.Type.BLOCK && MinecraftClient.getInstance().world != null) {
-            return Registries.BLOCK.getKey(
-                    MinecraftClient.getInstance().world.getBlockState(((BlockHitResult) hitResult).getBlockPos()).getBlock()
-            ).get().getValue().toTranslationKey();
+            return Util.createTranslationKey(
+                    "block",
+                    Registry.BLOCK.getId(
+                            MinecraftClient.getInstance().world.getBlockState(((BlockHitResult) hitResult).getBlockPos()).getBlock()
+                    )
+            );
         }
         return null;
     }
@@ -341,7 +344,7 @@ public class FunctionCompatibility implements FunctionHolder,
     }
 
     public void displayGuiScreen(MPKGuiScreen screen) {
-        MinecraftClient.getInstance().setScreen(
+        MinecraftClient.getInstance().openScreen(
                 screen == null
                         ? null
                         : new io.github.kurrycat.mpkmod.compatibility.fabric_1_16_5.MPKGuiScreen(screen));
@@ -381,18 +384,18 @@ public class FunctionCompatibility implements FunctionHolder,
         if (player == null) return false;
         GameOptions op = MinecraftClient.getInstance().options;
 
-        float prevYaw = player.getYaw();
-        float prevPitch = player.getPitch();
+        float prevYaw = player.yaw;
+        float prevPitch = player.pitch;
 
         if (yaw != null) {
-            player.setYaw(relYaw ? (player.getYaw() + yaw) : yaw);
-            player.prevYaw += player.getYaw() - prevYaw;
+            player.yaw = relYaw ? (player.yaw + yaw) : yaw;
+            player.prevYaw += player.yaw - prevYaw;
         }
         if (pitch != null) {
-            player.setPitch(relPitch ? (player.getPitch() + pitch) : pitch);
-            player.setPitch(MathHelper.clamp(player.getPitch(), -90.0F, 90.0F));
+            player.pitch = relPitch ? (player.pitch + pitch) : pitch;
+            player.pitch = MathHelper.clamp(player.pitch, -90.0F, 90.0F);
 
-            player.prevPitch += player.getPitch() - prevPitch;
+            player.prevPitch += player.pitch - prevPitch;
             player.prevPitch = MathHelper.clamp(player.prevPitch, -90.0F, 90.0F);
         }
 
@@ -401,13 +404,13 @@ public class FunctionCompatibility implements FunctionHolder,
         }
 
         KeyBinding[] keys = new KeyBinding[]{
-                op.forwardKey,
-                op.leftKey,
-                op.backKey,
-                op.rightKey,
-                op.sprintKey,
-                op.sneakKey,
-                op.jumpKey
+                op.keyForward,
+                op.keyLeft,
+                op.keyBack,
+                op.keyRight,
+                op.keySprint,
+                op.keySneak,
+                op.keyJump
         };
 
         for (int i = 0; i < keys.length; i++) {
@@ -420,13 +423,13 @@ public class FunctionCompatibility implements FunctionHolder,
             }
         }
 
-        KeyBinding.setKeyPressed(((KeyBindingAccessor) op.attackKey).getBoundKey(), L > 0);
+        KeyBinding.setKeyPressed(((KeyBindingAccessor) op.keyAttack).getBoundKey(), L > 0);
         for (int i = 0; i < L; i++)
-            KeyBinding.onKeyPressed(((KeyBindingAccessor) op.attackKey).getBoundKey());
+            KeyBinding.onKeyPressed(((KeyBindingAccessor) op.keyAttack).getBoundKey());
 
-        KeyBinding.setKeyPressed(((KeyBindingAccessor) op.useKey).getBoundKey(), R > 0);
+        KeyBinding.setKeyPressed(((KeyBindingAccessor) op.keyUse).getBoundKey(), R > 0);
         for (int i = 0; i < R; i++)
-            KeyBinding.onKeyPressed(((KeyBindingAccessor) op.useKey).getBoundKey());
+            KeyBinding.onKeyPressed(((KeyBindingAccessor) op.keyUse).getBoundKey());
 
         return true;
     }

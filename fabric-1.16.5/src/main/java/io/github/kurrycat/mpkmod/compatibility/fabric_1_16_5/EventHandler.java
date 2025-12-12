@@ -33,13 +33,13 @@ public class EventHandler {
         InputUtil.Key inputKey = InputUtil.fromKeyCode(key, scanCode);
 
         int[] keys = {
-                ((KeyBindingAccessor) options.forwardKey).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.leftKey).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.backKey).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.rightKey).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.sprintKey).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.sneakKey).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.jumpKey).getBoundKey().getCode()
+                ((KeyBindingAccessor) options.keyForward).getBoundKey().getCode(),
+                ((KeyBindingAccessor) options.keyLeft).getBoundKey().getCode(),
+                ((KeyBindingAccessor) options.keyBack).getBoundKey().getCode(),
+                ((KeyBindingAccessor) options.keyRight).getBoundKey().getCode(),
+                ((KeyBindingAccessor) options.keySprint).getBoundKey().getCode(),
+                ((KeyBindingAccessor) options.keySneak).getBoundKey().getCode(),
+                ((KeyBindingAccessor) options.keyJump).getBoundKey().getCode()
         };
 
         for (int i = 0; i < keys.length; i++) {
@@ -101,7 +101,7 @@ public class EventHandler {
                             new Vector3D(playerBB.minX, playerBB.minY, playerBB.minZ),
                             new Vector3D(playerBB.maxX, playerBB.maxY, playerBB.maxZ)
                     ))
-                    .setFlying(mcPlayer.getAbilities().flying)
+                    .setFlying(mcPlayer.abilities.flying)
                     .constructKeyInput()
                     .setKeyMSList(timeQueue)
                     .buildAndSave();
