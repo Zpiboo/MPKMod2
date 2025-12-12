@@ -24,6 +24,7 @@ plugins {
 include("common")
 
 if (System.getenv("JITPACK") == null) {
+    include("fabric-1.16.5")
     include("fabric-1.19.4")
     include("fabric-1.20.4")
     include("fabric-1.20.6")
