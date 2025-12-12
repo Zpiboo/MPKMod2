@@ -24,14 +24,14 @@ import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import org.joml.Matrix4f;
+import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.registry.Registry;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -128,18 +128,17 @@ public class FunctionCompatibility implements FunctionHolder,
     public void drawBox(BoundingBox3D bb, Color color, float partialTicks) {
         int r = color.getRed(), g = color.getGreen(), b = color.getBlue(), a = color.getAlpha();
 
-        RenderSystem.applyModelViewMatrix();
-
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        RenderSystem.disableTexture();
+        RenderSystem.defaultBlendFunc();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
 
-        RenderSystem.lineWidth(1.0F);
+        GL11.glLineWidth(1.0F);
 
-        Matrix4f posMat = matrixStack.peek().getPositionMatrix();
+        Matrix4f posMat = matrixStack.peek().getModel();
 
         float minX = (float) bb.minX();
         float minY = (float) bb.minY();
@@ -148,7 +147,7 @@ public class FunctionCompatibility implements FunctionHolder,
         float maxY = (float) bb.maxY();
         float maxZ = (float) bb.maxZ();
 
-        builder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        builder.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
 
         builder.vertex(posMat, minX, maxY, minZ).color(r, g, b, a).next();
         builder.vertex(posMat, maxX, maxY, minZ).color(r, g, b, a).next();
@@ -183,6 +182,7 @@ public class FunctionCompatibility implements FunctionHolder,
         tessellator.draw();
 
         RenderSystem.enableBlend();
+        RenderSystem.enableTexture();
     }
 
     /**
@@ -192,15 +192,16 @@ public class FunctionCompatibility implements FunctionHolder,
         if (matrixStack == null) return;
         //0.04 because drawString SHADOW_OFFSET is 0.03
         matrixStack.translate(0, 0, 0.04);
-        Matrix4f posMat = matrixStack.peek().getPositionMatrix();
+        Matrix4f posMat = matrixStack.peek().getModel();
         int r = color.getRed(), g = color.getGreen(), b = color.getBlue(), a = color.getAlpha();
         double x = pos.getX(), y = pos.getY(), w = size.getX(), h = size.getY();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bb = tessellator.getBuffer();
         RenderSystem.enableBlend();
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-        bb.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        RenderSystem.defaultBlendFunc();
+
+        bb.begin(GL11.GL_QUADS, VertexFormats.POSITION_COLOR);
         bb.vertex(posMat, (float) x, (float) (y + h), 0).color(r, g, b, a).next();
         bb.vertex(posMat, (float) (x + w), (float) (y + h), 0).color(r, g, b, a).next();
         bb.vertex(posMat, (float) (x + w), (float) y, 0).color(r, g, b, a).next();
@@ -221,18 +222,18 @@ public class FunctionCompatibility implements FunctionHolder,
         int r = color.getRed(), g = color.getGreen(), b = color.getBlue(), a = color.getAlpha();
 
         matrixStack.translate(0, 0, 0.04);
-        Matrix4f posMat = matrixStack.peek().getPositionMatrix();
+        Matrix4f posMat = matrixStack.peek().getModel();
 
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
+        RenderSystem.defaultBlendFunc();
 
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder builder = tessellator.getBuffer();
 
         RenderSystem.lineWidth(1.0f);
 
-        builder.begin(VertexFormat.DrawMode.DEBUG_LINE_STRIP, VertexFormats.POSITION_COLOR);
+        builder.begin(GL11.GL_LINE_STRIP, VertexFormats.POSITION_COLOR);
 
         for (Vector2D p : points) {
             builder.vertex(posMat, (float) p.getX(), (float) p.getY(), 0).color(r, g, b, a).next();
