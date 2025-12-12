@@ -7,7 +7,6 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.FontRenderer;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.util.ColorUtil;
 import io.github.kurrycat.mpkmod.util.MathUtil;
-import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
@@ -19,7 +18,7 @@ import java.util.stream.Collectors;
 public class MessageQueue extends ResizableComponent {
     private final String name;
     @JsonProperty
-    private final String messageReceiverID = "offset";
+    private final MessageReceiver messageReceiver;
     @JsonProperty
     public Color backgroundColor = new Color(100, 100, 100, 40);
     @JsonProperty
@@ -41,7 +40,7 @@ public class MessageQueue extends ResizableComponent {
     }
 
     public static MessageQueue getReceiverFor(String receiverID, ArrayList<MessageQueue> queuesToSearch) {
-        return queuesToSearch.stream().filter(messageQueue -> messageQueue.messageReceiverID.equals(receiverID)).findFirst().orElse(null);
+        return queuesToSearch.stream().filter(messageQueue -> messageQueue.messageReceiver.equals(receiverID)).findFirst().orElse(null);
     }
 
     public void render(Vector2D mouse) {

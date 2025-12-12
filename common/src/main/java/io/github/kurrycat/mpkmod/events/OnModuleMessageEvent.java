@@ -7,7 +7,7 @@ public class OnModuleMessageEvent extends Event {
     private final MPKPacketModuleMessage packet;
 
     public OnModuleMessageEvent(MPKPacketModuleMessage packet) {
-        super(EventType.PLUGIN_MESSAGE);
+        super(EventType.MODULE_MESSAGE);
         this.packet = packet;
     }
 
