@@ -1,7 +1,6 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
 import com.fasterxml.jackson.annotation.*;
-import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.util.JSONPos2D;
 import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
@@ -70,13 +69,6 @@ public abstract class Component extends ComponentHolder {
                 })
         );
         return menu;
-    }
-
-    public boolean contains(Vector2D testPos) {
-        if (testPos == null) return false;
-        if (getDisplayedPos() == null) return false;
-        return Renderer2D.scissorContains(testPos) &&
-                testPos.isInRectBetween(getDisplayedPos(), getDisplayedPos().add(getDisplayedSize()));
     }
 
     @Override

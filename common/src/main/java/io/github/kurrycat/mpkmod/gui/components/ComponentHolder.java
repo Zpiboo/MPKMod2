@@ -1,5 +1,6 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.util.Debug;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
@@ -61,6 +62,13 @@ public abstract class ComponentHolder {
 
     public void setRoot(ComponentHolder root) {
         this.root = root;
+    }
+
+    public boolean contains(Vector2D testPos) {
+        if (testPos == null) return false;
+        if (getDisplayedPos() == null) return false;
+        return Renderer2D.scissorContains(testPos) &&
+                testPos.isInRectBetween(getDisplayedPos(), getDisplayedPos().add(getDisplayedSize()));
     }
 
     public Vector2D getDisplayedPos() {
