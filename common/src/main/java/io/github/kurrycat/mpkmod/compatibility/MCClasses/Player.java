@@ -23,6 +23,10 @@ public class Player {
     @InfoString.AccessInstance
     public static Player displayInstance = new Player();
 
+    public static final int MAX_TURNS = 20;
+
+    public float[] turns = new float[MAX_TURNS];
+
     @InfoString.Field
     public PosAndAngle lastLanding = null;
     @InfoString.Field
@@ -292,7 +296,7 @@ public class Player {
 
         lastTiming = TimingStorage.match(getInputHistory());
 
-        //Grinds
+        // Grinds
         grinds = prev.grinds;
         grindTick = jumpTick && pos.getY() == prev.pos.getY() && motion.getY() == (-0.08 * 0.98F);
 
@@ -303,7 +307,7 @@ public class Player {
                 grinds = 1;
         }
 
-        //Blip
+        // Blip
         lastBlip = prev.lastBlip;
         if (onGround && !prev.onGround && pos.getY() == prev.pos.getY() && !prev.jumpTick) {
             if (lastBlip == null) lastBlip = new Blip(1, pos);
@@ -312,7 +316,7 @@ public class Player {
             if (lastBlip != null) lastBlip = new Blip(0, lastBlip.lastChainedBlips, lastBlip.pos);
         }
 
-        //Sidestep
+        // Sidestep
         sidestep = prev.sidestep;
         wadStart = prev.wadStart;
         if (jumpTick) {
@@ -328,6 +332,15 @@ public class Player {
         } else if (wadStart && keyInput.isMovingSideways() && prev.airtime != airtime) {
             sidestep = prev.airtime;  // WAD
             wadStart = false;
+        }
+
+        // Turns
+        turns = jumpTick
+                ? new float[MAX_TURNS]
+                : Arrays.copyOf(prev.turns, prev.turns.length);
+        if (!onGround && airtime <= MAX_TURNS && deltaYaw != null) {
+            int i = airtime - 1;
+            turns[i] = deltaYaw;
         }
 
         Player.updateDisplayInstance();
