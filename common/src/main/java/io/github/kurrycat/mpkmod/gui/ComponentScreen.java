@@ -1,6 +1,7 @@
 package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.InputConstants;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.components.Component;
@@ -182,6 +183,13 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
                     inputHistory.setPos(mouse);
                     inputHistory.setSize(new Vector2D(InputHistory.preferredWidth, 120));
                     addComponent(inputHistory);
+                    menu.close();
+                }));
+                newLabelMenu.addComponent(new Button("Add TurnsLabel", b -> {
+                    if (b != Mouse.Button.LEFT) return;
+                    TurnsLabel turnsLabel = new TurnsLabel();
+                    turnsLabel.setPos(mouse);
+                    addComponent(turnsLabel);
                     menu.close();
                 }));
                 newLabelMenu.addComponent(new Button("Add Plot (WIP)", b -> {
