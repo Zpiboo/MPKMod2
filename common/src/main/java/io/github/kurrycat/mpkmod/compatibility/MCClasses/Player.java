@@ -58,6 +58,7 @@ public class Player {
     public int sidestep = -1;
     public boolean wadStart = false;
     public boolean flying = false;
+    public Float preturn = null;
 
     @InfoString.Getter
     public static LandingBlock getLatestLB() {
@@ -234,6 +235,7 @@ public class Player {
             Player.updateDisplayInstance();
             return this;
         }
+
         if (prev.onGround || flying) airtime = prev.airtime;
         else airtime = prev.airtime + 1;
         if (prev.onGround && !onGround) airtime = 1;
@@ -260,6 +262,8 @@ public class Player {
         if (deltaYaw == 0) deltaYaw = null;
         deltaPitch = truePitch - prev.truePitch;
         if (deltaPitch == 0) deltaPitch = null;
+
+        preturn = jumpTick ? prev.deltaYaw : prev.preturn;
 
         deltaMouseX = new int[Main.mouseMovements.size()];
         deltaMouseY = new int[Main.mouseMovements.size()];
@@ -420,6 +424,11 @@ public class Player {
     public Player setFlying(boolean flying) {
         this.flying = flying;
         return this;
+    }
+
+    @InfoString.Getter
+    public Float getPreturn() {
+        return preturn;
     }
 
     @InfoString.DataClass
