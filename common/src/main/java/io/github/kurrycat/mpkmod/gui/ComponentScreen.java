@@ -3,7 +3,7 @@ package io.github.kurrycat.mpkmod.gui;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.InputConstants;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.components.Button;
-import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.HudComponent;
 import io.github.kurrycat.mpkmod.gui.components.PopupMenu;
 import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
@@ -23,13 +23,13 @@ import java.util.stream.Collectors;
 public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder, MouseInputListener, MouseScrollListener, KeyInputListener, MessageReceiver {
     public ArrayList<Pane<?>> openPanes = new ArrayList<>();
 
-    public ArrayList<Component> movableComponents = new ArrayList<>();
-    public Set<Component> selected = new HashSet<>();
-    public Set<Component> holding = new HashSet<>();
-    public Set<Component> highlighted = new HashSet<>();
+    public ArrayList<HudComponent> movableComponents = new ArrayList<>();
+    public Set<HudComponent> selected = new HashSet<>();
+    public Set<HudComponent> holding = new HashSet<>();
+    public Set<HudComponent> highlighted = new HashSet<>();
 
     private Vector2D lastClickedPos = null;
-    private Component lastClicked = null;
+    private HudComponent lastClicked = null;
     private Vector2D holdingSetPosOffset = null;
 
     public void postMessage(String receiverID, String content, boolean highlighted) {
@@ -101,7 +101,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
             highlighted.clear();
             lastClickedPos = mouse;
 
-            Component clicked = findFirstContainPos(lastClickedPos);
+            HudComponent clicked = findFirstContainPos(lastClickedPos);
             lastClicked = clicked;
 
             if (clicked != null) {
@@ -116,7 +116,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
             if (lastClickedPos != null && lastClicked == null) {
                 lastClickedPos = null;
             }
-            Component clicked = findFirstContainPos(mouse);
+            HudComponent clicked = findFirstContainPos(mouse);
             if (selected.size() <= 1 && clicked != null) {
                 highlighted.add(clicked);
                 PopupMenu menu = clicked.getPopupMenu();
@@ -138,7 +138,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
                 PopupMenu menu = new PopupMenu();
                 menu.addComponent(new Button("Delete", b -> {
                     if (b != Mouse.Button.LEFT) return;
-                    for (Component c : highlighted)
+                    for (HudComponent c : highlighted)
                         menu.paneHolder.removeComponent(c);
                     menu.close();
                 }));
@@ -232,7 +232,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
             }
 
             if (holdingSetPosOffset != null) {
-                for (Component c : holding) {
+                for (HudComponent c : holding) {
                     c.setRenderOffset(Vector2D.ZERO);
                     c.addPos(holdingSetPosOffset);
                 }
@@ -272,7 +272,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         movableComponents.forEach(c -> c.setSelected(selected.contains(c)));
         movableComponents.forEach(c -> c.setHighlighted(highlighted.contains(c)));
 
-        for (Component component : movableComponents) {
+        for (HudComponent component : movableComponents) {
             if (holding.contains(component)) {
                 Vector2D offset = component.getRenderOffset();
                 component.setRenderOffset(Vector2D.ZERO);
@@ -281,7 +281,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
             } else component.render(hoverMousePos);
         }
 
-        for (Component b : components) b.render(hoverMousePos);
+        for (HudComponent b : components) b.render(hoverMousePos);
 
         if (!holding.isEmpty()) {
             BoundingBox2D containingHolding = boundingBoxContainingAll(new ArrayList<>(holding));
@@ -292,7 +292,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
                     getScreenSize().sub(containingHolding.getMax())
             );
             holdingSetPosOffset = toMove;
-            for (Component component : holding) {
+            for (HudComponent component : holding) {
                 component.setRenderOffset(toMove);
                 component.render(hoverMousePos);
             }
@@ -315,7 +315,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         }
     }
 
-    public ArrayList<Component> overlap(Vector2D p1, Vector2D p2) {
+    public ArrayList<HudComponent> overlap(Vector2D p1, Vector2D p2) {
         return movableComponents.stream().filter(
                 c -> {
                     Vector2D c1 = c.getDisplayedPos();
@@ -341,8 +341,8 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         );
     }
 
-    public Component findFirstContainPos(Vector2D p) {
-        ArrayList<Component> containPos = findContainPos(p);
+    public HudComponent findFirstContainPos(Vector2D p) {
+        ArrayList<HudComponent> containPos = findContainPos(p);
         if (containPos.isEmpty()) return null;
         return containPos.get(0);
     }
@@ -365,15 +365,15 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         p.setLoaded(false);
     }
 
-    public void removeComponent(Component c) {
+    public void removeComponent(HudComponent c) {
         components.remove(c);
     }
 
-    public void addComponent(Component c) {
+    public void addComponent(HudComponent c) {
         components.add(c);
     }
 
-    public ArrayList<Component> findContainPos(Vector2D p) {
+    public ArrayList<HudComponent> findContainPos(Vector2D p) {
         return movableComponents.stream().filter(c -> c.contains(p)).collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -394,11 +394,11 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         );
     }
 
-    public BoundingBox2D boundingBoxContainingAll(ArrayList<Component> components) {
+    public BoundingBox2D boundingBoxContainingAll(ArrayList<HudComponent> components) {
         if (components.isEmpty()) return null;
 
         Vector2D min = null, max = null;
-        for (Component c : components) {
+        for (HudComponent c : components) {
             Vector2D p = c.getDisplayedPos().sub(c.getRenderOffset());
             Vector2D p2 = p.add(c.getDisplayedSize());
             if (min == null) min = new Vector2D(p);

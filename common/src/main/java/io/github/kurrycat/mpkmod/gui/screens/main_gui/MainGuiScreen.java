@@ -3,7 +3,7 @@ package io.github.kurrycat.mpkmod.gui.screens.main_gui;
 import io.github.kurrycat.mpkmod.gui.ComponentScreen;
 import io.github.kurrycat.mpkmod.gui.components.Anchor;
 import io.github.kurrycat.mpkmod.gui.components.Button;
-import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.HudComponent;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
@@ -73,13 +73,13 @@ public class MainGuiScreen extends ComponentScreen {
     }
 
     @Override
-    public void removeComponent(Component c) {
+    public void removeComponent(HudComponent c) {
         LabelConfiguration.currentConfig.components.remove(c);
         reloadConfig();
     }
 
     @Override
-    public void addComponent(Component c) {
+    public void addComponent(HudComponent c) {
         LabelConfiguration.currentConfig.components.add(c);
         reloadConfig();
     }

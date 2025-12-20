@@ -1,6 +1,6 @@
 package io.github.kurrycat.mpkmod.gui.screens.main_gui;
 
-import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.HudComponent;
 import io.github.kurrycat.mpkmod.save.Serializer;
 import io.github.kurrycat.mpkmod.util.Copyable;
 import io.github.kurrycat.mpkmod.util.FileUtil;
@@ -24,7 +24,7 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
     public static LabelConfiguration currentConfig;
     public static File customConfigurationFile;
 
-    public ArrayList<Component> components;
+    public ArrayList<HudComponent> components;
     public boolean isMutable = false;
 
     private File saveFile;
@@ -33,11 +33,11 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
         this(new ArrayList<>());
     }
 
-    public LabelConfiguration(ArrayList<Component> components) {
+    public LabelConfiguration(ArrayList<HudComponent> components) {
         this(null, components);
     }
 
-    public LabelConfiguration(File saveFile, ArrayList<Component> components) {
+    public LabelConfiguration(File saveFile, ArrayList<HudComponent> components) {
         this.saveFile = saveFile;
         this.components = components;
     }
@@ -49,7 +49,7 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
         for (String fileName : presetsFileNames) {
             InputStream in = FileUtil.getResource(presetsFolderName + fileName + ".json");
             if (in == null) continue;
-            Component[] components = Serializer.deserialize(in, Component[].class);
+            HudComponent[] components = Serializer.deserialize(in, HudComponent[].class);
             if (components == null) continue;
             presets.put(fileName, new LabelConfiguration(new ArrayList<>(Arrays.asList(components))));
         }
@@ -73,7 +73,7 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
     }
 
     public static LabelConfiguration fromFile(File file) {
-        ArrayList<Component> components = loadComponentsFromFile(file);
+        ArrayList<HudComponent> components = loadComponentsFromFile(file);
         if (components == null) return null;
         return new LabelConfiguration(file, components);
     }
@@ -81,15 +81,15 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
     public LabelConfiguration copy() {
         if (components.isEmpty()) return new LabelConfiguration();
 
-        String components = Serializer.serializeAsString(getComponentArray(), Component[].class);
-        Component[] copy = Serializer.deserializeString(components, Component[].class);
+        String components = Serializer.serializeAsString(getHudComponentArray(), HudComponent[].class);
+        HudComponent[] copy = Serializer.deserializeString(components, HudComponent[].class);
         if (copy == null) return new LabelConfiguration();
 
         return new LabelConfiguration(new ArrayList<>(Arrays.asList(copy)));
     }
 
-    private static ArrayList<Component> loadComponentsFromFile(File file) {
-        Component[] components = Serializer.deserialize(file, Component[].class);
+    private static ArrayList<HudComponent> loadComponentsFromFile(File file) {
+        HudComponent[] components = Serializer.deserialize(file, HudComponent[].class);
         if (components == null) return null;
         return new ArrayList<>(Arrays.asList(components));
     }
@@ -102,7 +102,7 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
 
     public LabelConfiguration reloadFromFile() {
         if (saveFile == null) return this;
-        ArrayList<Component> components = loadComponentsFromFile(saveFile);
+        ArrayList<HudComponent> components = loadComponentsFromFile(saveFile);
         if (components == null) return this;
         this.components = components;
         return this;
@@ -120,7 +120,7 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
         File file = new File(savedConfigsFolderName + name + ".json");
         try {
             if (!file.createNewFile()) return false;
-            Serializer.serialize(file, getComponentArray(), Component[].class);
+            Serializer.serialize(file, getHudComponentArray(), HudComponent[].class);
             savedConfigs.put(name, copy());
             return true;
         } catch (IOException e) {
@@ -129,11 +129,11 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
     }
 
     public void saveInCustom() {
-        Serializer.serialize(customConfigurationFile, getComponentArray(), Component[].class);
+        Serializer.serialize(customConfigurationFile, getHudComponentArray(), HudComponent[].class);
     }
 
-    private Component[] getComponentArray() {
-        return components.toArray(new Component[0]);
+    private HudComponent[] getHudComponentArray() {
+        return components.toArray(new HudComponent[0]);
     }
 
     @Override

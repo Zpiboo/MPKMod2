@@ -8,7 +8,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 import java.util.ArrayList;
 
 public abstract class ComponentHolder {
-    protected ArrayList<Component> components = new ArrayList<>();
+    protected ArrayList<HudComponent> components = new ArrayList<>();
     protected ComponentHolder parent = null;
     protected boolean absolute = false;
     protected long lastUpdated = 0;
@@ -227,11 +227,11 @@ public abstract class ComponentHolder {
         updatePosAndSize();
     }
 
-    public void addChild(Component child) {
+    public void addChild(HudComponent child) {
         addChild(child, PERCENT.NONE, Anchor.TOP_LEFT);
     }
 
-    public void addChild(Component child, int percentFlag) {
+    public void addChild(HudComponent child, int percentFlag) {
         addChild(child, percentFlag, Anchor.TOP_LEFT);
     }
 
@@ -240,11 +240,11 @@ public abstract class ComponentHolder {
      * @param percentFlag flag built of {@link PERCENT} fields that determines which fields of posX, posY, sizeX and sizeY should be treated as a percentage of the parent
      * @param anchor      {@link Anchor}point of both the parent and child
      */
-    public void addChild(Component child, int percentFlag, Anchor anchor) {
+    public void addChild(HudComponent child, int percentFlag, Anchor anchor) {
         addChild(child, percentFlag, anchor, anchor);
     }
 
-    public void addChild(Component child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
+    public void addChild(HudComponent child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
         passPositionTo(child, percentFlag, anchor, parentAnchor);
         this.components.add(child);
     }
@@ -286,7 +286,7 @@ public abstract class ComponentHolder {
         passPositionTo(child, percentFlag, anchor, anchor);
     }
 
-    public void removeChild(Component child) {
+    public void removeChild(HudComponent child) {
         this.components.remove(child);
         child.setRoot(null);
         child.parent = null;

@@ -150,7 +150,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         }
     }
 
-    private static class InfoVarComponent extends Component implements MouseInputListener {
+    private static class InfoVarComponent extends HudComponent implements MouseInputListener {
         private final InfoVar infoVar;
         private final InputField inputField;
         private final ArrayList<InfoVarComponent> children = new ArrayList<>();
@@ -247,7 +247,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
 
         @Override
         public void render(Vector2D mouse) {
-            for (Component c : components) {
+            for (HudComponent c : components) {
                 if (!showCollapseButton && c == collapseButton) continue;
                 c.render(mouse);
             }

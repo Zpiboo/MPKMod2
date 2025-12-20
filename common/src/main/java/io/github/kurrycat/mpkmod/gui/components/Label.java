@@ -8,7 +8,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Label extends Component {
+public class Label extends HudComponent {
     @Option.Field(showInOptionList = false)
     public static double DEFAULT_FONT_SIZE = FontRenderer.DEFAULT_FONT_SIZE;
 

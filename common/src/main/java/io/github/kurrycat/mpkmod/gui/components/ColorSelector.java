@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class ColorSelector extends Component implements KeyInputListener, MouseInputListener, MouseScrollListener {
+public class ColorSelector extends HudComponent implements KeyInputListener, MouseInputListener, MouseScrollListener {
     private final NumberSlider red, green, blue, alpha;
     private final InputField color;
     private final Consumer<Color> onChange;
