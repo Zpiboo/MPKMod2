@@ -1,6 +1,5 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
-import io.github.kurrycat.mpkmod.compatibility.MCClasses.FontRenderer;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.SoundManager;
 import io.github.kurrycat.mpkmod.gui.Theme;
@@ -12,7 +11,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class NumberSlider extends Component implements MouseInputListener, MouseScrollListener {
+public class NumberSlider extends HudComponent implements MouseInputListener, MouseScrollListener {
     private final SliderCallback sliderCallback;
     private final double from, to, step;
     private final Button button;

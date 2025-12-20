@@ -10,20 +10,20 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
         use = JsonTypeInfo.Id.CLASS,
         include = JsonTypeInfo.As.PROPERTY
 )
-public abstract class Component extends ComponentHolder {
+public abstract class HudComponent extends ComponentHolder {
     public boolean selected = false;
     public boolean highlighted = false;
 
     protected Vector2D renderOffset = Vector2D.ZERO;
 
     @JsonCreator
-    public Component() {
+    public HudComponent() {
     }
 
     public abstract void render(Vector2D mouse);
 
     @SuppressWarnings("UnusedReturnValue")
-    public Component setRenderOffset(Vector2D renderOffset) {
+    public HudComponent setRenderOffset(Vector2D renderOffset) {
         this.renderOffset = renderOffset.copy();
         return this;
     }

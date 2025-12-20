@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @SuppressWarnings("UnusedReturnValue")
-public abstract class ResizableComponent extends Component implements MouseInputListener {
+public abstract class ResizableComponent extends HudComponent implements MouseInputListener {
     private Vector2D minSize = new Vector2D(5, 5);
     private BoundingBox2D.Edge[] areBeingResized = null;
     private boolean xResizeLocked = false;

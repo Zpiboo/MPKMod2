@@ -6,7 +6,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class TextRectangle extends Component {
+public class TextRectangle extends HudComponent {
     public boolean leftAligned = false;
     private String text;
     private Color color;

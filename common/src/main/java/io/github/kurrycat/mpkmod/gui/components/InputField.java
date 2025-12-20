@@ -12,7 +12,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 import java.awt.*;
 
 //TODO: Multiline InputField
-public class InputField extends Component implements KeyInputListener, MouseInputListener {
+public class InputField extends HudComponent implements KeyInputListener, MouseInputListener {
     public static final double HEIGHT = 11;
     public static String FILTER_ALL = "[0-9a-zA-Z!?,.:;\\-{}()/&%$\"<>' ]";
     public static String FILTER_NUMBERS = "[0-9.,\\-!]";
