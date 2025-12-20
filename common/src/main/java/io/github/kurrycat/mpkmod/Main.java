@@ -6,7 +6,7 @@ import io.github.kurrycat.mpkmod.discord.DiscordRPC;
 import io.github.kurrycat.mpkmod.events.*;
 import io.github.kurrycat.mpkmod.events.Event;
 import io.github.kurrycat.mpkmod.gui.TickThread;
-import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.HudComponent;
 import io.github.kurrycat.mpkmod.gui.components.InputHistory;
 import io.github.kurrycat.mpkmod.gui.infovars.InfoString;
 import io.github.kurrycat.mpkmod.gui.infovars.InfoTree;
@@ -141,7 +141,7 @@ public class Main implements MPKModule {
                             Profiler.startSection("components");
                             if (mainGUI != null) {
                                 mainGUI.setSize(Renderer2D.getScaledSize());
-                                for (Component c : mainGUI.movableComponents) {
+                                for (HudComponent c : mainGUI.movableComponents) {
                                     Profiler.startSection(c.getClass().getSimpleName());
                                     c.render(new Vector2D(-1, -1));
                                     Profiler.endSection();
@@ -191,7 +191,7 @@ public class Main implements MPKModule {
                                     });
                             Profiler.endSection();
                             Profiler.startSection("tickInputHistories");
-                            for (Component component : mainGUI.movableComponents) {
+                            for (HudComponent component : mainGUI.movableComponents) {
                                 if (!(component instanceof InputHistory)) continue;
                                 ((InputHistory) component).onTick();
                             }
