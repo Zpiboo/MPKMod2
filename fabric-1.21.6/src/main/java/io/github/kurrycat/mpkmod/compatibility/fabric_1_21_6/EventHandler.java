@@ -65,6 +65,34 @@ public class EventHandler {
         });
     }
 
+    public void onMouseMove(double x, double y, double dx, double dy) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, (int) dx, (int) dy,
+                0, System.nanoTime()
+        );
+    }
+
+    public void onMouseScroll(double vertical, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, 0, 0,
+                (int) vertical, System.nanoTime()
+        );
+    }
+
+    public void onMouseButton(int button, int action, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(button),
+                button == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
+                        (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
+                (int) x, (int) y, 0, 0,
+                0, System.nanoTime()
+        );
+    }
+
     public void onInGameOverlayRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
         drawContext.getMatrices().pushMatrix();
         API.<FunctionCompatibility>getFunctionHolder().drawContext = drawContext;

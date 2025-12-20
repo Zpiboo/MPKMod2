@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
@@ -63,6 +64,34 @@ public class EventHandler {
                 API.Events.onKeybind(id);
             }
         });
+    }
+
+    public void onMouseMove(double x, double y, double dx, double dy) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, (int) dx, (int) dy,
+                0, System.nanoTime()
+        );
+    }
+
+    public void onMouseScroll(double vertical, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, 0, 0,
+                (int) vertical, System.nanoTime()
+        );
+    }
+
+    public void onMouseButton(MouseInput input, int action, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(input.button()),
+                input.button() == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
+                        (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
+                (int) x, (int) y, 0, 0,
+                0, System.nanoTime()
+        );
     }
 
     public void onInGameOverlayRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
