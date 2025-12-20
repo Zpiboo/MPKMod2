@@ -4,26 +4,21 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.*;
 import io.github.kurrycat.mpkmod.compatibility.fabric_1_16_1.mixin.KeyBindingAccessor;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
-import io.github.kurrycat.mpkmod.util.BoundingBox3D;
-import io.github.kurrycat.mpkmod.util.Debug;
-import io.github.kurrycat.mpkmod.util.Vector2D;
-import io.github.kurrycat.mpkmod.util.Vector3D;
-import io.github.kurrycat.mpkmod.util.ScissorBox;
+import io.github.kurrycat.mpkmod.util.*;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
-import io.netty.buffer.Unpooled;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.ServerInfo;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.render.*;
+import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.util.Window;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
@@ -35,8 +30,8 @@ import net.minecraft.util.registry.Registry;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class FunctionCompatibility implements FunctionHolder,
         SoundManager.Interface,
@@ -75,7 +70,7 @@ public class FunctionCompatibility implements FunctionHolder,
         if (MinecraftClient.getInstance().getCameraEntity() == null)
             return null;
 
-        HitResult hitResult = MinecraftClient.getInstance().getCameraEntity().raycast(20, 0, false);
+        HitResult hitResult = MinecraftClient.getInstance().getCameraEntity().rayTrace(20, 0, false);
         if (hitResult instanceof BlockHitResult) {
             BlockPos blockPos = ((BlockHitResult) hitResult).getBlockPos();
             return new Vector3D(blockPos.getX(), blockPos.getY(), blockPos.getZ());
@@ -116,7 +111,7 @@ public class FunctionCompatibility implements FunctionHolder,
         if (MinecraftClient.getInstance().getCameraEntity() == null)
             return null;
 
-        HitResult hitResult = MinecraftClient.getInstance().getCameraEntity().raycast(20, 0, false);
+        HitResult hitResult = MinecraftClient.getInstance().getCameraEntity().rayTrace(20, 0, false);
         if (hitResult.getType() == HitResult.Type.BLOCK && MinecraftClient.getInstance().world != null) {
             return Util.createTranslationKey(
                     "block",
@@ -403,7 +398,7 @@ public class FunctionCompatibility implements FunctionHolder,
             player.getVehicle().onPassengerLookAround(player);
         }
 
-        KeyBinding[] keys = new KeyBinding[]{
+        KeyBinding[] keys = new net.minecraft.client.options.KeyBinding[]{
                 op.keyForward,
                 op.keyLeft,
                 op.keyBack,
@@ -439,7 +434,7 @@ public class FunctionCompatibility implements FunctionHolder,
     }
 
     public void sendPacket(MPKPacket packet) {
-        ClientPlayNetworking.send(MPKMod.NETWORKING_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(packet.getData())));
+//        ClientPlayNetworking.send(MPKMod.NETWORKING_IDENTIFIER, new PacketByteBuf(Unpooled.wrappedBuffer(packet.getData())));
     }
 
     public List<Integer> getPressedButtons() {

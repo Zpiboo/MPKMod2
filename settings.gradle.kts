@@ -24,13 +24,14 @@ plugins {
 include("common")
 
 if (System.getenv("JITPACK") == null) {
-    include("fabric-1.16.5")
-    include("fabric-1.19.4")
-    include("fabric-1.20.4")
-    include("fabric-1.20.6")
-    include("fabric-1.21")
-    include("fabric-1.21.3")
-    include("fabric-1.21.5")
-    include("fabric-1.21.6")
-    include("fabric-1.21.9")
+    include("fabric-1.16.1")
+//    include("fabric-1.16.5")
+//    include("fabric-1.19.4")
+//    include("fabric-1.20.4")
+//    include("fabric-1.20.6")
+//    include("fabric-1.21")
+//    include("fabric-1.21.3")
+//    include("fabric-1.21.5")
+//    include("fabric-1.21.6")
+//    include("fabric-1.21.9")
 }
