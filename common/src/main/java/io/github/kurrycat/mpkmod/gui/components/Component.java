@@ -284,4 +284,6 @@ public abstract class Component {
             return flag;
         }
     }
+
+    public abstract void render(Vector2D mouse);
 }
