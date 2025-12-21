@@ -5,7 +5,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Rectangle extends HudComponent {
+public class Rectangle extends Component {
     public Color color;
 
     public Rectangle(Vector2D pos, Vector2D size, Color color) {

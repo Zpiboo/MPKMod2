@@ -10,7 +10,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Button extends HudComponent implements MouseInputListener {
+public class Button extends Component implements MouseInputListener {
     public Color pressedColor = Theme.lightBackground;
     public Color normalColor = Theme.darkBackground;
     public Color hoverColor = Theme.hoverBackground;

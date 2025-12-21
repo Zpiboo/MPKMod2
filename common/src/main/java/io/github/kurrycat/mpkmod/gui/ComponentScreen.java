@@ -292,7 +292,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
             } else component.render(hoverMousePos);
         }
 
-        for (HudComponent b : components) b.render(hoverMousePos);
+        for (Component b : components) b.render(hoverMousePos);
 
         if (!holding.isEmpty()) {
             BoundingBox2D containingHolding = boundingBoxContainingAll(new ArrayList<>(holding));

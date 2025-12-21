@@ -28,11 +28,11 @@ public class PopupMenu extends Pane<MainGuiScreen> {
         passPositionTo(menu);
     }
 
-    public void addComponent(HudComponent c) {
+    public void addComponent(Component c) {
         addComponent(c, PERCENT.NONE);
     }
 
-    public void addComponent(HudComponent c, int percentFlag) {
+    public void addComponent(Component c, int percentFlag) {
         c.setPos(new Vector2D(1, getDisplayedSize().getY()));
         addChild(c, percentFlag, Anchor.TOP_LEFT);
         this.setSize(
@@ -41,7 +41,7 @@ public class PopupMenu extends Pane<MainGuiScreen> {
                         getDisplayedSize().getY() + c.getDisplayedSize().getY() + 1
                 )
         );
-        for (HudComponent comp : components) {
+        for (Component comp : components) {
             comp.setSize(new Vector2D(-2, comp.getDisplayedSize().getY()));
         }
     }

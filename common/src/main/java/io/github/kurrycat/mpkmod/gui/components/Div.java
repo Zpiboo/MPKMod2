@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Div extends HudComponent implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Div extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = null;
     public Color borderColor = null;
     public Color textColor = null;
@@ -132,7 +132,7 @@ public class Div extends HudComponent implements MouseInputListener, MouseScroll
         return this;
     }
 
-    public void addChildBelow(HudComponent child) {
+    public void addChildBelow(Component child) {
         addChild(child, PERCENT.NONE, Anchor.TOP_LEFT);
         child.setPos(new Vector2D(1, getDisplayedSize().getY()));
         this.setSize(new Vector2D(

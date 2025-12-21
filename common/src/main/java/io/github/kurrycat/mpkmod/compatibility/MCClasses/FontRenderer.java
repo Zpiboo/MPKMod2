@@ -1,7 +1,7 @@
 package io.github.kurrycat.mpkmod.compatibility.MCClasses;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
-import io.github.kurrycat.mpkmod.gui.components.ComponentHolder;
+import io.github.kurrycat.mpkmod.gui.components.Component;
 import io.github.kurrycat.mpkmod.util.Colors;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
@@ -90,11 +90,11 @@ public class FontRenderer {
         }
     }
 
-    public static void drawCenteredString(String text, ComponentHolder parent, Color color, boolean shadow) {
+    public static void drawCenteredString(String text, Component parent, Color color, boolean shadow) {
         drawCenteredString(text, parent, color, DEFAULT_FONT_SIZE, shadow);
     }
 
-    public static void drawCenteredString(String text, ComponentHolder parent, Color color, double fontSize, boolean shadow) {
+    public static void drawCenteredString(String text, Component parent, Color color, double fontSize, boolean shadow) {
         Vector2D stringSize = getStringSize(text);
         drawString(text,
                 parent.getDisplayedPos().getX() + parent.getDisplayedSize().getX() / 2D - stringSize.getX() / 2D,

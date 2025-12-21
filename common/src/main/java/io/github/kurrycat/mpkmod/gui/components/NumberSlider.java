@@ -11,7 +11,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class NumberSlider extends HudComponent implements MouseInputListener, MouseScrollListener {
+public class NumberSlider extends ComponentHolder implements MouseInputListener, MouseScrollListener {
     private final SliderCallback sliderCallback;
     private final double from, to, step;
     private final Button button;

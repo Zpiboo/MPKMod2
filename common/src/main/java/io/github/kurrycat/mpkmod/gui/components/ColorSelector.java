@@ -4,8 +4,8 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseScrollListener;
-import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.ColorUtil;
+import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class ColorSelector extends HudComponent implements KeyInputListener, MouseInputListener, MouseScrollListener {
+public class ColorSelector extends ComponentHolder implements KeyInputListener, MouseInputListener, MouseScrollListener {
     private final NumberSlider red, green, blue, alpha;
     private final InputField color;
     private final Consumer<Color> onChange;

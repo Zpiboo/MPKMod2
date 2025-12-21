@@ -249,7 +249,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
 
         @Override
         public void render(Vector2D mouse) {
-            for (HudComponent c : components) {
+            for (Component c : components) {
                 if (!showCollapseButton && c == collapseButton) continue;
                 c.render(mouse);
             }

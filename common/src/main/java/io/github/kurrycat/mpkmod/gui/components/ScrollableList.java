@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponent implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
+public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
     public final List<I> items = new CopyOnWriteArrayList<>();
     private final TextRectangle titleComponent;
     public Color backgroundColor = Theme.darkBackground;
@@ -217,7 +217,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
                 .forEach(i -> i.renderHover(mouse));
     }
 
-    public static class ScrollBar<I extends ScrollableListItem<I>> extends HudComponent implements MouseInputListener {
+    public static class ScrollBar<I extends ScrollableListItem<I>> extends Component implements MouseInputListener {
         private final ScrollableList<I> parentList;
         public double barWidth = 11;
         public Color backgroundColor = Color.DARK_GRAY;
