@@ -443,6 +443,7 @@ public class Player {
             this.pos = pos;
         }
 
+        @Override
         public String formatDecimals(int decimals, boolean keepZeros) {
             return "[" +
                     chainedBlips + ", " +

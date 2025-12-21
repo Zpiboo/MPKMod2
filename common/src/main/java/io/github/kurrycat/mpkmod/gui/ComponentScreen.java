@@ -3,6 +3,7 @@ package io.github.kurrycat.mpkmod.gui;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.InputConstants;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.components.Button;
+import io.github.kurrycat.mpkmod.gui.components.Component;
 import io.github.kurrycat.mpkmod.gui.components.HudComponent;
 import io.github.kurrycat.mpkmod.gui.components.PopupMenu;
 import io.github.kurrycat.mpkmod.gui.components.*;
@@ -32,12 +33,14 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
     private HudComponent lastClicked = null;
     private Vector2D holdingSetPosOffset = null;
 
+    @Override
     public void postMessage(String receiverID, String content, boolean highlighted) {
         MessageQueue q = MessageQueue.getReceiverFor(receiverID, ItrUtil.getAllOfType(MessageQueue.class, movableComponents));
         if (q != null)
             q.postMessage(content, highlighted);
     }
 
+    @Override
     public void onGuiInit() {
         super.onGuiInit();
         movableComponents.clear();
@@ -50,6 +53,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         holdingSetPosOffset = null;
     }
 
+    @Override
     public void onGuiClosed() {
         super.onGuiClosed();
         movableComponents.forEach(c -> c.setSelected(false));
@@ -59,6 +63,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         highlighted.clear();
     }
 
+    @Override
     public void onKeyEvent(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         super.onKeyEvent(keyCode, keyCode, modifiers, isCharTyped);
 
@@ -90,6 +95,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         }
     }
 
+    @Override
     public void onMouseClicked(Vector2D mouse, int mouseButton) {
         super.onMouseClicked(mouse, mouseButton);
 
@@ -207,6 +213,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         }
     }
 
+    @Override
     public void onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {
         super.onMouseClickMove(mouse, mouseButton, timeSinceLastClick);
 
@@ -217,6 +224,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         selected = selected.stream().filter(c -> holding.contains(c)).collect(Collectors.toCollection(HashSet::new));
     }
 
+    @Override
     public void onMouseReleased(Vector2D mouse, int mouseButton) {
         super.onMouseReleased(mouse, mouseButton);
 
@@ -252,10 +260,12 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         }
     }
 
+    @Override
     public void onMouseScroll(Vector2D mousePos, int delta) {
         handleMouseScroll(mousePos, delta);
     }
 
+    @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         if (!openPanes.isEmpty())
             openPanes.get(openPanes.size() - 1).handleMouseScroll(mousePos, delta);
@@ -265,6 +275,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         );
     }
 
+    @Override
     public void render(Vector2D mouse, float partialTicks) {
         if (openPanes.isEmpty() || openPanes.get(openPanes.size() - 1) instanceof PopupMenu) drawDefaultBackground();
         Vector2D hoverMousePos = openPanes.isEmpty() ? mouse : new Vector2D(-1, -1);
@@ -329,6 +340,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         ).collect(Collectors.toCollection(ArrayList::new));
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (!openPanes.isEmpty()) {
             Pane<?> topPane = openPanes.get(openPanes.size() - 1);
@@ -347,6 +359,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         return containPos.get(0);
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T extends PaneHolder> void openPane(Pane<T> p, Vector2D pos) {
         openPanes.add(p);
@@ -357,6 +370,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         cleanupScreen();
     }
 
+    @Override
     public <T extends PaneHolder> void closePane(Pane<T> p) {
         openPanes.remove(p);
         if (openPanes.isEmpty()) {
@@ -365,11 +379,11 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         p.setLoaded(false);
     }
 
-    public void removeComponent(HudComponent c) {
+    public void removeComponent(Component c) {
         components.remove(c);
     }
 
-    public void addComponent(HudComponent c) {
+    public void addComponent(Component c) {
         components.add(c);
     }
 
@@ -385,6 +399,7 @@ public abstract class ComponentScreen extends MPKGuiScreen implements PaneHolder
         holdingSetPosOffset = null;
     }
 
+    @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         if (!openPanes.isEmpty())
             openPanes.get(openPanes.size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);

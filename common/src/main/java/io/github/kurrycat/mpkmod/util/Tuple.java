@@ -27,6 +27,7 @@ public class Tuple<A, B> implements Copyable<Tuple<A, B>> {
         this.b = b;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Tuple<A, B> copy() {
         return new Tuple<>(

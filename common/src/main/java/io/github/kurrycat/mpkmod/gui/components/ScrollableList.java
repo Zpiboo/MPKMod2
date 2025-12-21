@@ -63,6 +63,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
         bottomCover.components.forEach(c -> c.render(mouse));
     }
 
+    @Override
     public void render(Vector2D mouse) {
         scrollBar.constrainScrollAmountToScreen();
 
@@ -148,6 +149,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
         return null;
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (shouldRenderScrollbar() && scrollBar.handleMouseInput(state, mousePos, button))
             return true;
@@ -168,6 +170,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
                 ) || contains(mousePos);
     }
 
+    @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         if (!contains(mousePos)) return false;
 
@@ -192,6 +195,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
         return contains(mousePos);
     }
 
+    @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         boolean itemClicked = false;
         for (I item : getItems()) {

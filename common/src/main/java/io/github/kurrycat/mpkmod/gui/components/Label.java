@@ -32,6 +32,7 @@ public class Label extends HudComponent {
         this.text = text;
     }
 
+    @Override
     public void render(Vector2D mouse) {
         drawDefaultSelectedBackground();
         if (backgroundColor != null) Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);

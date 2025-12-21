@@ -68,6 +68,7 @@ public class MainGuiScreen extends ComponentScreen {
         LabelConfiguration.currentConfig.saveInCustom();
     }
 
+    @Override
     public void render(Vector2D mouse, float partialTicks) {
         super.render(mouse, partialTicks);
     }

@@ -78,6 +78,7 @@ public class NumberSlider extends HudComponent implements MouseInputListener, Mo
         }
     }
 
+    @Override
     public void render(Vector2D mouse) {
         Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);
 
@@ -88,6 +89,7 @@ public class NumberSlider extends HudComponent implements MouseInputListener, Mo
         this.button.render(mouse);
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (contains(mousePos)) {
             this.button.handleMouseInput(state, mousePos, button);

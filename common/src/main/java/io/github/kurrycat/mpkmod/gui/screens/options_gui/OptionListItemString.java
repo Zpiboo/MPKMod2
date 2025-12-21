@@ -19,10 +19,12 @@ public class OptionListItemString extends OptionListItem {
         addChild(inputField, PERCENT.SIZE_X, Anchor.CENTER_RIGHT);
     }
 
+    @Override
     protected void updateDisplayValue() {
         inputField.content = this.value;
     }
 
+    @Override
     protected void renderTypeSpecific(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
         inputField.render(mouse);
     }

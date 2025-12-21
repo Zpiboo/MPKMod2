@@ -53,10 +53,12 @@ public class FunctionCompatibility implements FunctionHolder,
     public static final Set<Integer> pressedButtons = new HashSet<>();
     public GuiGraphicsExtractor drawContext = null;
 
+    @Override
     public void playButtonSound() {
         net.minecraft.client.Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
 
+    @Override
     public ArrayList<BoundingBox3D> getCollisionBoundingBoxes(Vector3D blockPosVector) {
         final Vector3D blockPosVec = blockPosVector.copy();
         BlockPos blockPos = new BlockPos(blockPosVec.getXI(), blockPosVec.getYI(), blockPosVec.getZI());
@@ -73,6 +75,7 @@ public class FunctionCompatibility implements FunctionHolder,
         return boundingBoxes;
     }
 
+    @Override
     public Vector3D getLookingAt() {
         if (net.minecraft.client.Minecraft.getInstance().getCameraEntity() == null)
             return null;
@@ -127,6 +130,7 @@ public class FunctionCompatibility implements FunctionHolder,
         return null;
     }
 
+    @Override
     public void drawBox(BoundingBox3D bb, Color color, float partialTicks) {
         var ms = MPKMod.INSTANCE.matrixStack;
         ms.pushPose();
@@ -199,6 +203,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Renderer2D.Interface}
      */
+    @Override
     public void drawRect(Vector2D pos, Vector2D size, Color color) {
         if (drawContext == null) return;
         drawContext.fill(
@@ -211,6 +216,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Renderer2D.Interface}
      */
+    @Override
     public void drawLines(Collection<Vector2D> points, Color color) {
         if (points.size() < 2) {
             Debug.stacktrace("At least two points expected, got: " + points.size());
@@ -229,6 +235,7 @@ public class FunctionCompatibility implements FunctionHolder,
         ));
     }
 
+    @Override
     public Vector2D getScaledSize() {
         return new Vector2D(
                 net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledWidth(),
@@ -236,10 +243,12 @@ public class FunctionCompatibility implements FunctionHolder,
         );
     }
 
+    @Override
     public Vector2D getScreenSize() {
         return new Vector2D(net.minecraft.client.Minecraft.getInstance().getWindow().getScreenWidth(), net.minecraft.client.Minecraft.getInstance().getWindow().getScreenHeight());
     }
 
+    @Override
     public void enableScissor(double x, double y, double w, double h) {
         int x1 = (int) x;
         int y1 = (int) y;
@@ -248,12 +257,14 @@ public class FunctionCompatibility implements FunctionHolder,
         drawContext.enableScissor(x1, y1, x2, y2);
     }
 
+    @Override
     public void disableScissor() {
         try {
             drawContext.disableScissor();
         } catch (IllegalStateException ignored) {}
     }
 
+    @Override
     public void clearScissors() {
         boolean clearedAll = false;
         while (!clearedAll) {
@@ -265,10 +276,12 @@ public class FunctionCompatibility implements FunctionHolder,
         }
     }
 
+    @Override
     public boolean scissorContains(Vector2D point) {
         return drawContext.containsPointInScissor(point.getXI(), point.getYI());
     }
 
+    @Override
     public void drawString(String text, double x, double y, Color color, double fontSize, boolean shadow) {
         if (drawContext == null) return;
         var matrixStack = drawContext.pose();
@@ -283,6 +296,7 @@ public class FunctionCompatibility implements FunctionHolder,
         matrixStack.popMatrix();
     }
 
+    @Override
     public Vector2D getStringSize(String text, double fontSize) {
         return new Vector2D(
                 net.minecraft.client.Minecraft.getInstance().font.width(text) *
@@ -291,6 +305,7 @@ public class FunctionCompatibility implements FunctionHolder,
         );
     }
 
+    @Override
     public String getIP() {
         ServerData d = net.minecraft.client.Minecraft.getInstance().getCurrentServer();
 
@@ -300,18 +315,21 @@ public class FunctionCompatibility implements FunctionHolder,
             return d.ip;
     }
 
+    @Override
     public String getFPS() {
         return String.valueOf(net.minecraft.client.Minecraft.getInstance().getFps());
     }
 
     public static int ping = -1;
 
+    @Override
     public int getPing() {
         //PlayerInfo info = net.minecraft.client.Minecraft.getInstance().getConnection().getListedOnlinePlayers().stream().filter(playerInfo -> playerInfo.getProfile().id().equals(net.minecraft.client.Minecraft.getInstance().player.getUUID())).findFirst().get();
         //return info.getLatency();
         return ping;
     }
 
+    @Override
     public void displayGuiScreen(MPKGuiScreen screen) {
         net.minecraft.client.Minecraft.getInstance().setScreen(
                 screen == null
@@ -319,6 +337,7 @@ public class FunctionCompatibility implements FunctionHolder,
                         : new io.github.kurrycat.mpkmod.compatibility.fabric_26_1.MPKGuiScreen(screen));
     }
 
+    @Override
     public String getCurrentGuiScreen() {
         Screen curr = net.minecraft.client.Minecraft.getInstance().screen;
 
@@ -338,15 +357,18 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Minecraft.Interface Minecraft.Interface}
      */
+    @Override
     public String getUserName() {
         if (net.minecraft.client.Minecraft.getInstance().player == null) return null;
         return net.minecraft.client.Minecraft.getInstance().player.getName().getString();
     }
 
+    @Override
     public void copyToClipboard(String content) {
         net.minecraft.client.Minecraft.getInstance().keyboardHandler.setClipboard(content);
     }
 
+    @Override
     public boolean setInputs(Float yaw, boolean relYaw, Float pitch, boolean relPitch, int pressedInputs, int releasedInputs, int L, int R) {
         if (!Minecraft.isSingleplayer()) return false;
         LocalPlayer player = net.minecraft.client.Minecraft.getInstance().player;
@@ -403,26 +425,32 @@ public class FunctionCompatibility implements FunctionHolder,
         return true;
     }
 
+    @Override
     public boolean isF3Enabled() {
         return net.minecraft.client.Minecraft.getInstance().debugEntries.isOverlayVisible();
     }
 
+    @Override
     public void sendPacket(MPKPacket packet) {
         ClientPlayNetworking.send(new DataCustomPayload(packet.getData()));
     }
 
+    @Override
     public ArrayList<Integer> getPressedButtons() {
         return new ArrayList<>(pressedButtons);
     }
 
+    @Override
     public void startSection(String name) {
         net.minecraft.util.profiling.Profiler.get().push(name);
     }
 
+    @Override
     public void endStartSection(String name) {
         net.minecraft.util.profiling.Profiler.get().popPush(name);
     }
 
+    @Override
     public void endSection() {
         net.minecraft.util.profiling.Profiler.get().pop();
     }

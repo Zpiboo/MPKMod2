@@ -12,7 +12,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Pane<T extends PaneHolder> extends HudComponent implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Pane<T extends PaneHolder> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = Theme.darkBackground;
 
     public T paneHolder = null;
@@ -41,12 +41,14 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
         paneHolder.closePane(this);
     }
 
+    @Override
     public void render(Vector2D mousePos) {
         Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);
 
         components.forEach(c -> c.render(mousePos));
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
@@ -57,6 +59,7 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
         return false;
     }
 
+    @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
@@ -90,6 +93,7 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
         addChild(titleRect, PERCENT.SIZE_X, Anchor.TOP_CENTER);
     }
 
+    @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
