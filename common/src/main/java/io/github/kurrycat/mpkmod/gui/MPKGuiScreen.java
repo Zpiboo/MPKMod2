@@ -2,13 +2,17 @@ package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
-import io.github.kurrycat.mpkmod.gui.components.ComponentHolder;
+import io.github.kurrycat.mpkmod.gui.components.*;
+import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.PopupMenu;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public abstract class MPKGuiScreen extends ComponentHolder {
+    public ArrayList<Pane<?>> openPanes = new ArrayList<>();
     private boolean initialized = false;
     private String id = null;
 
@@ -78,11 +82,27 @@ public abstract class MPKGuiScreen extends ComponentHolder {
     }
 
     public final void drawScreen(Vector2D mouse, float partialTicks) {
-        render(mouse, partialTicks);
+        if (openPanes.isEmpty() || openPanes.get(openPanes.size() - 1) instanceof PopupMenu) drawDefaultBackground();
+        Vector2D hoverMousePos = openPanes.isEmpty() ? mouse : new Vector2D(-1, -1);
+
+        renderScreen(hoverMousePos, partialTicks);
+
+        if (!openPanes.isEmpty()) {
+            Pane<?> last = openPanes.get(openPanes.size() - 1);
+            if (!(last instanceof PopupMenu))
+                drawDefaultBackground();
+            for (int i = 0; i < openPanes.size() - 1; i++) {
+                openPanes.get(i).render(Vector2D.OFFSCREEN);
+            }
+            last.render(mouse);
+        }
+
         Renderer2D.endFrame();
     }
 
-    public void render(Vector2D mouse, float partialTicks) {
+    public void renderScreen(Vector2D mouse, float partialTicks) {
+        for (Component c : components)
+            c.render(mouse);
     }
 
     public final void drawDefaultBackground() {
@@ -99,5 +119,36 @@ public abstract class MPKGuiScreen extends ComponentHolder {
 
     public final void close() {
         Minecraft.displayGuiScreen(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends MPKGuiScreen> void openPane(Pane<T> p) {
+        openPanes.add(p);
+        p.setPaneHolder((T) this);
+        p.setLoaded(true);
+    }
+
+    public <T extends MPKGuiScreen> void closePane(Pane<T> p) {
+        openPanes.remove(p);
+        p.setLoaded(false);
+    }
+
+    public void addComponent(Component c) {
+        components.add(c);
+    }
+
+    public void removeComponent(Component c) {
+        components.remove(c);
+    }
+
+    public <T extends MPKGuiScreen> void openPane(Pane<T> p, Vector2D pos) {
+        openPane(p);
+        p.setPos(pos);
+    }
+
+    public final void closeAllPanes() {
+        for (int i = openPanes.size() - 1; i >= 0; i--) {
+            openPanes.get(i).close();
+        }
     }
 }

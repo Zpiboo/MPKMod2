@@ -1,5 +1,7 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
+import io.github.kurrycat.mpkmod.util.Vector2D;
+
 import java.util.ArrayList;
 
 public abstract class ComponentHolder extends Component {
@@ -63,5 +65,10 @@ public abstract class ComponentHolder extends Component {
         this.components.remove(child);
         child.setRoot(null);
         child.parent = null;
+    }
+
+    @Override
+    public void render(Vector2D mouse) {
+        components.forEach(c -> c.render(mouse));
     }
 }

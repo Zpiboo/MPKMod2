@@ -1,7 +1,7 @@
 package io.github.kurrycat.mpkmod.gui.screens.options_gui;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
-import io.github.kurrycat.mpkmod.gui.ComponentScreen;
+import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.components.Anchor;
 import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.components.ScrollableList;
@@ -9,7 +9,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
 
-public class OptionsGuiScreen extends ComponentScreen {
+public class OptionsGuiScreen extends MPKGuiScreen {
     private OptionList optionList;
 
     @Override
@@ -67,8 +67,8 @@ public class OptionsGuiScreen extends ComponentScreen {
 
 
     @Override
-    public void render(Vector2D mouse, float partialTicks) {
-        super.render(mouse, partialTicks);
+    public void renderScreen(Vector2D mouse, float partialTicks) {
+        super.renderScreen(mouse, partialTicks);
         optionList.renderHover(mouse);
     }
 

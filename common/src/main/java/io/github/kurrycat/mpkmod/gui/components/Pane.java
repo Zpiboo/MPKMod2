@@ -1,18 +1,19 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
+import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.Theme;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseScrollListener;
-import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Colors;
+import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Pane<T extends PaneHolder> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = Theme.darkBackground;
 
     public T paneHolder = null;
@@ -45,7 +46,7 @@ public class Pane<T extends PaneHolder> extends ComponentHolder implements Mouse
     public void render(Vector2D mousePos) {
         Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);
 
-        components.forEach(c -> c.render(mousePos));
+        super.render(mousePos);
     }
 
     @Override
