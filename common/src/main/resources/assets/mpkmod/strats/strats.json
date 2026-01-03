@@ -34,7 +34,7 @@
       "a==1": "Max ",
       "default": "Pessi",
       "a!=1": " -{a}t",
-      "a_ms": " ({a_ms}ms}"
+      "a_ms": " ({a_ms}ms)"
     },
     "timingEntries": [
       "a{1,1}:J",
@@ -47,7 +47,7 @@
       "a==1": "Max ",
       "default": "BWPessi",
       "a!=1": " -{a}t",
-      "a_ms": " ({a_ms}ms}"
+      "a_ms": " ({a_ms}ms)"
     },
     "timingEntries": [
       "a{1,1}:J",
@@ -101,7 +101,7 @@
     "format": {
       "default": "HH",
       "x!=1": " {x}t",
-      "x_ms": " ({x_ms}ms}"
+      "x_ms": " ({x_ms}ms)"
     },
     "timingEntries": [
       "x{1,}:WP",
@@ -112,7 +112,7 @@
     "format": {
       "default": "BWHH",
       "x!=1": " {x}t",
-      "x_ms": " ({x_ms}ms}"
+      "x_ms": " ({x_ms}ms)"
     },
     "timingEntries": [
       "x{1,}:S",
@@ -165,7 +165,7 @@
     "format": {
       "default": "Delayed HH",
       "x!=1": " {x}t",
-      "x_ms": " ({x_ms}ms}"
+      "x_ms": " ({x_ms}ms)"
     },
     "timingEntries": [
       "x{1,}:W",
