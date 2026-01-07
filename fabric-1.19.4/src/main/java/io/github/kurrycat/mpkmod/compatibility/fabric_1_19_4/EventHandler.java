@@ -12,11 +12,14 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Util;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+
+import java.util.Map;
 
 public class EventHandler {
     private static final ButtonMSList timeQueue = new ButtonMSList();
@@ -56,11 +59,53 @@ public class EventHandler {
 
         API.Events.onKeyInput(key, inputKey.getLocalizedText().getString(), action == 1);
 
-        MPKMod.keyBindingMap.forEach((id, keyBinding) -> {
-            if (keyBinding.isPressed()) {
-                API.Events.onKeybind(id);
+        if (action != 0)
+            checkKeyBinding(key);
+    }
+
+    public void onMouseMove(double x, double y, double dx, double dy) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, (int) dx, (int) dy,
+                0, System.nanoTime()
+        );
+    }
+
+    public void onMouseScroll(double vertical, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, 0, 0,
+                (int) vertical, System.nanoTime()
+        );
+    }
+
+    public void onMouseButton(int button, int action, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(button),
+                button == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
+                        (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
+                (int) x, (int) y, 0, 0,
+                0, System.nanoTime()
+        );
+
+        if (action == 1)
+            checkKeyBinding(button);
+    }
+
+    private void checkKeyBinding(int keyCode) {
+        if (MinecraftClient.getInstance().currentScreen != null) return;
+
+        for (Map.Entry<String, KeyBinding> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
+            InputUtil.Key boundKey = ((KeyBindingAccessor) keyBindingEntry.getValue()).getBoundKey();
+            String keyBindId = keyBindingEntry.getKey();
+
+            if (boundKey.getCode() == keyCode) {
+                API.Events.onKeybind(keyBindId);
+                return;
             }
-        });
+        }
     }
 
     public void onInGameOverlayRender(MatrixStack matrixStack, float tickDelta) {

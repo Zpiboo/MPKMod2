@@ -1,7 +1,6 @@
 package io.github.kurrycat.mpkmod.compatibility.fabric_1_21.mixin;
 
-import io.github.kurrycat.mpkmod.compatibility.API;
-import net.minecraft.client.MinecraftClient;
+import io.github.kurrycat.mpkmod.compatibility.fabric_1_21.MPKMod;
 import net.minecraft.client.Mouse;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -22,34 +21,16 @@ public class MouseMixin {
 
     @Inject(method = "onCursorPos", at = @At(value = "TAIL"))
     private void onCursorPos(long window, double x, double y, CallbackInfo ci) {
-        if (window == MinecraftClient.getInstance().getWindow().getHandle()) {
-            API.Events.onMouseInput(
-                    io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
-                    io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
-                    (int) x, (int) y, (int) cursorDeltaX, (int) -cursorDeltaY,
-                    0, System.nanoTime()
-            );
-        }
+        MPKMod.INSTANCE.eventHandler.onMouseMove(x, y, cursorDeltaX, -cursorDeltaY);
     }
 
     @Inject(method = "onMouseScroll", at = @At(value = "TAIL"))
     private void onMouseScroll(long window, double horizontal, double vertical, CallbackInfo ci) {
-        API.Events.onMouseInput(
-                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
-                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
-                (int) x, (int) y, 0, 0,
-                (int) vertical, System.nanoTime()
-        );
+        MPKMod.INSTANCE.eventHandler.onMouseScroll(vertical, x, y);
     }
 
     @Inject(method = "onMouseButton", at = @At(value = "TAIL"))
     private void onMouseButton(long window, int button, int action, int mods, CallbackInfo ci) {
-        API.Events.onMouseInput(
-                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(button),
-                button == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
-                        (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
-                (int) x, (int) y, 0, 0,
-                0, System.nanoTime()
-        );
+        MPKMod.INSTANCE.eventHandler.onMouseButton(button, action, x, y);
     }
 }

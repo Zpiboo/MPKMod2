@@ -6,11 +6,12 @@
   "mixins": [
   ],
   "client": [
-      "GameRendererMixin",
-      "KeyBindingAccessor",
-      "KeyboardMixin",
-      "MinecraftClientMixin",
-      "MouseMixin"
+    "GameRendererMixin",
+    "KeyBindingAccessor",
+    "KeyboardMixin",
+    "MinecraftClientMixin",
+    "MouseMixin",
+    "ToggleSprintKeyMixin"
   ],
   "injectors": {
     "defaultRequire": 1

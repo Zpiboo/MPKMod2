@@ -11,9 +11,11 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.input.KeyInput;
+import net.minecraft.client.input.MouseInput;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
@@ -21,18 +23,20 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.Map;
+
 public class EventHandler {
     private static final ButtonMSList timeQueue = new ButtonMSList();
 
     /**
-     * @param keyInput The Minecraft {@link KeyInput} object.
+     * @param input The Minecraft {@link KeyInput} object.
      * @param action   The action, where 0 = unpressed, 1 = pressed, 2 = held.
      */
-    public void onKey(KeyInput keyInput, int action) {
+    public void onKey(KeyInput input, int action) {
         GameOptions options = MinecraftClient.getInstance().options;
         long eventNanos = Util.getMeasuringTimeNano();
 
-        InputUtil.Key inputKey = InputUtil.fromKeyCode(new KeyInput(keyInput.key(), keyInput.scancode(), keyInput.modifiers()));
+        InputUtil.Key inputKey = InputUtil.fromKeyCode(new KeyInput(input.key(), input.scancode(), input.modifiers()));
 
         int[] keys = {
                 ((KeyBindingAccessor) options.forwardKey).getBoundKey().getCode(),
@@ -45,7 +49,7 @@ public class EventHandler {
         };
 
         for (int i = 0; i < keys.length; i++) {
-            if (keyInput.key() == keys[i]) {
+            if (input.key() == keys[i]) {
                 timeQueue.add(ButtonMS.of(ButtonMS.Button.values()[i], eventNanos, action == 1));
             }
         }
@@ -56,13 +60,55 @@ public class EventHandler {
             FunctionCompatibility.pressedButtons.remove(inputKey.getCode());
         }
 
-        API.Events.onKeyInput(keyInput.key(), inputKey.getLocalizedText().getString(), action == 1);
+        API.Events.onKeyInput(input.key(), inputKey.getLocalizedText().getString(), action == 1);
 
-        MPKMod.keyBindingMap.forEach((id, keyBinding) -> {
-            if (keyBinding.isPressed()) {
-                API.Events.onKeybind(id);
+        if (action != 0)
+            checkKeyBinding(input.key());
+    }
+
+    public void onMouseMove(double x, double y, double dx, double dy) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, (int) dx, (int) dy,
+                0, System.nanoTime()
+        );
+    }
+
+    public void onMouseScroll(double vertical, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.NONE,
+                io.github.kurrycat.mpkmod.util.Mouse.State.NONE,
+                (int) x, (int) y, 0, 0,
+                (int) vertical, System.nanoTime()
+        );
+    }
+
+    public void onMouseButton(MouseInput input, int action, double x, double y) {
+        API.Events.onMouseInput(
+                io.github.kurrycat.mpkmod.util.Mouse.Button.fromInt(input.button()),
+                input.button() == -1 ? io.github.kurrycat.mpkmod.util.Mouse.State.NONE :
+                        (action == 1 ? io.github.kurrycat.mpkmod.util.Mouse.State.DOWN : io.github.kurrycat.mpkmod.util.Mouse.State.UP),
+                (int) x, (int) y, 0, 0,
+                0, System.nanoTime()
+        );
+
+        if (action == 1)
+            checkKeyBinding(input.button());
+    }
+
+    private void checkKeyBinding(int keyCode) {
+        if (MinecraftClient.getInstance().currentScreen != null) return;
+
+        for (Map.Entry<String, KeyBinding> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
+            InputUtil.Key boundKey = ((KeyBindingAccessor) keyBindingEntry.getValue()).getBoundKey();
+            String keyBindId = keyBindingEntry.getKey();
+
+            if (boundKey.getCode() == keyCode) {
+                API.Events.onKeybind(keyBindId);
+                return;
             }
-        });
+        }
     }
 
     public void onInGameOverlayRender(DrawContext drawContext, RenderTickCounter renderTickCounter) {
