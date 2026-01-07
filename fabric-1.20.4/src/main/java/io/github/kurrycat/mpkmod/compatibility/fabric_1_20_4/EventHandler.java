@@ -96,6 +96,8 @@ public class EventHandler {
     }
 
     private void checkKeyBinding(int keyCode) {
+        if (MinecraftClient.getInstance().currentScreen != null) return;
+
         for (Map.Entry<String, KeyBinding> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
             InputUtil.Key boundKey = ((KeyBindingAccessor) keyBindingEntry.getValue()).getBoundKey();
             String keyBindId = keyBindingEntry.getKey();
