@@ -10,7 +10,8 @@
     "KeyBindingAccessor",
     "KeyboardMixin",
     "MinecraftClientMixin",
-    "MouseMixin"
+    "MouseMixin",
+    "ToggleSprintKeyMixin"
   ],
   "injectors": {
     "defaultRequire": 1

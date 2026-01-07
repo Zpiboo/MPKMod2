@@ -1,16 +1,17 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_5.mixin",
+  "package": "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
   ],
   "client": [
-    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.GameRendererMixin",
-    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.KeyBindingAccessor",
-    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.KeyboardMixin",
-    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.MinecraftClientMixin",
-    "io.github.kurrycat.mpkmod.compatibility.fabric_1_21_6.mixin.MouseMixin"
+    "GameRendererMixin",
+    "KeyBindingAccessor",
+    "KeyboardMixin",
+    "MinecraftClientMixin",
+    "MouseMixin",
+    "ToggleSprintKeyMixin"
   ],
   "injectors": {
     "defaultRequire": 1
