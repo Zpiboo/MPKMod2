@@ -7,8 +7,6 @@ import io.github.kurrycat.mpkmod.save.Serializer;
 import io.github.kurrycat.mpkmod.util.FileUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,6 +49,10 @@ public class TimingStorage {
         List<Timing.Match> matches = new ArrayList<>();
         for (Map.Entry<String, Timing> entry : patterns.entrySet()) {
             Timing.Match match = entry.getValue().match(inputList);
+
+            if (match == null && entry.getValue().isSymmetrical()) {
+                match = entry.getValue().getMirrored().match(inputList);
+            }
             if (match != null) {
                 matches.add(match);
             }
