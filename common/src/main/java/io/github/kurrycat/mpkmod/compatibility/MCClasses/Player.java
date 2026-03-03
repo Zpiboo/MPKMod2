@@ -32,7 +32,7 @@ public class Player {
     @InfoString.Field
     public Blip lastBlip = null;
 
-    public TimingInput timingInput = new TimingInput("");
+    public TimingInput timingInput = TimingInput.stopTick();
     public KeyInput keyInput = null;
     public ButtonMSList keyMSList = null;
     public Vector3D pos = null;
