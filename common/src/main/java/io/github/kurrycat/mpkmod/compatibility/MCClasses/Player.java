@@ -517,7 +517,7 @@ public class Player {
                 KeyBinding b = KeyBinding.getByName("key." + f.getName());
                 if (b == null) continue;
                 try {
-                    f.set(k, b.isKeyDown());
+                    f.set(k, b.getTickState());
                 } catch (IllegalAccessException ignored) {
                 }
             }

@@ -6,13 +6,15 @@ import java.util.function.Supplier;
 public class KeyBinding {
     private static final HashMap<String, KeyBinding> keyMap = new HashMap<>();
     private final String name;
-    private final Supplier<Boolean> isKeyDown;
+    private final Supplier<Boolean> isKeyDownSupplier;
     private final Supplier<String> displayName;
 
-    public KeyBinding(Supplier<String> displayName, String name, Supplier<Boolean> isKeyDown) {
+    private boolean tickState = false;
+
+    public KeyBinding(Supplier<String> displayName, String name, Supplier<Boolean> isKeyDownSupplier) {
         this.displayName = displayName;
         this.name = name;
-        this.isKeyDown = isKeyDown;
+        this.isKeyDownSupplier = isKeyDownSupplier;
 
         if (!keyMap.containsKey(this.name))
             keyMap.put(this.name, this);
@@ -26,6 +28,11 @@ public class KeyBinding {
         return keyMap;
     }
 
+    public static void updateKeyStates() {
+        for (KeyBinding k : getKeyMap().values())
+            k.updateTickState();
+    }
+
     public String getDisplayName() {
         return displayName.get();
     }
@@ -34,7 +41,11 @@ public class KeyBinding {
         return name;
     }
 
-    public boolean isKeyDown() {
-        return isKeyDown.get();
+    private void updateTickState() {
+        tickState = isKeyDownSupplier.get();
+    }
+
+    public boolean getTickState() {
+        return tickState;
     }
 }

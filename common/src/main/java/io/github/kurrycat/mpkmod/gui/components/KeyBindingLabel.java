@@ -56,7 +56,7 @@ public class KeyBindingLabel extends ResizableComponent {
 
     public void render(Vector2D mouse) {
         String displayName = this.displayName;
-        boolean keyDown = keyBinding != null && keyBinding.isKeyDown();
+        boolean keyDown = keyBinding != null && keyBinding.getTickState();
         Color c = selected ? selectedColor : keyDown ? keyDownColor : keyUpColor;
         if (highlighted) Renderer2D.drawDottedRect(getDisplayedPos(), getDisplayedSize(), 1, 1, 1, Color.BLACK);
         Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), c);
