@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Tuple;
+import io.github.kurrycat.mpkmod.util.input.InputPredicateReference;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,14 +14,25 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Timing {
+public final class Timing {
     private final LinkedHashMap<FormatCondition, FormatString> format;
     private final TimingEntry[] timingEntries;
 
     @JsonCreator
     public Timing(@JsonProperty("format") LinkedHashMap<FormatCondition, FormatString> format, @JsonProperty("timingEntries") TimingEntry[] timingEntries) {
+    public Timing(
+            @JsonProperty("format")
+            LinkedHashMap<FormatCondition, FormatString> format,
+            @JsonProperty("timingEntries")
+            TimingEntry[] timingEntries
+    ) {
         this.format = format;
         this.timingEntries = timingEntries;
+
+        for (TimingEntry e : timingEntries) {
+            if (e.inputPredicate instanceof InputPredicateReference)
+                ((InputPredicateReference) e.inputPredicate).setParentTimingEntries(timingEntries);
+        }
     }
 
     public Match match(List<TimingInput> inputList) {
