@@ -3,12 +3,9 @@ package io.github.kurrycat.mpkmod.ticks;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.kurrycat.mpkmod.util.Range;
-import io.github.kurrycat.mpkmod.util.Tuple;
 import io.github.kurrycat.mpkmod.util.input.InputPredicate;
 import io.github.kurrycat.mpkmod.util.input.InputPredicateBase;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public final class TimingEntry {
@@ -64,11 +61,11 @@ public final class TimingEntry {
     /**
      * @param inputList List of {@link TimingInput} instances
      * @param startIndex the index it should start matching from
-     * @param vars HashMap containing all variables for that {@link Timing}. Vars of this TimingEntry are added
+     * @param ctx HashMap containing all variables for that {@link Timing}. Vars of this TimingEntry are added
      * @param repeatedVar if the current var appeared in the previous {@link TimingEntry}
      * @return amount of matched inputs or null if no match was found (returns 0 for variable entries with 0 within range)
      */
-    public Integer matches(List<TimingInput> inputList, int startIndex, HashMap<String, Timing.TickMS> vars, boolean repeatedVar) {
+    public Integer matches(List<TimingInput> inputList, int startIndex, VariableContext ctx, boolean repeatedVar) {
         int i = startIndex;
 
         if (inputPredicate instanceof InputPredicate) ((InputPredicate) inputPredicate).resetLastMatch();
@@ -78,45 +75,14 @@ public final class TimingEntry {
         if (range.isValueBelow(i - startIndex)) return null;
 
         if (varName != null) {
-            if (vars.containsKey(varName) && repeatedVar) {
-                vars.get(varName).tickCount += count;
+            if (ctx.tickVars.containsKey(varName) && repeatedVar) {
+                ctx.tickVars.put(varName, ctx.tickVars.get(varName) + count);
             } else {
-                vars.put(varName, new Timing.TickMS(count));
+                ctx.tickVars.put(varName, count);
             }
-
-            vars.get(varName).ms = getMS(
-                    i - vars.get(varName).tickCount,
-                    vars.get(varName).tickCount,
-                    inputList
-            );
         }
 
         return count;
-    }
-
-    private Integer getMS(int startIndex, int matchCount, List<TimingInput> inputList) {
-        // if at least one tick matches and a tick after match exists
-        if (matchCount == 0 || startIndex + matchCount >= inputList.size())
-            return null;
-
-        TimingInput before = startIndex == 0 ? TimingInput.stopTick() : inputList.get(startIndex - 1);
-        TimingInput after = inputList.get(startIndex + matchCount);
-        ArrayList<TimingInput> curr = new ArrayList<>();
-        for (int i = startIndex; i < startIndex + matchCount; i++) {
-            if (curr.isEmpty() || !curr.get(curr.size() - 1).equals(inputList.get(i))) {
-                curr.add(inputList.get(i));
-            }
-        }
-
-        Tuple<ButtonMS.Button, ButtonMS.Button> range = TimingInput.findMSButtons(before, after, curr);
-        if (range == null)
-            return null;
-
-        ButtonMS startMS = curr.get(0).msList.forKey(range.getFirst());
-        if (startMS == null) return null;
-        ButtonMS endMS = after.msList.forKey(range.getSecond());
-        if (endMS == null) return null;
-        return endMS.msFrom(startMS);
     }
 
     public TimingEntry mirrored() {

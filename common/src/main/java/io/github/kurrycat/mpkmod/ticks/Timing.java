@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.util.MathUtil;
-import io.github.kurrycat.mpkmod.util.Tuple;
 import io.github.kurrycat.mpkmod.util.input.InputPredicateReference;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -64,11 +62,12 @@ public final class Timing {
     }
 
     private Match startsWithMatch(List<TimingInput> inputList) {
-        HashMap<String, TickMS> vars = new HashMap<>();
+        VariableContext ctx = new VariableContext();
+
         int startIndex = 0;
         for (int i = 0; i < timingEntries.length; i++) {
             boolean repeatedVar = i >= 1 && timingEntries[i].varNameMatches(timingEntries[i - 1]);
-            Integer matchCount = timingEntries[i].matches(inputList, startIndex, vars, repeatedVar);
+            Integer matchCount = timingEntries[i].matches(inputList, startIndex, ctx, repeatedVar);
             if (matchCount == null)
                 return null;
 
@@ -78,7 +77,7 @@ public final class Timing {
         }
 
         //System.out.printf("Match: %s\nVars: %s\n\n", inputList, vars);
-        return new Match(getFormatString(vars), vars.size(), inputList.size() - startIndex);
+        return new Match(getFormatString(ctx), inputList.size() - startIndex);
     }
 
     private Timing makeMirrored() {
@@ -89,52 +88,50 @@ public final class Timing {
         return new Timing(format, mirroredTimingEntries, false);
     }
 
-    private String getFormatString(HashMap<String, TickMS> vars) {
+    private String getFormatString(VariableContext ctx) {
         StringBuilder sb = new StringBuilder();
         format.forEach((fc, fs) -> {
-            if (fc.check(vars)) sb.append(fs.get(vars));
+            if (fc.check(ctx)) sb.append(fs.get(ctx));
         });
         return sb.toString();
     }
 
     public static class FormatString {
-        private static final String rawRegex = "(?<varName>[a-zA-Z]+)(?<ms>_ms)?";
-        public static final Pattern regexPatternRaw = Pattern.compile(rawRegex);
-        private static final String regex = "\\{(?<varName>[a-zA-Z]+)(?<ms>_ms)?}";
-        public static final Pattern regexPattern = Pattern.compile(regex);
+        private static final String varNameRegex = "((?<varType>[a-zA-Z]+):)?(?<varName>[a-zA-Z]+)";
+        public static final Pattern varNameRegexPattern = Pattern.compile(varNameRegex);
+        private static final String varRegex = "\\{" + varNameRegex + "}";
+        public static final Pattern varRegexPattern = Pattern.compile(varRegex);
 
         String formatString;
-        List<Tuple<String, Boolean>> vars = new ArrayList<>();
+        List<VariableMatch> varMatches = new ArrayList<>();
 
         @JsonCreator
         public FormatString(String formatString) {
             this.formatString = formatString;
-            Matcher matcher = regexPattern.matcher(formatString);
+            Matcher matcher = varRegexPattern.matcher(formatString);
             while (matcher.find()) {
-                vars.add(new Tuple<>(
-                        matcher.group("varName"),
-                        matcher.group("varName") != null)
+                String typeString = matcher.group("varType");
+                VariableType type = (
+                        typeString == null
+                                ? VariableType.TICKS
+                                : VariableType.fromString(typeString)
                 );
+                String name = matcher.group("varName");
+
+                varMatches.add(new VariableMatch(type, name));
             }
         }
 
-        public String get(HashMap<String, TickMS> vars) {
+        public String get(VariableContext ctx) {
             String returnString = formatString;
-            for (Tuple<String, Boolean> var : this.vars) {
-                if (vars.containsKey(var.getFirst())) {
-                    if (var.getSecond()) {
-                        returnString = returnString
-                                .replaceAll(
-                                        "\\{" + var.getFirst() + "_ms}",
-                                        vars.get(var.getFirst()).getMSOrEmpty()
-                                );
-                    }
+            for (VariableMatch varMatch : this.varMatches) {
+                if (varMatch.type == VariableType.TICKS && ctx.tickVars.containsKey(varMatch.name)) {
                     returnString = returnString
                             .replaceAll(
-                                    "\\{" + var.getFirst() + "}",
-                                    String.valueOf(vars.get(var.getFirst()).tickCount)
+                                    varMatch.getRegex(),
+                                    String.valueOf(ctx.tickVars.get(varMatch.name))
                             );
-                } else return "";
+                }
             }
             return returnString;
         }
@@ -143,18 +140,12 @@ public final class Timing {
     public static class FormatCondition {
         OR condition;
         boolean isDefault = false;
-        String checkMS = null;
 
         @JsonCreator
         public FormatCondition(String formatCondition) {
-            if (formatCondition.startsWith("default")) {
+            if (formatCondition.equals("default")) {
                 isDefault = true;
                 return;
-            }
-            Matcher matcher = FormatString.regexPatternRaw.matcher(formatCondition);
-            if (matcher.matches()) {
-                checkMS = matcher.group("varName");
-                if (checkMS != null) return;
             }
 
             try {
@@ -164,12 +155,11 @@ public final class Timing {
             }
         }
 
-        public boolean check(HashMap<String, TickMS> vars) {
+        public boolean check(VariableContext ctx) {
             if (isDefault) return true;
-            if (checkMS != null)
-                return TimingStorage.renderLastTimingMS && vars.containsKey(checkMS) && vars.get(checkMS).ms != null;
+
             if (condition == null) return false;
-            return condition.check(vars);
+            return condition.check(ctx);
         }
 
         public enum Operator {
@@ -206,9 +196,9 @@ public final class Timing {
                 }
             }
 
-            boolean check(HashMap<String, TickMS> vars) {
+            boolean check(VariableContext ctx) {
                 for (AND p : parts) {
-                    if (p.check(vars)) return true;
+                    if (p.check(ctx)) return true;
                 }
                 return false;
             }
@@ -225,9 +215,9 @@ public final class Timing {
                 }
             }
 
-            boolean check(HashMap<String, TickMS> vars) {
+            boolean check(VariableContext ctx) {
                 for (COND p : parts) {
-                    if (!p.check(vars)) return false;
+                    if (!p.check(ctx)) return false;
                 }
                 return true;
             }
@@ -263,11 +253,11 @@ public final class Timing {
                 return operator.check.check(parts.get(0), parts.get(1)) && helperCheck(parts.subList(1, parts.size()));
             }
 
-            boolean check(HashMap<String, TickMS> vars) {
+            boolean check(VariableContext ctx) {
                 List<Integer> parts = new ArrayList<>();
 
                 for (ADD part : this.parts) {
-                    Integer v = part.get(vars);
+                    Integer v = part.get(ctx);
                     if (v == null) return false;
                     parts.add(v);
                 }
@@ -282,11 +272,11 @@ public final class Timing {
                 parts = add.split("\\+");
             }
 
-            public Integer get(HashMap<String, TickMS> vars) {
+            public Integer get(VariableContext ctx) {
                 int result = 0;
                 for (String part : this.parts) {
                     Integer v;
-                    if (vars.containsKey(part)) v = vars.get(part).tickCount;
+                    if (ctx.tickVars.containsKey(part)) v = ctx.tickVars.get(part);
                     else v = MathUtil.parseInt(part, null);
                     if (v == null) return null;
                     result += v;
@@ -297,35 +287,17 @@ public final class Timing {
     }
 
     public static class Match implements Comparable<Match> {
-        private final int numberOfVars;
-        private final int endOffset;
+        private final int length;
         public String displayString;
 
-        private Match(String displayString, int numberOfVars, int endOffset) {
+        private Match(String displayString, int length) {
             this.displayString = displayString;
-            this.numberOfVars = numberOfVars;
-            this.endOffset = endOffset;
+            this.length = length;
         }
 
         @Override
         public int compareTo(Match o) {
-            if (this.endOffset != o.endOffset)
-                return Integer.compare(this.endOffset, o.endOffset);
-            return Integer.compare(this.numberOfVars, o.numberOfVars);
-        }
-    }
-
-    public static class TickMS {
-        public int tickCount;
-        public Integer ms = null;
-
-        public TickMS(int tickCount) {
-            this.tickCount = tickCount;
-        }
-
-        public String getMSOrEmpty() {
-            if (ms == null) return "";
-            return String.valueOf(ms);
+            return Integer.compare(this.length, o.length);
         }
     }
 }

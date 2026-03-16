@@ -3,7 +3,7 @@
     "format": {
       "a==1": "Max ",
       "default": "FMM",
-      "a!=1": " {a}t",
+      "a!=1": " {ticks:a}t",
       "a_ms": " ({a_ms}ms)"
     },
     "timingEntries": [{
