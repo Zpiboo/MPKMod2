@@ -6,11 +6,22 @@
       "a!=1": " {a}t",
       "a_ms": " ({a_ms}ms)"
     },
-    "timingEntries": [
-      "a{1,1}:WJ",
-      "a:W!G",
-      "WP!G"
-    ]
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "Wad",
+      "sprint": false,
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": 0,
+      "sprint": false,
+      "groundState": "AIRBORNE"
+    }, {
+      "min": 1,
+      "inputs": 0,
+      "sprint": true,
+      "groundState": "AIRBORNE"
+    }]
   },
   "c4.5": {
     "format": {
@@ -20,14 +31,32 @@
       "a_ms": " ({a_ms}ms)",
       "r!=1": " Run {r}t"
     },
-    "timingEntries": [
-      "a{1,1}:WJ",
-      "a:W!G",
-      "b:WP!G",
-      "WPG",
-      "r{1,}:WPG",
-      "WPJ"
-    ]
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "Wad",
+      "sprint": false,
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": 0,
+      "sprint": false,
+      "groundState": "AIRBORNE"
+    }, {
+      "min": 1,
+      "inputs": 0,
+      "sprint": true,
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": 0,
+      "groundState": "GROUNDED"
+    }, {
+      "var": "r", "min": 1,
+      "inputs": 0,
+      "groundState": "GROUNDED"
+    }, {
+      "inputs": 0,
+      "groundState": "JUMPING"
+    }]
   },
   "pessi": {
     "format": {
@@ -36,34 +65,35 @@
       "a!=1": " -{a}t",
       "a_ms": " ({a_ms}ms)"
     },
-    "timingEntries": [
-      "a{1,1}:J",
-      "a:!G",
-      "WP!G"
-    ]
-  },
-  "bwpessi": {
-    "format": {
-      "a==1": "Max ",
-      "default": "BWPessi",
-      "a!=1": " -{a}t",
-      "a_ms": " ({a_ms}ms)"
-    },
-    "timingEntries": [
-      "a{1,1}:J",
-      "a:!G",
-      "S!G"
-    ]
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "wasd?",
+      "groundState": "AIRBORNE"
+    }]
   },
   "a7hh": {
     "format": {
       "default": "A7HH"
     },
-    "timingEntries": [
-      "a{1,1}:J",
-      "a:!G",
-      "WPG"
-    ]
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "wasd?",
+      "groundState": "GROUNDED"
+    }]
   },
   "panefmm": {
     "format": {
@@ -72,30 +102,38 @@
       "a!=1&&a!=4": " {a}t",
       "r!=1": " Run {r}t"
     },
-    "timingEntries": [
-      "a{1,1}:J",
-      "a:",
-      "b:WP!G",
-      "WPG",
-      "r{1,6}:WPG",
-      "WPJ"
-    ]
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "",
+      "groundState": "AIRBORNE"
+    }, {
+      "min": 0,
+      "inputs": "wasd?",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": 2,
+      "groundState": "GROUNDED"
+    }, {
+      "var": "r", "min": 1,
+      "inputs": 2,
+      "groundState": "GROUNDED"
+    }, {
+      "inputs": 2,
+      "groundState": "JUMPING"
+    }]
   },
   "jam": {
     "format": {
       "default": "Jam"
     },
-    "timingEntries": [
-      "WPJ"
-    ]
-  },
-  "bwjam": {
-    "format": {
-      "default": "BWJam"
-    },
-    "timingEntries": [
-      "SJ"
-    ]
+    "timingEntries": [{
+      "inputs": "wasd?",
+      "groundState": "JUMPING"
+    }]
   },
   "hh": {
     "format": {
@@ -103,34 +141,38 @@
       "x!=1": " {x}t",
       "x_ms": " ({x_ms}ms)"
     },
-    "timingEntries": [
-      "x{1,}:WP",
-      "WPJ"
-    ]
-  },
-  "bwhh": {
-    "format": {
-      "default": "BWHH",
-      "x!=1": " {x}t",
-      "x_ms": " ({x_ms}ms)"
-    },
-    "timingEntries": [
-      "x{1,}:S",
-      "SJ"
-    ]
+    "timingEntries": [{
+      "var": "x", "min": 1,
+      "inputs": "wasd?",
+      "groundState": "GROUNDED"
+    }, {
+      "inputs": 0,
+      "groundState": "JUMPING"
+    }]
   },
   "3bcbwmm": {
     "format": {
       "default": "3bc BWMM",
       "w!=1": " Walk {w}t"
     },
-    "timingEntries": [
-      "SJ",
-      "a:S!G",
-      "SG",
-      "w{1,}:SG",
-      "WPJ"
-    ]
+    "timingEntries": [{
+      "inputs": "S",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "S",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "S",
+      "groundState": "GROUNDED"
+    }, {
+      "var": "w", "min": 1,
+      "inputs": "S",
+      "groundState": "GROUNDED"
+    }, {
+      "inputs": "W",
+      "groundState": "JUMPING"
+    }]
   },
   "rexbwmm": {
     "format": {
@@ -139,27 +181,81 @@
       "s_ms": " ({s_ms}ms)",
       "w!=1": " Walk {w}t"
     },
-    "timingEntries": [
-      "SJ",
-      "a:S!G",
-      "SG",
-      "w{1,}:SG",
-      "s{1,1}:WAPJ",
-      "s:WAP!G",
-      "WP!G"
-    ]
+    "timingEntries": [{
+      "inputs": "S",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "S",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "S",
+      "groundState": "GROUNDED"
+    }, {
+      "var": "w", "min": 1,
+      "inputs": "S",
+      "groundState": "GROUNDED"
+    }, {
+      "var": "s",
+      "inputs": "WA",
+      "groundState": "JUMPING"
+    }, {
+      "var": "s", "min": 0,
+      "inputs": "WA",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "W",
+      "groundState": "AIRBORNE"
+    }],
+    "symmetrical": true
   },
   "mark": {
+    "format": {
+      "default": "{a}t Mark"
+    },
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "D",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "D",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "WD",
+      "groundState": "AIRBORNE"
+    }],
+    "symmetrical": true
+  },
+  "markrun": {
     "format": {
       "default": "{a}t Mark",
       "r!=1": " Run {r}t"
     },
-    "timingEntries": [
-      "DJ",
-      "a{1,}:D!G",
-      "b:WDP!G",
-      "r{1,}:WDPG"
-    ]
+    "timingEntries": [{
+      "var": "a",
+      "inputs": "D",
+      "groundState": "JUMPING"
+    }, {
+      "var": "a", "min": 0,
+      "inputs": "D",
+      "groundState": "AIRBORNE"
+    }, {
+      "min": 0,
+      "inputs": "WD",
+      "groundState": "AIRBORNE"
+    }, {
+      "inputs": "WD",
+      "groundState": "GROUNDED"
+    }, {
+      "var": "r", "min": 1,
+      "inputs": "WD",
+      "groundState": "GROUNDED"
+    }, {
+      "inputs": "Wd",
+      "groundState": "JUMPING"
+    }],
+    "symmetrical": true
   },
   "delayedhh": {
     "format": {
@@ -167,9 +263,15 @@
       "x!=1": " {x}t",
       "x_ms": " ({x_ms}ms)"
     },
-    "timingEntries": [
-      "x{1,}:W",
-      "WPJ"
-    ]
+    "timingEntries": [{
+      "var": "x", "min": 1,
+      "inputs": "Wad",
+      "sprint": false,
+      "groundState": "GROUNDED"
+    }, {
+      "inputs": 0,
+      "sprint": true,
+      "groundState": "JUMPING"
+    }]
   }
 }
