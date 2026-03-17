@@ -37,10 +37,12 @@ public class TimingInput implements Copyable<TimingInput> {
 
         ButtonMS.Button[] allButtons = ButtonMS.Button.values();
 
+        // Succeeds if exactly one key was held for the whole match, but not immediately before or after it
         int onlyPressedCurr = findSingleOnlyPressedCurr(befInputs, aftInputs, curInputsList);
         if (onlyPressedCurr != -1)
             return new Tuple<>(allButtons[onlyPressedCurr], allButtons[onlyPressedCurr]);
 
+        // Fails if a non-jump key changes
         for (int i = 0; i < curr.size() - 1; i++) {
             if (!curr.get(i).equalsIgnoreJump(curr.get(i + 1)))
                 return null;
@@ -50,6 +52,7 @@ public class TimingInput implements Copyable<TimingInput> {
 
         Tuple<Integer, Integer> interruptedByMovMod = findInterruptedByMove(befInputs, curInputs, aftInputs);
 
+        // Succeeds if a key press is "interrupted" on the last tick (except for the jump key since holding it midair does nothing)
         if (interruptedByMovMod.getFirst() != -1 && interruptedByMovMod.getSecond() != -1)
             return new Tuple<>(allButtons[interruptedByMovMod.getFirst()], allButtons[interruptedByMovMod.getSecond()]);
 
@@ -66,7 +69,14 @@ public class TimingInput implements Copyable<TimingInput> {
         };
     }
 
-    //returns -1 on multiple matches
+    /**
+     * Finds the only key that was held for the whole match.
+     *
+     * @param befInputs inputs before the match
+     * @param aftInputs inputs after the match
+     * @param curInputs inputs throughout the match
+     * @return the detected key's index in an {@link TimingInput#inputBoolList} if exactly one was found; {@code -1} otherwise
+     */
     private static int findSingleOnlyPressedCurr(boolean[] befInputs, boolean[] aftInputs, List<boolean[]> curInputs) {
         int index = -1;
         for (int i = 0; i < befInputs.length - 1; i++) {
@@ -86,7 +96,18 @@ public class TimingInput implements Copyable<TimingInput> {
         return inputVector.equals(other.inputVector) && P == other.P && N == other.N;
     }
 
-    //first and second can be -1
+    /**
+     * Finds the key change that occurs when entering the current state and the key change that occurs when exiting it,
+     * "interrupting" the previous one.
+     *
+     * @param befInputs inputs before the match
+     * @param curInputs inputs on the first match tick, assuming only the jump key state could change during the match
+     * @param aftInputs inputs after the match
+     * @return a {@link Tuple} containing the indices of the detected key changes:
+     *         the first element is the key change entering the current state,
+     *         and the second one is the key change exiting the current state.
+     *         If a change is not detected, the corresponding value is {@code -1}.
+     */
     private static Tuple<Integer, Integer> findInterruptedByMove(boolean[] befInputs, boolean[] curInputs, boolean[] aftInputs) {
         int first = findMovButtonDiff(befInputs, curInputs);
         int second = findFirstButtonDiff(curInputs, aftInputs);
