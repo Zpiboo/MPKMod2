@@ -4,7 +4,7 @@ import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.events.Event;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.infovars.InfoString;
-import io.github.kurrycat.mpkmod.ticks.TickInput;
+import io.github.kurrycat.mpkmod.util.input.TickInput;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 
 import java.text.SimpleDateFormat;

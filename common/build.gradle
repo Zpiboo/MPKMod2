@@ -10,7 +10,14 @@ dependencies {
     compileOnly 'org.apache.logging.log4j:log4j-api:2.0-beta9'
     compileOnly 'org.apache.logging.log4j:log4j-core:2.0-beta9'
 
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.2'
+
     library "com.github.MPKMod.MPKNetworkAPI:common:${project.networkApiVersion}"
+}
+
+test {
+    useJUnitPlatform()
 }
 
 compileJava.doLast {

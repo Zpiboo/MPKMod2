@@ -1,7 +1,6 @@
 package io.github.kurrycat.mpkmod.save;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,10 +29,6 @@ public class Serializer {
         module.addDeserializer(Color.class, new ColorDeserializer());
 
         mapper.registerModule(module);
-        mapper.enableDefaultTyping(
-                ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE,
-                JsonTypeInfo.As.PROPERTY
-        );
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
@@ -46,17 +41,19 @@ public class Serializer {
         mapper.configure(DeserializationFeature.FAIL_ON_MISSING_CREATOR_PROPERTIES, false);
     }
 
-    public static <T> void serialize(File configFile, T value) {
+    public static <T> void serialize(File configFile, T value, Class<T> c) {
         try {
-            mapper.writeValue(configFile, value);
+            mapper.writerFor(c)
+                    .writeValue(configFile, value);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static String serializeAsString(Object value) {
+    public static <T> String serializeAsString(T value, Class<T> c) {
         try {
-            return mapper.writeValueAsString(value);
+            return mapper.writerFor(c)
+                    .writeValueAsString(value);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
