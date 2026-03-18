@@ -1,4 +1,4 @@
-package io.github.kurrycat.mpkmod.ticks;
+package io.github.kurrycat.mpkmod.util.input;
 
 import io.github.kurrycat.mpkmod.util.Copyable;
 

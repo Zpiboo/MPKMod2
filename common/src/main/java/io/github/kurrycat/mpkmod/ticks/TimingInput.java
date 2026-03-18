@@ -2,36 +2,27 @@ package io.github.kurrycat.mpkmod.ticks;
 
 import io.github.kurrycat.mpkmod.util.Copyable;
 import io.github.kurrycat.mpkmod.util.Tuple;
+import io.github.kurrycat.mpkmod.util.input.InputVector;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class TimingInput implements Copyable<TimingInput> {
-    public boolean W, A, S, D, P, N, J;
-    public Boolean G = null;
-    public ButtonMSList msList = new ButtonMSList();
+    public final InputVector inputVector;
+    public final boolean P, N;
+    public final GroundState G;
+    public final ButtonMSList msList = new ButtonMSList();
 
-    public TimingInput(String inputString) {
-        W = inputString.contains("W");
-        A = inputString.contains("A");
-        S = inputString.contains("S");
-        D = inputString.contains("D");
-        P = inputString.contains("P");
-        N = inputString.contains("N");
-        J = inputString.contains("J");
-        if (inputString.contains("G"))
-            G = !inputString.contains("!G");
+    public TimingInput(boolean W, boolean A, boolean S, boolean D, boolean P, boolean N, boolean jump, boolean ground) {
+        this(
+                new InputVector(W, A, S, D),
+                P, N, GroundState.fromBooleans(jump, ground)
+        );
     }
-
-    public TimingInput(boolean W, boolean A, boolean S, boolean D, boolean P, boolean N, boolean J, Boolean G) {
-        this.W = W;
-        this.A = A;
-        this.S = S;
-        this.D = D;
+    public TimingInput(InputVector inputVector, boolean P, boolean N, GroundState G) {
+        this.inputVector = inputVector;
         this.P = P;
         this.N = N;
-        this.J = J;
         this.G = G;
     }
 
@@ -46,10 +37,12 @@ public class TimingInput implements Copyable<TimingInput> {
 
         ButtonMS.Button[] allButtons = ButtonMS.Button.values();
 
+        // Succeeds if exactly one key was held for the whole match, but not immediately before or after it
         int onlyPressedCurr = findSingleOnlyPressedCurr(befInputs, aftInputs, curInputsList);
         if (onlyPressedCurr != -1)
             return new Tuple<>(allButtons[onlyPressedCurr], allButtons[onlyPressedCurr]);
 
+        // Fails if a non-jump key changes
         for (int i = 0; i < curr.size() - 1; i++) {
             if (!curr.get(i).equalsIgnoreJump(curr.get(i + 1)))
                 return null;
@@ -59,6 +52,7 @@ public class TimingInput implements Copyable<TimingInput> {
 
         Tuple<Integer, Integer> interruptedByMovMod = findInterruptedByMove(befInputs, curInputs, aftInputs);
 
+        // Succeeds if a key press is "interrupted" on the last tick (except for the jump key since holding it midair does nothing)
         if (interruptedByMovMod.getFirst() != -1 && interruptedByMovMod.getSecond() != -1)
             return new Tuple<>(allButtons[interruptedByMovMod.getFirst()], allButtons[interruptedByMovMod.getSecond()]);
 
@@ -66,10 +60,23 @@ public class TimingInput implements Copyable<TimingInput> {
     }
 
     public boolean[] inputBoolList() {
-        return new boolean[]{W, A, S, D, P, N, J};
+        return new boolean[] {
+                inputVector.isW(),
+                inputVector.isA(),
+                inputVector.isS(),
+                inputVector.isD(),
+                P, N, G.jump
+        };
     }
 
-    //returns -1 on multiple matches
+    /**
+     * Finds the only key that was held for the whole match.
+     *
+     * @param befInputs inputs before the match
+     * @param aftInputs inputs after the match
+     * @param curInputs inputs throughout the match
+     * @return the detected key's index in an {@link TimingInput#inputBoolList} if exactly one was found; {@code -1} otherwise
+     */
     private static int findSingleOnlyPressedCurr(boolean[] befInputs, boolean[] aftInputs, List<boolean[]> curInputs) {
         int index = -1;
         for (int i = 0; i < befInputs.length - 1; i++) {
@@ -86,10 +93,21 @@ public class TimingInput implements Copyable<TimingInput> {
     }
 
     public boolean equalsIgnoreJump(TimingInput other) {
-        return W == other.W && A == other.A && S == other.S && D == other.D && P == other.P && N == other.N;
+        return inputVector.equals(other.inputVector) && P == other.P && N == other.N;
     }
 
-    //first and second can be -1
+    /**
+     * Finds the key change that occurs when entering the current state and the key change that occurs when exiting it,
+     * "interrupting" the previous one.
+     *
+     * @param befInputs inputs before the match
+     * @param curInputs inputs on the first match tick, assuming only the jump key state could change during the match
+     * @param aftInputs inputs after the match
+     * @return a {@link Tuple} containing the indices of the detected key changes:
+     *         the first element is the key change entering the current state,
+     *         and the second one is the key change exiting the current state.
+     *         If a change is not detected, the corresponding value is {@code -1}.
+     */
     private static Tuple<Integer, Integer> findInterruptedByMove(boolean[] befInputs, boolean[] curInputs, boolean[] aftInputs) {
         int first = findMovButtonDiff(befInputs, curInputs);
         int second = findFirstButtonDiff(curInputs, aftInputs);
@@ -119,12 +137,16 @@ public class TimingInput implements Copyable<TimingInput> {
     }
 
     public boolean isStopTick() {
-        return !W && !A && !S && !D && !P && !N && !J && G != null && G;
+        return inputVector.isStop() && !P && !N && G == GroundState.GROUNDED;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(W, A, S, D, P, N, J, G);
+        int h = inputVector.hashCode();
+        h = 31 * h + (P ? 1 : 0);
+        h = 31 * h + (N ? 1 : 0);
+        h = 31 * h + G.ordinal();
+        return h;
     }
 
     @Override
@@ -132,27 +154,24 @@ public class TimingInput implements Copyable<TimingInput> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TimingInput that = (TimingInput) o;
-        return W == that.W && A == that.A && S == that.S && D == that.D && P == that.P && N == that.N && J == that.J &&
-                (G == null || that.G == null || this.G == that.G);
+
+        return inputVector.equals(that.inputVector) && P == that.P && N == that.N && G == that.G;
     }
 
     @Override
     public String toString() {
-        return toInputs() + (G == null ? "" : (G ? "G" : "!G"));
+        return toInputString() + (G.ground ? "G" : "!G");
     }
 
-    public String toInputs() {
-        return (W ? "W" : "") +
-                (A ? "A" : "") +
-                (S ? "S" : "") +
-                (D ? "D" : "") +
+    public String toInputString() {
+        return inputVector.toString() +
                 (P ? "P" : "") +
                 (N ? "N" : "") +
-                (J ? "J" : "");
+                (G.jump ? "J" : "");
     }
 
     @Override
     public TimingInput copy() {
-        return new TimingInput(W, A, S, D, P, N, J, G);
+        return new TimingInput(inputVector, P, N, G);
     }
 }

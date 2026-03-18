@@ -1,7 +1,6 @@
 package io.github.kurrycat.mpkmod.save;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,10 +29,6 @@ public class Serializer {
         module.addDeserializer(Color.class, new ColorDeserializer());
 
         mapper.registerModule(module);
-        mapper.enableDefaultTyping(
-                ObjectMapper.DefaultTyping.OBJECT_AND_NON_CONCRETE,
-                JsonTypeInfo.As.PROPERTY
-        );
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
 
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
