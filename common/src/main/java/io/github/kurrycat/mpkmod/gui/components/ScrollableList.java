@@ -17,7 +17,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
     private final TextRectangle titleComponent;
     public Color backgroundColor = Theme.darkBackground;
     public Color edgeColor = Theme.darkEdge;
-    public ScrollBar<I> scrollBar;
+    public ScrollBar scrollBar;
     public Div topCover;
     public Div bottomCover;
     public Div content;
@@ -42,7 +42,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
         passPositionTo(content, PERCENT.SIZE);
         stretchYBetween(content, topCover, bottomCover);
 
-        scrollBar = new ScrollBar<>(this);
+        scrollBar = new ScrollBar();
         content.passPositionTo(scrollBar, PERCENT.SIZE_Y, Anchor.TOP_RIGHT);
         scrollBar.setSize(new Vector2D(scrollBar.barWidth, 1));
     }
@@ -217,8 +217,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
                 .forEach(i -> i.renderHover(mouse));
     }
 
-    public static class ScrollBar<I extends ScrollableListItem<I>> extends Component implements MouseInputListener {
-        private final ScrollableList<I> parentList;
+    public class ScrollBar extends Component implements MouseInputListener {
         public double barWidth = 11;
         public Color backgroundColor = Color.DARK_GRAY;
         public Color hoverColor = new Color(180, 180, 180);
@@ -226,10 +225,6 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
         private int scrollAmount = 0;
 
         private int clickedYOffset = -1;
-
-        public ScrollBar(ScrollableList<I> parentList) {
-            this.parentList = parentList;
-        }
 
         @Override
         public void render(Vector2D mouse) {
@@ -256,13 +251,13 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
         public int mapScrollAmountToScrollButtonPos() {
             return MathUtil.map(
                     scrollAmount,
-                    0, parentList.totalHeight() - getDisplayedSize().getYI() - 2,
+                    0, ScrollableList.this.totalHeight() - getDisplayedSize().getYI() - 2,
                     1, getDisplayedSize().getYI() - getScrollButtonHeight() - 1
             );
         }
 
         public int getScrollButtonHeight() {
-            int totalHeight = parentList.totalHeight();
+            int totalHeight = ScrollableList.this.totalHeight();
             if (totalHeight == 0) totalHeight++;
             return Math.min(MathUtil.sqr(getDisplayedSize().getYI() - 2) / totalHeight, getDisplayedSize().getYI() - 2);
         }
@@ -296,12 +291,12 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
             return MathUtil.map(
                     pos.getYI() - clickedYOffset - getDisplayedPos().getYI(),
                     1, getDisplayedSize().getYI() - getScrollButtonHeight() - 1,
-                    0, parentList.totalHeight() - getDisplayedSize().getYI() - 2
+                    0, ScrollableList.this.totalHeight() - getDisplayedSize().getYI() - 2
             );
         }
 
         public void constrainScrollAmountToScreen() {
-            scrollAmount = MathUtil.constrain(scrollAmount, 0, parentList.totalHeight() - getDisplayedSize().getYI() - 2);
+            scrollAmount = MathUtil.constrain(scrollAmount, 0, ScrollableList.this.totalHeight() - getDisplayedSize().getYI() - 2);
         }
 
         public void scrollBy(int delta) {
