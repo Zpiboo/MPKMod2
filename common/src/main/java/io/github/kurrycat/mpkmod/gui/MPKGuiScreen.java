@@ -14,16 +14,15 @@ import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListener, MouseScrollListener {
     private final GuiScreenRoot<Component> guiRoot = new GuiScreenRoot<>();
+    private final GuiScreenRoot<Pane<?>> panesRoot = new GuiScreenRoot<>();
 
-    public ArrayList<Pane<?>> openPanes = new ArrayList<>();
-    private boolean initialized = false;
     private String id = null;
+    private boolean initialized = false;
 
     public final String getID() {
         return id;
@@ -43,6 +42,11 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
         return guiRoot;
     }
 
+    public List<Pane<?>> getOpenPanes() {
+        return panesRoot.getChildren();
+    }
+
+    // TODO: figure out a better way to do this (only used for events, probably won't stay)
     protected List<Component> getComponents() {
         return getGuiRoot().getChildren();
     }
@@ -120,11 +124,10 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
         return handleMouseScroll(mouse, delta);
     }
 
-    // TODO: move pane checks to somewhere else (give them their own root?)
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
-        if (!openPanes.isEmpty())
-            openPanes.get(openPanes.size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
+        if (!getOpenPanes().isEmpty())
+            getOpenPanes().get(getOpenPanes().size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(KeyInputListener.class, getComponents()),
                 b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
@@ -133,8 +136,8 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
 
     @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
-        if (!openPanes.isEmpty()) {
-            Pane<?> topPane = openPanes.get(openPanes.size() - 1);
+        if (!getOpenPanes().isEmpty()) {
+            Pane<?> topPane = getOpenPanes().get(getOpenPanes().size() - 1);
             topPane.handleMouseInput(state, mousePos, button);
             if (topPane.isLoaded()) return true;
         }
@@ -146,8 +149,8 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
 
     @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
-        if (!openPanes.isEmpty())
-            openPanes.get(openPanes.size() - 1).handleMouseScroll(mousePos, delta);
+        if (!getOpenPanes().isEmpty())
+            getOpenPanes().get(getOpenPanes().size() - 1).handleMouseScroll(mousePos, delta);
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(MouseScrollListener.class, getComponents()),
                 b -> b.handleMouseScroll(mousePos, delta)
@@ -155,17 +158,17 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
     }
 
     public final void drawScreen(Vector2D mouse, float partialTicks) {
-        if (openPanes.isEmpty() || openPanes.get(openPanes.size() - 1) instanceof PopupMenu) drawDefaultBackground();
-        Vector2D hoverMousePos = openPanes.isEmpty() ? mouse : new Vector2D(-1, -1);
+        if (getOpenPanes().isEmpty() || getOpenPanes().get(getOpenPanes().size() - 1) instanceof PopupMenu) drawDefaultBackground();
+        Vector2D hoverMousePos = getOpenPanes().isEmpty() ? mouse : new Vector2D(-1, -1);
 
         renderScreen(hoverMousePos, partialTicks);
 
-        if (!openPanes.isEmpty()) {
-            Pane<?> last = openPanes.get(openPanes.size() - 1);
+        if (!getOpenPanes().isEmpty()) {
+            Pane<?> last = getOpenPanes().get(getOpenPanes().size() - 1);
             if (!(last instanceof PopupMenu))
                 drawDefaultBackground();
-            for (int i = 0; i < openPanes.size() - 1; i++) {
-                openPanes.get(i).render(Vector2D.OFFSCREEN);
+            for (int i = 0; i < getOpenPanes().size() - 1; i++) {
+                getOpenPanes().get(i).render(Vector2D.OFFSCREEN);
             }
             last.render(mouse);
         }
@@ -195,13 +198,13 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
 
     @SuppressWarnings("unchecked")
     public <T extends MPKGuiScreen> void openPane(Pane<T> p) {
-        openPanes.add(p);
+        panesRoot.addChild(p);
         p.setScreen((T) this);
         p.setLoaded(true);
     }
 
     public <T extends MPKGuiScreen> void closePane(Pane<T> p) {
-        openPanes.remove(p);
+        panesRoot.removeChild(p);
         p.setLoaded(false);
     }
 
@@ -211,8 +214,8 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
     }
 
     public final void closeAllPanes() {
-        for (int i = openPanes.size() - 1; i >= 0; i--) {
-            openPanes.get(i).close();
+        for (int i = getOpenPanes().size() - 1; i >= 0; i--) {
+            getOpenPanes().get(i).close();
         }
     }
 

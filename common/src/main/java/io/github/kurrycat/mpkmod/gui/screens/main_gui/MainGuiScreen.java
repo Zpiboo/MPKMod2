@@ -184,7 +184,7 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
     public <T extends MPKGuiScreen> void closePane(Pane<T> p) {
         super.closePane(p);
 
-        if (openPanes.isEmpty())
+        if (getOpenPanes().isEmpty())
             highlighted.clear();
     }
 
@@ -436,8 +436,8 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
 
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
-        if (!openPanes.isEmpty())
-            openPanes.get(openPanes.size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
+        if (!getOpenPanes().isEmpty())
+            getOpenPanes().get(getOpenPanes().size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(KeyInputListener.class, getGuiRoot().getChildren(), getHudRoot().getChildren()),
                 b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
@@ -446,8 +446,8 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
 
     @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
-        if (!openPanes.isEmpty()) {
-            Pane<?> topPane = openPanes.get(openPanes.size() - 1);
+        if (!getOpenPanes().isEmpty()) {
+            Pane<?> topPane = getOpenPanes().get(getOpenPanes().size() - 1);
             topPane.handleMouseInput(state, mousePos, button);
             if (topPane.isLoaded()) return true;
         }
@@ -459,8 +459,8 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
 
     @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
-        if (!openPanes.isEmpty())
-            openPanes.get(openPanes.size() - 1).handleMouseScroll(mousePos, delta);
+        if (!getOpenPanes().isEmpty())
+            getOpenPanes().get(getOpenPanes().size() - 1).handleMouseScroll(mousePos, delta);
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(MouseScrollListener.class, getGuiRoot().getChildren(), getHudRoot().getChildren()),
                 b -> b.handleMouseScroll(mousePos, delta)
