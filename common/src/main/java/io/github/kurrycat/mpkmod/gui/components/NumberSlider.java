@@ -11,7 +11,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class NumberSlider extends ComponentHolder implements MouseInputListener, MouseScrollListener {
+public class NumberSlider extends Component implements MouseInputListener, MouseScrollListener {
     private final SliderCallback sliderCallback;
     private final double from, to, step;
     private final Button button;
@@ -36,7 +36,7 @@ public class NumberSlider extends ComponentHolder implements MouseInputListener,
                 new Vector2D(getRelativeXPosFromValue(), 1),
                 new Vector2D(getSliderWidth(), -2)
         );
-        passPositionTo(this.button, PERCENT.NONE, Anchor.TOP_LEFT);
+        passPositionTo(this.button.setAnchors(Anchor.TOP_LEFT));
         this.button.hoverColor = buttonHoverColor;
         this.button.normalColor = buttonColor;
         this.button.pressedColor = buttonPressedColor;
@@ -45,7 +45,10 @@ public class NumberSlider extends ComponentHolder implements MouseInputListener,
                 MathUtil.formatDecimals(value, 5, false),
                 null, Theme.defaultText
         );
-        passPositionTo(valueTextRect, PERCENT.SIZE, Anchor.CENTER);
+        passPositionTo(valueTextRect
+                .setPercentFlag(PERCENT.SIZE)
+                .setAnchors(Anchor.CENTER)
+        );
     }
 
     private double getRelativeXPosFromValue() {

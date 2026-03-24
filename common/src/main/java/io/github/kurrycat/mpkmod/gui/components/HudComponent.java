@@ -9,7 +9,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
         use = JsonTypeInfo.Id.CLASS,
         include = JsonTypeInfo.As.PROPERTY
 )
-public abstract class HudComponent extends ComponentHolder {
+public abstract class HudComponent extends Component {
     public boolean selected = false;
     public boolean highlighted = false;
 
@@ -61,7 +61,7 @@ public abstract class HudComponent extends ComponentHolder {
         menu.addComponent(
                 new Button("Delete", Vector2D.OFFSCREEN, new Vector2D(30, 11), mouseButton -> {
                     if (Mouse.Button.LEFT.equals(mouseButton)) {
-                        menu.paneHolder.removeComponent(this);
+                        menu.screen.removeHudComponent(this);
                         menu.close();
                     }
                 })

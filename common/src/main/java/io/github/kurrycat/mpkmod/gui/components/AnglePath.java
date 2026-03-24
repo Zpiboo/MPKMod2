@@ -114,7 +114,7 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
         if (!fullScreen || isInMainGui) {
             Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1,
                     selected ? selectedColor : Theme.lightBackground, Theme.lightEdge);
-            long latestTime = dataPoints.size() == 0 ? 0 : dataPoints.getFirst().tickTime;
+            long latestTime = dataPoints.isEmpty() ? 0 : dataPoints.getFirst().tickTime;
             if (latestTime - displayTime >= timeWindow) {
                 double size = (double) timeWindow / (latestTime - startTime) * (getDisplayedSize().getX() - 2);
                 double pos = MathUtil.map(displayTime, startTime, latestTime - timeWindow,
@@ -220,7 +220,7 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
         menu.addComponent(
                 new Button("Delete", mouseButton -> {
                     if (Mouse.Button.LEFT.equals(mouseButton)) {
-                        menu.paneHolder.removeComponent(this);
+                        menu.screen.removeHudComponent(this);
                         menu.close();
                     }
                 })
@@ -242,7 +242,7 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
     public enum Mode {
         X_Y,
         X_TIME,
-        Y_TIME;
+        Y_TIME
     }
 
     protected static class DataPoint {

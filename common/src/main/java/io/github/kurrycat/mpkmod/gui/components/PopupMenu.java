@@ -12,7 +12,7 @@ public class PopupMenu extends Pane<MainGuiScreen> {
 
     public PopupMenu() {
         super(Vector2D.OFFSCREEN, new Vector2D(0, 1));
-        this.components.clear();
+        this.children.clear();
     }
 
     @SuppressWarnings("unused")
@@ -34,14 +34,14 @@ public class PopupMenu extends Pane<MainGuiScreen> {
 
     public void addComponent(Component c, int percentFlag) {
         c.setPos(new Vector2D(1, getDisplayedSize().getY()));
-        addChild(c, percentFlag, Anchor.TOP_LEFT);
+        addChild(c.setPercentFlag(percentFlag));
         this.setSize(
                 new Vector2D(
                         Math.max(c.getDisplayedSize().getX() + 2, this.getDisplayedSize().getX()),
                         getDisplayedSize().getY() + c.getDisplayedSize().getY() + 1
                 )
         );
-        for (Component comp : components) {
+        for (Component comp : children) {
             comp.setSize(new Vector2D(-2, comp.getDisplayedSize().getY()));
         }
     }

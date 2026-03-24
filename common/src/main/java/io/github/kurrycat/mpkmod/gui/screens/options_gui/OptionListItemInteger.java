@@ -16,7 +16,10 @@ public class OptionListItemInteger extends OptionListItem {
             this.value = content.getContent();
         });
 
-        addChild(inputField, PERCENT.SIZE_X, Anchor.CENTER_RIGHT);
+        addChild(inputField
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.CENTER_RIGHT)
+        );
     }
 
     @Override

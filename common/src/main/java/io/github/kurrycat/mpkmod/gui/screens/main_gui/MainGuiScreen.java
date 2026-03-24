@@ -5,7 +5,7 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.components.Button;
-import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.Component.PERCENT;
 import io.github.kurrycat.mpkmod.gui.components.PopupMenu;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
@@ -21,17 +21,22 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyInputListener, MouseInputListener, MouseScrollListener {
+public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
+    private final GuiScreenRoot<HudComponent> hudRoot = new GuiScreenRoot<>();
+
     public OptionsPane optionsPane = null;
     public LoadConfigPane loadConfigPane = null;
     public SaveConfigPane saveConfigPane = null;
-    public ArrayList<HudComponent> movableComponents = new ArrayList<>();
     public Set<HudComponent> selected = new HashSet<>();
     public Set<HudComponent> holding = new HashSet<>();
     public Set<HudComponent> highlighted = new HashSet<>();
     private Vector2D lastClickedPos = null;
     private HudComponent lastClicked = null;
     private Vector2D holdingSetPosOffset = null;
+
+    public GuiScreenRoot<HudComponent> getHudRoot() {
+        return hudRoot;
+    }
 
     @Override
     public boolean shouldCreateKeyBind() {
@@ -41,8 +46,8 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
     @Override
     public void onGuiInit() {
         super.onGuiInit();
-        movableComponents.clear();
-        components.clear();
+        getHudRoot().clearChildren();
+
         selected.clear();
         holding.clear();
         highlighted.clear();
@@ -52,48 +57,54 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
 
         reloadConfig();
 
-        addChild(new Button(
-                "Save",
-                new Vector2D(115, 5),
-                new Vector2D(50, 20),
-                mouseButton -> MainGuiScreen.this.openPane(saveConfigPane)
-        ), PERCENT.NONE, Anchor.BOTTOM_RIGHT);
+        getGuiRoot().addChild(
+                new Button(
+                        "Save",
+                        new Vector2D(115, 5),
+                        new Vector2D(50, 20),
+                        mouseButton -> MainGuiScreen.this.openPane(saveConfigPane)
+                ).setAnchors(Anchor.BOTTOM_RIGHT)
+        );
 
-        addChild(
+        getGuiRoot().addChild(
                 new Button(
                         "Load File",
                         new Vector2D(60, 5),
                         new Vector2D(50, 20),
                         mouseButton -> MainGuiScreen.this.openPane(loadConfigPane)
-                ),
-                PERCENT.NONE, Anchor.BOTTOM_RIGHT
+                ).setAnchors(Anchor.BOTTOM_RIGHT)
         );
 
-        addChild(
+        getGuiRoot().addChild(
                 new Button(
                         "Options",
                         new Vector2D(5, 5),
                         new Vector2D(50, 20),
                         mouseButton -> MainGuiScreen.this.openPane(optionsPane)
-                ),
-                PERCENT.NONE, Anchor.BOTTOM_RIGHT
+                ).setAnchors(Anchor.BOTTOM_RIGHT)
         );
 
-        optionsPane = new OptionsPane(Vector2D.ZERO, new Vector2D(3 / 5D, 3 / 5D));
-        passPositionTo(optionsPane, PERCENT.ALL, Anchor.CENTER);
+        optionsPane = new OptionsPane(Vector2D.ZERO, new Vector2D(3 / 5D, 3 / 5D))
+                .setPercentFlag(PERCENT.ALL)
+                .setAnchors(Anchor.CENTER);
+        getGuiRoot().passPositionTo(optionsPane);
 
-        loadConfigPane = new LoadConfigPane(Vector2D.ZERO, new Vector2D(3 / 5D, 1));
-        passPositionTo(loadConfigPane, PERCENT.ALL, Anchor.CENTER);
+        loadConfigPane = new LoadConfigPane(Vector2D.ZERO, new Vector2D(3 / 5D, 1))
+                .setPercentFlag(PERCENT.ALL)
+                .setAnchors(Anchor.CENTER);
+        getGuiRoot().passPositionTo(loadConfigPane);
 
-        saveConfigPane = new SaveConfigPane(Vector2D.ZERO, new Vector2D(3 / 5D, 1));
-        passPositionTo(saveConfigPane, PERCENT.ALL, Anchor.CENTER);
+        saveConfigPane = new SaveConfigPane(Vector2D.ZERO, new Vector2D(3 / 5D, 1))
+                .setPercentFlag(PERCENT.ALL)
+                .setAnchors(Anchor.CENTER);
+        getGuiRoot().passPositionTo(saveConfigPane);
     }
 
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        movableComponents.forEach(c -> c.setSelected(false));
-        movableComponents.forEach(c -> c.setHighlighted(false));
+        getHudRoot().getChildren().forEach(c -> c.setSelected(false));
+        getHudRoot().getChildren().forEach(c -> c.setHighlighted(false));
         selected.clear();
         holding.clear();
         highlighted.clear();
@@ -111,10 +122,11 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
 
     @Override
     public void renderScreen(Vector2D mouse, float partialTicks) {
-        movableComponents.forEach(c -> c.setSelected(selected.contains(c)));
-        movableComponents.forEach(c -> c.setHighlighted(highlighted.contains(c)));
+        getHudRoot().getChildren().forEach(c -> c.setSelected(selected.contains(c)));
+        getHudRoot().getChildren().forEach(c -> c.setHighlighted(highlighted.contains(c)));
 
-        for (HudComponent component : movableComponents) {
+        for (HudComponent component : getHudRoot().getChildren()) {
+            component.updatePosAndSize();
             if (holding.contains(component)) {
                 Vector2D offset = component.getRenderOffset();
                 component.setRenderOffset(Vector2D.ZERO);
@@ -123,7 +135,7 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
             } else component.render(mouse);
         }
 
-        for (Component b : components) b.render(mouse);
+        super.renderScreen(mouse, partialTicks);
 
         if (!holding.isEmpty()) {
             BoundingBox2D containingHolding = boundingBoxContainingAll(new ArrayList<>(holding));
@@ -145,16 +157,6 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
             Vector2D s = new Vector2D(Math.max(lastClickedPos.getX(), mouse.getX()), Math.max(lastClickedPos.getY(), mouse.getY())).sub(p);
             Renderer2D.drawHollowRect(p, s, 1, Color.RED);
         }
-
-        if (!openPanes.isEmpty()) {
-            Pane<?> last = openPanes.get(openPanes.size() - 1);
-            if (!(last instanceof PopupMenu))
-                drawDefaultBackground();
-            for (int i = 0; i < openPanes.size() - 1; i++) {
-                openPanes.get(i).render(Vector2D.OFFSCREEN);
-            }
-            last.render(mouse);
-        }
     }
 
     public void addHudComponent(HudComponent c) {
@@ -168,13 +170,13 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
     }
 
     public void reloadConfig() {
-        movableComponents = new ArrayList<>(LabelConfiguration.currentConfig.components);
-        movableComponents.forEach(this::passPositionTo);
+        getHudRoot().clearChildren();
+        LabelConfiguration.currentConfig.components.forEach(getHudRoot()::addChild);
     }
 
     @Override
     public <T extends MPKGuiScreen> void openPane(Pane<T> p) {
-        super.openPane(p, pos);
+        super.openPane(p);
         cleanupScreen();
     }
 
@@ -188,13 +190,13 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
 
     @Override
     public void postMessage(String receiverID, String content, boolean highlighted) {
-        MessageQueue q = MessageQueue.getReceiverFor(receiverID, ItrUtil.getAllOfType(MessageQueue.class, movableComponents));
+        MessageQueue q = MessageQueue.getReceiverFor(receiverID, ItrUtil.getAllOfType(MessageQueue.class, getHudRoot().getChildren()));
         if (q != null)
             q.postMessage(content, highlighted);
     }
 
     public ArrayList<HudComponent> overlap(Vector2D p1, Vector2D p2) {
-        return movableComponents.stream().filter(
+        return getHudRoot().getChildren().stream().filter(
                 c -> {
                     Vector2D c1 = c.getDisplayedPos();
                     Vector2D c2 = c.getDisplayedPos().add(c.getDisplayedSize());
@@ -214,7 +216,7 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
     }
 
     public ArrayList<HudComponent> findContainPos(Vector2D p) {
-        return movableComponents.stream().filter(c -> c.contains(p)).collect(Collectors.toCollection(ArrayList::new));
+        return getHudRoot().getChildren().stream().filter(c -> c.contains(p)).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public BoundingBox2D boundingBoxContainingAll(ArrayList<HudComponent> components) {
@@ -236,10 +238,8 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
     }
 
     @Override
-    public void onKeyEvent(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
-        super.onKeyEvent(keyCode, keyCode, modifiers, isCharTyped);
-
-        if (handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)) return;
+    public boolean onKeyEvent(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
+        if (super.onKeyEvent(keyCode, keyCode, modifiers, isCharTyped)) return true;
 
         if (!isCharTyped && !selected.isEmpty()) {
             Vector2D arrowKeyMove = Vector2D.ZERO;
@@ -260,20 +260,20 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
             BoundingBox2D containingSelected = boundingBoxContainingAll(new ArrayList<>(selected));
             Vector2D toMove = arrowKeyMove.constrain(
                     Vector2D.ZERO.sub(containingSelected.getMin()),
-                    getDisplayedSize().sub(containingSelected.getMax())
+                    getScreenSize().sub(containingSelected.getMax())
             );
 
             selected.forEach(c -> c.addPos(toMove));
         }
+
+        return true;
     }
 
     @Override
-    public void onMouseClicked(Vector2D mouse, int mouseButton) {
-        super.onMouseClicked(mouse, mouseButton);
+    public boolean onMouseClicked(Vector2D mouse, int mouseButton) {
+        if (super.onMouseClicked(mouse, mouseButton)) return true;
 
-        if (handleMouseInput(Mouse.State.DOWN, mouse, Mouse.Button.fromInt(mouseButton))) return;
-
-        if (movableComponents.isEmpty()) return;
+        if (getHudRoot().getChildren().isEmpty()) return true;
 
         if (Mouse.Button.LEFT.equals(mouseButton)) {
             highlighted.clear();
@@ -310,14 +310,14 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
                             )
                     );
                 }
-            } else if (selected.size() > 0) {
+            } else if (!selected.isEmpty()) {
                 highlighted.addAll(selected);
                 selected.clear();
                 PopupMenu menu = new PopupMenu();
                 menu.addComponent(new Button("Delete", b -> {
                     if (b != Mouse.Button.LEFT) return;
                     for (HudComponent c : highlighted)
-                        menu.paneHolder.removeComponent(c);
+                        menu.screen.removeHudComponent(c);
                     menu.close();
                 }));
                 openPane(menu, mouse);
@@ -383,26 +383,26 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
                 openPane(menu, mouse);
             }
         }
+
+        return true;
     }
 
     @Override
-    public void onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {
-        super.onMouseClickMove(mouse, mouseButton, timeSinceLastClick);
+    public boolean onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {
+        if (super.onMouseClickMove(mouse, mouseButton, timeSinceLastClick)) return true;
 
-        if (handleMouseInput(Mouse.State.DRAG, mouse, Mouse.Button.fromInt(mouseButton))) return;
-
-        if (movableComponents.isEmpty()) return;
+        if (getHudRoot().getChildren().isEmpty()) return true;
 
         selected = selected.stream().filter(c -> holding.contains(c)).collect(Collectors.toCollection(HashSet::new));
+
+        return true;
     }
 
     @Override
-    public void onMouseReleased(Vector2D mouse, int mouseButton) {
-        super.onMouseReleased(mouse, mouseButton);
+    public boolean onMouseReleased(Vector2D mouse, int mouseButton) {
+        if (super.onMouseReleased(mouse, mouseButton)) return true;
 
-        if (handleMouseInput(Mouse.State.UP, mouse, Mouse.Button.fromInt(mouseButton))) return;
-
-        if (movableComponents.isEmpty()) return;
+        if (getHudRoot().getChildren().isEmpty()) return true;
 
         if (Mouse.Button.LEFT.equals(mouseButton) && lastClickedPos != null) {
             boolean moved = lastClickedPos.sub(mouse).lengthSqr() > 3 * 3;
@@ -430,11 +430,8 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
             lastClickedPos = null;
             lastClicked = null;
         }
-    }
 
-    @Override
-    public void onMouseScroll(Vector2D mousePos, int delta) {
-        handleMouseScroll(mousePos, delta);
+        return true;
     }
 
     @Override
@@ -442,7 +439,7 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
         if (!openPanes.isEmpty())
             openPanes.get(openPanes.size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
         return ItrUtil.orMap(
-                ItrUtil.getAllOfType(KeyInputListener.class, components, movableComponents),
+                ItrUtil.getAllOfType(KeyInputListener.class, getGuiRoot().getChildren(), getHudRoot().getChildren()),
                 b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
         );
     }
@@ -455,7 +452,7 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
             if (topPane.isLoaded()) return true;
         }
         return ItrUtil.orMap(
-                ItrUtil.getAllOfType(MouseInputListener.class, components, movableComponents),
+                ItrUtil.getAllOfType(MouseInputListener.class, getGuiRoot().getChildren(), getHudRoot().getChildren()),
                 b -> b.handleMouseInput(state, mousePos, button)
         );
     }
@@ -465,7 +462,7 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver, KeyI
         if (!openPanes.isEmpty())
             openPanes.get(openPanes.size() - 1).handleMouseScroll(mousePos, delta);
         return ItrUtil.orMap(
-                ItrUtil.getAllOfType(MouseScrollListener.class, components, movableComponents),
+                ItrUtil.getAllOfType(MouseScrollListener.class, getGuiRoot().getChildren(), getHudRoot().getChildren()),
                 b -> b.handleMouseScroll(mousePos, delta)
         );
     }

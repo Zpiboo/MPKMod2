@@ -13,7 +13,7 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.function.Consumer;
 
-public class ColorSelector extends ComponentHolder implements KeyInputListener, MouseInputListener, MouseScrollListener {
+public class ColorSelector extends Component implements KeyInputListener, MouseInputListener, MouseScrollListener {
     private final NumberSlider red, green, blue, alpha;
     private final InputField color;
     private final Consumer<Color> onChange;
@@ -34,7 +34,7 @@ public class ColorSelector extends ComponentHolder implements KeyInputListener, 
                 newValue -> sliderValueChanged(new Color((int) newValue, this.value.getGreen(), this.value.getBlue(), this.value.getAlpha()))
         );
         currY += this.red.getDisplayedSize().getY() + 1;
-        passPositionTo(this.red, PERCENT.NONE, Anchor.TOP_LEFT);
+        passPositionTo(this.red.setAnchors(Anchor.TOP_LEFT));
 
         this.green = new NumberSlider(0, 255, 1, value.getGreen(),
                 new Vector2D(1, currY),
@@ -42,7 +42,7 @@ public class ColorSelector extends ComponentHolder implements KeyInputListener, 
                 newValue -> sliderValueChanged(new Color(this.value.getRed(), (int) newValue, this.value.getBlue(), this.value.getAlpha()))
         );
         currY += this.green.getDisplayedSize().getY() + 1;
-        passPositionTo(this.green, PERCENT.NONE, Anchor.TOP_LEFT);
+        passPositionTo(this.green.setAnchors(Anchor.TOP_LEFT));
 
         this.blue = new NumberSlider(0, 255, 1, value.getBlue(),
                 new Vector2D(1, currY),
@@ -50,7 +50,7 @@ public class ColorSelector extends ComponentHolder implements KeyInputListener, 
                 newValue -> sliderValueChanged(new Color(this.value.getRed(), this.value.getGreen(), (int) newValue, this.value.getAlpha()))
         );
         currY += this.blue.getDisplayedSize().getY() + 1;
-        passPositionTo(this.blue, PERCENT.NONE, Anchor.TOP_LEFT);
+        passPositionTo(this.blue.setAnchors(Anchor.TOP_LEFT));
 
         this.alpha = new NumberSlider(0, 255, 1, value.getAlpha(),
                 new Vector2D(1, currY),
@@ -58,12 +58,12 @@ public class ColorSelector extends ComponentHolder implements KeyInputListener, 
                 newValue -> sliderValueChanged(new Color(this.value.getRed(), this.value.getGreen(), this.value.getBlue(), (int) newValue))
         );
         currY += this.alpha.getDisplayedSize().getY() + 1;
-        passPositionTo(this.alpha, PERCENT.NONE, Anchor.TOP_LEFT);
+        passPositionTo(this.alpha.setAnchors(Anchor.TOP_LEFT));
 
         this.color = new InputField(ColorUtil.colorToHex(this.value), new Vector2D(1, currY + 3), width)
                 .setOnContentChange(content -> inputValueChanged(content.getContent()))
                 .setFilter(InputField.FILTER_HEX);
-        passPositionTo(this.color, PERCENT.NONE, Anchor.TOP_LEFT);
+        passPositionTo(this.color.setAnchors(Anchor.TOP_LEFT));
 
         this.setSize(
                 new Vector2D(

@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
+public class ScrollableList<I extends ScrollableListItem<I>> extends Component implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
     public final List<I> items = new CopyOnWriteArrayList<>();
     private final TextRectangle titleComponent;
     public Color backgroundColor = Theme.darkBackground;
@@ -23,27 +23,34 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
     public Div content;
 
     public ScrollableList() {
-        topCover = new Div(new Vector2D(0, 0), new Vector2D(1, 0));
+        topCover = new Div(new Vector2D(0, 0), new Vector2D(1, 0))
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.TOP_LEFT);
         topCover.backgroundColor = backgroundColor;
-        passPositionTo(topCover, PERCENT.SIZE_X, Anchor.TOP_LEFT);
+        passPositionTo(topCover);
 
         titleComponent = new TextRectangle(
                 new Vector2D(0, 0),
                 new Vector2D(1, 1),
                 "", null, Color.WHITE
-        );
-        topCover.addChild(titleComponent, PERCENT.SIZE);
+        ).setPercentFlag(PERCENT.SIZE);
+        topCover.addChild(titleComponent);
 
-        bottomCover = new Div(new Vector2D(0, 0), new Vector2D(1, 0));
+        bottomCover = new Div(new Vector2D(0, 0), new Vector2D(1, 0))
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.BOTTOM_LEFT);
         bottomCover.backgroundColor = backgroundColor;
-        passPositionTo(bottomCover, PERCENT.SIZE_X, Anchor.BOTTOM_LEFT);
+        passPositionTo(bottomCover);
 
-        content = new Div(new Vector2D(0, 0), new Vector2D(1, 1));
-        passPositionTo(content, PERCENT.SIZE);
+        content = new Div(new Vector2D(0, 0), new Vector2D(1, 1))
+                .setPercentFlag(PERCENT.SIZE);
+        passPositionTo(content);
         stretchYBetween(content, topCover, bottomCover);
 
-        scrollBar = new ScrollBar();
-        content.passPositionTo(scrollBar, PERCENT.SIZE_Y, Anchor.TOP_RIGHT);
+        scrollBar = new ScrollBar()
+                .setPercentFlag(PERCENT.SIZE_Y)
+                .setAnchors(Anchor.TOP_RIGHT);
+        content.passPositionTo(scrollBar);
         scrollBar.setSize(new Vector2D(scrollBar.barWidth, 1));
     }
 
@@ -58,9 +65,9 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
     }
 
     public void renderComponents(Vector2D mouse) {
-        components.forEach(c -> c.render(mouse));
-        topCover.components.forEach(c -> c.render(mouse));
-        bottomCover.components.forEach(c -> c.render(mouse));
+        children.forEach(c -> c.render(mouse));
+        topCover.children.forEach(c -> c.render(mouse));
+        bottomCover.children.forEach(c -> c.render(mouse));
     }
 
     @Override
@@ -165,7 +172,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
 
         return itemClicked ||
                 ItrUtil.orMapAll(
-                        ItrUtil.getAllOfType(MouseInputListener.class, components, topCover.components, bottomCover.components),
+                        ItrUtil.getAllOfType(MouseInputListener.class, children, topCover.children, bottomCover.children),
                         e -> e.handleMouseInput(state, mousePos, button)
                 ) || contains(mousePos);
     }
@@ -185,7 +192,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
 
         if (itemClicked ||
                 ItrUtil.orMapAll(
-                        ItrUtil.getAllOfType(MouseScrollListener.class, components, topCover.components, bottomCover.components),
+                        ItrUtil.getAllOfType(MouseScrollListener.class, children, topCover.children, bottomCover.children),
                         e -> e.handleMouseScroll(mousePos, delta)
                 )
         ) return true;
@@ -205,7 +212,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
         }
         return itemClicked ||
                 ItrUtil.orMapAll(
-                        ItrUtil.getAllOfType(KeyInputListener.class, components, topCover.components, bottomCover.components),
+                        ItrUtil.getAllOfType(KeyInputListener.class, children, topCover.children, bottomCover.children),
                         e -> e.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
                 );
     }
@@ -213,7 +220,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHo
     @Override
     public void renderHover(Vector2D mouse) {
         getItems().forEach(i -> i.renderHover(mouse));
-        ItrUtil.getAllOfType(HoverComponent.class, components, topCover.components, bottomCover.components)
+        ItrUtil.getAllOfType(HoverComponent.class, children, topCover.children, bottomCover.children)
                 .forEach(i -> i.renderHover(mouse));
     }
 

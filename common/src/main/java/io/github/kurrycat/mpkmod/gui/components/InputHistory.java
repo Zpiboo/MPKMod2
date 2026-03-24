@@ -108,7 +108,7 @@ public class InputHistory extends ResizableComponent {
         menu.addComponent(
                 new Button("Delete", mouseButton -> {
                     if (Mouse.Button.LEFT.equals(mouseButton)) {
-                        menu.paneHolder.removeComponent(this);
+                        menu.screen.removeHudComponent(this);
                         menu.close();
                     }
                 })

@@ -13,10 +13,10 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Pane<T extends MPKGuiScreen> extends Component implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = Theme.darkBackground;
 
-    public T paneHolder = null;
+    public T screen = null;
 
     private boolean loaded;
 
@@ -25,7 +25,7 @@ public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements Mou
         this.setSize(size);
         this.loaded = false;
 
-        this.addChild(createCloseButton(), PERCENT.NONE, Anchor.TOP_RIGHT);
+        this.addChild(createCloseButton().setAnchors(Anchor.TOP_RIGHT));
     }
 
     public Button createCloseButton() {
@@ -38,8 +38,8 @@ public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements Mou
     }
 
     public void close() {
-        if (paneHolder == null) return;
-        paneHolder.closePane(this);
+        if (screen == null) return;
+        screen.closePane(this);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements Mou
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
-                    ItrUtil.getAllOfType(MouseInputListener.class, components),
+                    ItrUtil.getAllOfType(MouseInputListener.class, children),
                     b -> b.handleMouseInput(state, mousePos, button)
             );
         }
@@ -64,7 +64,7 @@ public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements Mou
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
-                    ItrUtil.getAllOfType(MouseScrollListener.class, components),
+                    ItrUtil.getAllOfType(MouseScrollListener.class, children),
                     b -> b.handleMouseScroll(mousePos, delta)
             );
         }
@@ -79,8 +79,8 @@ public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements Mou
         this.loaded = loaded;
     }
 
-    public void setPaneHolder(T p) {
-        this.paneHolder = p;
+    public void setScreen(T p) {
+        this.screen = p;
     }
 
     public void addTitle(String title) {
@@ -90,15 +90,15 @@ public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements Mou
                 Colors.UNDERLINE.getCode() + title,
                 new Color(0, 0, 0, 0),
                 Color.WHITE
-        );
-        addChild(titleRect, PERCENT.SIZE_X, Anchor.TOP_CENTER);
+        ).setPercentFlag(PERCENT.SIZE_X).setAnchors(Anchor.TOP_CENTER);
+        addChild(titleRect);
     }
 
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
-                    ItrUtil.getAllOfType(KeyInputListener.class, components),
+                    ItrUtil.getAllOfType(KeyInputListener.class, children),
                     b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
             );
         }

@@ -30,8 +30,8 @@ public class OptionsPane extends Pane<MainGuiScreen> {
         OptionList optionList = new OptionList(
                 new Vector2D(0, 0.05),
                 new Vector2D(0.9, 0.8)
-        );
-        addChild(optionList, PERCENT.ALL, Anchor.CENTER);
+        ).setPercentFlag(PERCENT.ALL).setAnchors(Anchor.CENTER);
+        addChild(optionList);
 
         OptionItem pkcOption = new OptionItem(optionList);
         pkcOption.setHeight(20);
@@ -41,10 +41,11 @@ public class OptionsPane extends Pane<MainGuiScreen> {
                 "Radius:",
                 new Color(0, 0, 0, 0),
                 Color.WHITE
-        );
-        pkcOption.addChild(radiusText, PERCENT.SIZE_Y);
-        Div pkcContent = new Div(new Vector2D(0, 0), new Vector2D(-2, -2));
-        pkcOption.addChild(pkcContent, PERCENT.NONE, Anchor.CENTER);
+        ).setPercentFlag(PERCENT.SIZE_Y);
+        pkcOption.addChild(radiusText);
+        Div pkcContent = new Div(new Vector2D(0, 0), new Vector2D(-2, -2))
+                .setAnchors(Anchor.CENTER);
+        pkcOption.addChild(pkcContent);
         pkcOption.stretchXBetween(pkcContent, radiusText, null);
         NumberSlider pkcFileRadius = new NumberSlider(
                 1, 20, 1, 5,
@@ -52,14 +53,14 @@ public class OptionsPane extends Pane<MainGuiScreen> {
                 new Vector2D(0.45D, 1),
                 v -> {
                 }
-        );
-        pkcContent.addChild(pkcFileRadius, PERCENT.ALL);
+        ).setPercentFlag(PERCENT.ALL);
+        pkcContent.addChild(pkcFileRadius);
         pkcContent.addChild(
                 new Button("Save as PKC File",
                         new Vector2D(1 / 2D, 0),
                         new Vector2D(1 / 2D, 1),
                         mouseButton -> WorldToFile.parseWorld((int) pkcFileRadius.getValue())
-                ), PERCENT.ALL
+                ).setPercentFlag(PERCENT.ALL)
         );
 
         optionList.addItem(pkcOption);
@@ -73,11 +74,12 @@ public class OptionsPane extends Pane<MainGuiScreen> {
                 "Default Font Size:",
                 new Color(0, 0, 0, 0),
                 Color.WHITE
-        );
-        fontSizeOption.addChild(fontSizeText, PERCENT.SIZE_Y);
+        ).setPercentFlag(PERCENT.SIZE_Y);
+        fontSizeOption.addChild(fontSizeText);
 
-        Div fontSizeContent = new Div(new Vector2D(0, 0), new Vector2D(-2, -2));
-        fontSizeOption.addChild(fontSizeContent, PERCENT.NONE, Anchor.CENTER);
+        Div fontSizeContent = new Div(new Vector2D(0, 0), new Vector2D(-2, -2))
+                .setAnchors(Anchor.CENTER);
+        fontSizeOption.addChild(fontSizeContent);
         fontSizeOption.stretchXBetween(fontSizeContent, fontSizeText, null);
         fontSizeContent.addChild(
                 new NumberSlider(
@@ -85,12 +87,12 @@ public class OptionsPane extends Pane<MainGuiScreen> {
                         new Vector2D(0, 0),
                         new Vector2D(1, 1),
                         v -> {
-                            for(Label l : ItrUtil.getAllOfType(Label.class, Main.mainGUI.movableComponents)) {
+                            for(Label l : ItrUtil.getAllOfType(Label.class, Main.mainGUI.getHudRoot().getChildren())) {
                                 if(l.fontSize == Label.DEFAULT_FONT_SIZE) l.fontSize = v;
                             }
                             Label.DEFAULT_FONT_SIZE = v;
                         }
-                ), PERCENT.SIZE, Anchor.TOP_RIGHT
+                ).setPercentFlag(PERCENT.SIZE).setAnchors(Anchor.TOP_RIGHT)
         );
         optionList.addItem(fontSizeOption);
 

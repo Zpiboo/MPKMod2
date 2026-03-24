@@ -121,7 +121,7 @@ public class Main implements MPKModule {
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> API.tickTime++));
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> {
             TickThread.setTickables(
-                    ItrUtil.getAllOfType(TickThread.Tickable.class, mainGUI.movableComponents)
+                    ItrUtil.getAllOfType(TickThread.Tickable.class, mainGUI.getHudRoot().getChildren())
             );
         }));
 
@@ -140,12 +140,12 @@ public class Main implements MPKModule {
 
                             Profiler.startSection("components");
                             if (mainGUI != null) {
-                                mainGUI.setSize(Renderer2D.getScaledSize());
-                                for (HudComponent c : mainGUI.movableComponents) {
-                                    Profiler.startSection(c.getClass().getSimpleName());
-                                    c.render(new Vector2D(-1, -1));
-                                    Profiler.endSection();
-                                }
+                                mainGUI.getHudRoot().render(new Vector2D(-1, -1));
+//                                for (HudComponent c : mainGUI.movableComponents) {
+//                                    Profiler.startSection(c.getClass().getSimpleName());
+//                                    c.render(new Vector2D(-1, -1));
+//                                    Profiler.endSection();
+//                                }
                             }
                             Profiler.endSection();
                         }
@@ -191,7 +191,7 @@ public class Main implements MPKModule {
                                     });
                             Profiler.endSection();
                             Profiler.startSection("tickInputHistories");
-                            for (HudComponent component : mainGUI.movableComponents) {
+                            for (HudComponent component : mainGUI.getHudRoot().getChildren()) {
                                 if (!(component instanceof InputHistory)) continue;
                                 ((InputHistory) component).onTick();
                             }

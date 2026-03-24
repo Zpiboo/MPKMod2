@@ -4,6 +4,7 @@ import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.components.Anchor;
 import io.github.kurrycat.mpkmod.gui.components.Button;
+import io.github.kurrycat.mpkmod.gui.components.Component.PERCENT;
 import io.github.kurrycat.mpkmod.gui.components.ScrollableList;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
@@ -25,7 +26,10 @@ public class OptionsGuiScreen extends MPKGuiScreen {
                 new Vector2D(3 / 5D, -40),
                 new ArrayList<>(API.optionsMap.values())
         );
-        addChild(optionList, PERCENT.SIZE_X, Anchor.TOP_CENTER);
+        getGuiRoot().addChild(optionList
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.TOP_CENTER)
+        );
 
         optionList.topCover.addChild(
                 new Button(
@@ -33,8 +37,7 @@ public class OptionsGuiScreen extends MPKGuiScreen {
                         new Vector2D(5, 1),
                         new Vector2D(11, 11),
                         mouseButton -> close()
-                ),
-                PERCENT.NONE, Anchor.CENTER_RIGHT
+                ).setAnchors(Anchor.CENTER_RIGHT)
         );
 
         optionList.bottomCover.setHeight(24, false);
@@ -45,8 +48,7 @@ public class OptionsGuiScreen extends MPKGuiScreen {
                         new Vector2D(-2, 2),
                         new Vector2D(100, 20),
                         mouseButton -> optionList.updateAll()
-                ),
-                PERCENT.NONE, Anchor.BOTTOM_RIGHT, Anchor.BOTTOM_CENTER
+                ).setAnchor(Anchor.BOTTOM_RIGHT).setParentAnchor(Anchor.BOTTOM_CENTER)
         );
 
         optionList.bottomCover.addChild(new Button(
@@ -54,8 +56,7 @@ public class OptionsGuiScreen extends MPKGuiScreen {
                         new Vector2D(2, 2),
                         new Vector2D(100, 20),
                         mouseButton -> optionList.resetAllToDefault()
-                ),
-                PERCENT.NONE, Anchor.BOTTOM_LEFT, Anchor.BOTTOM_CENTER
+                ).setAnchor(Anchor.BOTTOM_LEFT).setParentAnchor(Anchor.BOTTOM_CENTER)
         );
     }
 

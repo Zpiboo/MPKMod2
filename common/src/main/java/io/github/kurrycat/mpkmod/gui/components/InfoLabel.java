@@ -69,8 +69,11 @@ public class InfoLabel extends Label implements TickThread.Tickable {
 
         menu.addComponent(new Button("Edit", mouseButton -> {
             if (mouseButton != Mouse.Button.LEFT) return;
-            menu.paneHolder.passPositionTo(editPane, PERCENT.SIZE_X, Anchor.CENTER);
-            menu.paneHolder.openPane(editPane);
+            menu.screen.getGuiRoot().passPositionTo(editPane
+                    .setPercentFlag(PERCENT.SIZE_X)
+                    .setAnchors(Anchor.CENTER)
+            );
+            menu.screen.openPane(editPane);
             menu.close();
         }));
         menu.addComponent(new NumberSlider(
@@ -82,7 +85,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         ));
         menu.addComponent(new Button("Delete", mouseButton -> {
             if (mouseButton != Mouse.Button.LEFT) return;
-            menu.paneHolder.removeComponent(this);
+            menu.screen.removeHudComponent(this);
             menu.close();
         }));
         return menu;
@@ -128,7 +131,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
             this.setHeight(18);
             this.infoVarComponent = new InfoVarComponent(infoVar, parent.inputField);
             infoVarComponent.setSize(new Vector2D(1, -HEIGHT));
-            passPositionTo(infoVarComponent, PERCENT.SIZE_X);
+            passPositionTo(infoVarComponent.setPercentFlag(PERCENT.SIZE_X));
         }
 
         @Override
@@ -155,7 +158,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
     private static class InfoVarComponent extends HudComponent implements MouseInputListener {
         private final InfoVar infoVar;
         private final InputField inputField;
-        private final ArrayList<InfoVarComponent> children = new ArrayList<>();
+        private final ArrayList<InfoVarComponent> childrenInfoVars = new ArrayList<>();
         private final Button collapseButton;
         private final Button addButton;
         private final boolean showCollapseButton;
@@ -173,11 +176,11 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                         c.setSize(new Vector2D(-4, InfoVarListItem.HEIGHT));
                         c.setPos(new Vector2D(2, i[0] + 2));
                         i[0] += c.getHeight();
-                        passPositionTo(c, PERCENT.NONE, Anchor.TOP_RIGHT);
-                        children.add(c);
+                        passPositionTo(c.setAnchors(Anchor.TOP_RIGHT));
+                        childrenInfoVars.add(c);
                     });
 
-            showCollapseButton = children.size() > 0;
+            showCollapseButton = !childrenInfoVars.isEmpty();
 
             TextRectangle text = new TextRectangle(
                     Vector2D.ZERO,
@@ -188,19 +191,19 @@ public class InfoLabel extends Label implements TickThread.Tickable {
             );
             text.edgeColor = ScrollableListItem.defaultEdgeColor;
             text.leftAligned = true;
-            addChild(text, PERCENT.SIZE_X);
+            addChild(text.setPercentFlag(PERCENT.SIZE_X));
 
             Div buttonHolder = new Div();
             buttonHolder.setSize(new Vector2D(1, InfoVarListItem.HEIGHT));
-            passPositionTo(buttonHolder, PERCENT.SIZE_X);
+            passPositionTo(buttonHolder.setPercentFlag(PERCENT.SIZE_X));
 
             collapseButton = new Button("v", new Vector2D(13, 0), new Vector2D(11, 11));
             collapseButton.setButtonCallback(mouseButton -> {
                 if (mouseButton != Mouse.Button.LEFT) return;
                 setCollapsed(!collapsed);
             });
-            buttonHolder.passPositionTo(collapseButton, PERCENT.NONE, Anchor.CENTER_RIGHT);
-            components.add(collapseButton);
+            buttonHolder.passPositionTo(collapseButton.setAnchors(Anchor.CENTER_RIGHT));
+            children.add(collapseButton);
 
             addButton = new Button("+", new Vector2D(1, 0), new Vector2D(11, 11));
             addButton.textOffset = new Vector2D(0, 1);
@@ -209,8 +212,8 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                 inputField.typeContentAtCursor("{" + infoVar.getFullName() + "}");
                 inputField.focus();
             });
-            buttonHolder.passPositionTo(addButton, PERCENT.NONE, Anchor.CENTER_RIGHT);
-            components.add(addButton);
+            buttonHolder.passPositionTo(addButton.setAnchors(Anchor.CENTER_RIGHT));
+            children.add(addButton);
         }
 
         private void setCollapsed(boolean collapsed) {
@@ -222,7 +225,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
             if (parent != null) parent.updateChildPositions();
 
             if (collapsed)
-                for (InfoVarComponent c : children) c.setCollapsed(true);
+                for (InfoVarComponent c : childrenInfoVars) c.setCollapsed(true);
         }
 
         public boolean searchAndOpenString(String searchString) {
@@ -231,7 +234,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                 return true;
 
             boolean result = false;
-            for (InfoVarComponent c : children) {
+            for (InfoVarComponent c : childrenInfoVars) {
                 if (c.searchAndOpenString(searchString)) result = true;
             }
             setCollapsed(!result);
@@ -240,7 +243,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
 
         private void updateChildPositions() {
             double[] i = {InfoVarListItem.HEIGHT};
-            children.forEach(c -> {
+            childrenInfoVars.forEach(c -> {
                 c.setPos(new Vector2D(2, i[0] + 2));
                 i[0] += c.getHeight();
             });
@@ -249,19 +252,19 @@ public class InfoLabel extends Label implements TickThread.Tickable {
 
         @Override
         public void render(Vector2D mouse) {
-            for (Component c : components) {
+            for (Component c : children) {
                 if (!showCollapseButton && c == collapseButton) continue;
                 c.render(mouse);
             }
 
             if (!collapsed) {
-                children.forEach(c -> c.render(mouse));
+                childrenInfoVars.forEach(c -> c.render(mouse));
             }
         }
 
         public int getHeight() {
             return InfoVarListItem.HEIGHT +
-                    (collapsed ? 0 : children.stream()
+                    (collapsed ? 0 : childrenInfoVars.stream()
                             .map(InfoVarComponent::getHeight)
                             .reduce(0, Integer::sum) + 4);
         }
@@ -270,7 +273,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
             return addButton.handleMouseInput(state, mousePos, button) ||
                     showCollapseButton && collapseButton.handleMouseInput(state, mousePos, button) ||
-                    !collapsed && ItrUtil.orMap(children, c -> c.handleMouseInput(state, mousePos, button));
+                    !collapsed && ItrUtil.orMap(childrenInfoVars, c -> c.handleMouseInput(state, mousePos, button));
         }
     }
 
@@ -302,7 +305,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                     }
             );
             button.normalColor = Theme.NONE;
-            addChild(button, PERCENT.SIZE);
+            addChild(button.setPercentFlag(PERCENT.SIZE));
         }
 
         @Override
@@ -323,12 +326,18 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                     new Color(0, 0, 0, 0),
                     Color.WHITE
             );
-            addChild(this.label, PERCENT.SIZE_X, Anchor.TOP_CENTER);
+            addChild(this.label
+                    .setPercentFlag(PERCENT.SIZE_X)
+                    .setAnchors(Anchor.TOP_CENTER)
+            );
 
             InputField inputField = new InputField(text, new Vector2D(0, 5), 0.9D)
                     .setOnContentChange(content -> updateText(content.getContent()));
 
-            addChild(inputField, PERCENT.SIZE_X, Anchor.BOTTOM_CENTER);
+            addChild(inputField
+                    .setPercentFlag(PERCENT.SIZE_X)
+                    .setAnchors(Anchor.BOTTOM_CENTER)
+            );
 
             ColorList cl = new ColorList(inputField);
             cl.setAbsolute(true);
@@ -340,7 +349,10 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                     new Vector2D(2 / 9D, -10)
             );
             vl.setAbsolute(true);
-            addChild(vl, PERCENT.SIZE_X, Anchor.TOP_RIGHT);
+            addChild(vl
+                    .setPercentFlag(PERCENT.SIZE_X)
+                    .setAnchors(Anchor.TOP_RIGHT)
+            );
 
             vl.bottomCover.setHeight(35, false);
             vl.bottomCover.addChild(
@@ -350,11 +362,14 @@ public class InfoLabel extends Label implements TickThread.Tickable {
                             "Filter",
                             null,
                             Color.WHITE
-                    ), PERCENT.SIZE_X, Anchor.TOP_CENTER);
+                    ).setPercentFlag(PERCENT.SIZE_X).setAnchors(Anchor.TOP_CENTER)
+            );
             vl.bottomCover.addChild(
                     new InputField(new Vector2D(0, 5), 0.9D)
-                            .setOnContentChange(c -> vl.updateSearchFilter(c.getContent())),
-                    PERCENT.SIZE_X, Anchor.BOTTOM_CENTER);
+                            .setOnContentChange(c -> vl.updateSearchFilter(c.getContent()))
+                            .setPercentFlag(PERCENT.SIZE_X)
+                            .setAnchors(Anchor.BOTTOM_CENTER)
+            );
         }
 
         @Override

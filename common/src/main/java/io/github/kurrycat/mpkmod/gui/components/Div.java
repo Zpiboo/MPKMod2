@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Div extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Div extends Component implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = null;
     public Color borderColor = null;
     public Color textColor = null;
@@ -133,7 +133,7 @@ public class Div extends ComponentHolder implements MouseInputListener, MouseScr
     }
 
     public void addChildBelow(Component child) {
-        addChild(child, PERCENT.NONE, Anchor.TOP_LEFT);
+        addChild(child);
         child.setPos(new Vector2D(1, getDisplayedSize().getY()));
         this.setSize(new Vector2D(
                 Math.max(child.getDisplayedSize().getX() + 2, this.getDisplayedSize().getX()),
@@ -155,13 +155,13 @@ public class Div extends ComponentHolder implements MouseInputListener, MouseScr
                 pos.addYInPlace(FontRenderer.getStringSize(line).getY());
             }
         }
-        components.forEach(c -> c.render(mouse));
+        super.render(mouse);
     }
 
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         return ItrUtil.orMapAll(
-                ItrUtil.getAllOfType(KeyInputListener.class, components),
+                ItrUtil.getAllOfType(KeyInputListener.class, children),
                 e -> e.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
         );
     }
@@ -169,7 +169,7 @@ public class Div extends ComponentHolder implements MouseInputListener, MouseScr
     @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         return ItrUtil.orMapAll(
-                ItrUtil.getAllOfType(MouseInputListener.class, components),
+                ItrUtil.getAllOfType(MouseInputListener.class, children),
                 e -> e.handleMouseInput(state, mousePos, button)
         );
     }
@@ -177,7 +177,7 @@ public class Div extends ComponentHolder implements MouseInputListener, MouseScr
     @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         return ItrUtil.orMapAll(
-                ItrUtil.getAllOfType(MouseScrollListener.class, components),
+                ItrUtil.getAllOfType(MouseScrollListener.class, children),
                 e -> e.handleMouseScroll(mousePos, delta)
         );
     }

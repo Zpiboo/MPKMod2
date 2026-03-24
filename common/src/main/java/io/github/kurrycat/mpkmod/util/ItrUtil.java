@@ -2,6 +2,7 @@ package io.github.kurrycat.mpkmod.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -36,7 +37,7 @@ public class ItrUtil {
      * @return a list containing any element of <code>list</code> for that <code>element instanceof tClass</code> is true
      */
     @SuppressWarnings("unchecked")
-    public static <T> ArrayList<T> getAllOfType(Class<T> tClass, ArrayList<?> list) {
+    public static <T> ArrayList<T> getAllOfType(Class<T> tClass, List<?> list) {
         return list.stream()
                 .filter(Objects::nonNull)
                 .filter(tClass::isInstance)
@@ -57,9 +58,9 @@ public class ItrUtil {
      * @param <T>    any type
      * @return the result of {@link ItrUtil#getAllOfType getAllOfType(tClass, list)} for every list in lists combined
      */
-    public static <T> ArrayList<T> getAllOfType(Class<T> tClass, ArrayList<?>... lists) {
+    public static <T> ArrayList<T> getAllOfType(Class<T> tClass, List<?>... lists) {
         ArrayList<T> returnList = new ArrayList<>();
-        for (ArrayList<?> list : lists) {
+        for (List<?> list : lists) {
             returnList.addAll(getAllOfType(tClass, list));
         }
         return returnList;

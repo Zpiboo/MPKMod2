@@ -15,7 +15,7 @@ public class OptionListItemBoolean extends OptionListItem {
         checkButton.enabled = option.getType() == Option.ValueType.BOOLEAN;
         if (checkButton.enabled) {
             checkButton.setChecked(option.getBoolean());
-            addChild(checkButton, PERCENT.NONE, Anchor.CENTER_RIGHT);
+            addChild(checkButton.setAnchors(Anchor.CENTER_RIGHT));
         }
     }
 

@@ -30,7 +30,10 @@ public class SaveConfigPane extends Pane<MainGuiScreen> {
                 new Vector2D(0.2 / 3, 0.05),
                 new Vector2D(4 / 10D, 0.9));
         savedConfigs.setTitle("Saved Configurations");
-        addChild(savedConfigs, PERCENT.ALL, Anchor.TOP_RIGHT);
+        addChild(savedConfigs
+                .setPercentFlag(PERCENT.ALL)
+                .setAnchors(Anchor.TOP_RIGHT)
+        );
 
         TextRectangle r = new TextRectangle(
                 new Vector2D(0, 40),
@@ -56,17 +59,31 @@ public class SaveConfigPane extends Pane<MainGuiScreen> {
                     filename.clear();
                     savedConfigs.reloadItems();
                     savedConfigs.updateItems();
-                    paneHolder.loadConfigPane.reload();
+                    screen.loadConfigPane.reload();
                 }
         );
+
         Div fileDiv = new Div(
                 new Vector2D(0.2 / 3D, 0),
                 new Vector2D(4 / 10D, 50)
         );
-        fileDiv.addChild(r, PERCENT.SIZE_X, Anchor.BOTTOM_CENTER);
-        fileDiv.addChild(filename, PERCENT.SIZE_X, Anchor.BOTTOM_CENTER);
-        fileDiv.addChild(b, PERCENT.SIZE_X, Anchor.BOTTOM_CENTER);
-        addChild(fileDiv, PERCENT.POS_X | PERCENT.SIZE_X, Anchor.CENTER_LEFT);
+        fileDiv.addChild(r
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.BOTTOM_CENTER)
+        );
+        fileDiv.addChild(filename
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.BOTTOM_CENTER)
+        );
+        fileDiv.addChild(b
+                .setPercentFlag(PERCENT.SIZE_X)
+                .setAnchors(Anchor.BOTTOM_CENTER)
+        );
+
+        addChild(fileDiv
+                .setPercentFlag(PERCENT.POS_X | PERCENT.SIZE_X)
+                .setAnchors(Anchor.CENTER_LEFT)
+        );
     }
 
     private class ConfigFileList extends ScrollableList<ConfigFileListItem> {
@@ -116,10 +133,10 @@ public class SaveConfigPane extends Pane<MainGuiScreen> {
                 LabelConfiguration.delete(file);
                 parent.reloadItems();
                 parent.updateItems();
-                paneHolder.loadConfigPane.reload();
+                screen.loadConfigPane.reload();
             });
             delete.textColor = Color.RED;
-            addChild(delete, PERCENT.NONE, Anchor.CENTER_RIGHT);
+            addChild(delete.setAnchors(Anchor.CENTER_RIGHT));
         }
 
         @Override
