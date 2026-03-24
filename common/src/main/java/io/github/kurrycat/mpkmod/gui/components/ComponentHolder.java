@@ -3,72 +3,61 @@ package io.github.kurrycat.mpkmod.gui.components;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class ComponentHolder extends Component {
-    protected ArrayList<Component> components = new ArrayList<>();
+public abstract class ComponentHolder<C extends Component> {
+    protected final List<C> children = new ArrayList<>();
 
-    public void addChild(Component child) {
-        addChild(child, PERCENT.NONE, Anchor.TOP_LEFT);
+    protected abstract long getLastUpdated();
+
+    public abstract Vector2D getDisplayedPos();
+    public abstract Vector2D getDisplayedSize();
+
+    public abstract ComponentHolder<C> getRoot();
+
+    public void render(Vector2D mousePos) {
+        children.forEach(c -> c.render(mousePos));
     }
 
-    public void addChild(Component child, int percentFlag) {
-        addChild(child, percentFlag, Anchor.TOP_LEFT);
+    public List<C> getChildren() {
+        return Collections.unmodifiableList(children);
     }
 
-    /**
-     * @param child       child component to add to parent
-     * @param percentFlag flag built of {@link PERCENT} fields that determines which fields of posX, posY, sizeX and sizeY should be treated as a percentage of the parent
-     * @param anchor      {@link Anchor}point of both the parent and child
-     */
-    public void addChild(Component child, int percentFlag, Anchor anchor) {
-        addChild(child, percentFlag, anchor, anchor);
-    }
-
-    public void addChild(Component child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
-        passPositionTo(child, percentFlag, anchor, parentAnchor);
-        this.components.add(child);
-    }
-
-    public void passPositionTo(Component child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
-        child.parentAnchor = parentAnchor;
-        child.anchor = anchor;
-        passPositionTo(child, percentFlag);
-    }
-
-    public void passPositionTo(Component child, int percentFlag) {
-        child.percentFlag = percentFlag;
+    public void addChild(C child) {
         passPositionTo(child);
+        children.add(child);
     }
 
-    public void passPositionTo(Component child) {
-        child.setParent(this);
+    public void removeChild(C child) {
+        this.children.remove(child);
+        child.setParent(null);
         child.updatePosAndSize();
     }
 
-    public void stretchXBetween(Component child, Component min, Component max) {
+    public void clearChildren() {
+        while (!getChildren().isEmpty())
+            removeChild(getChildren().get(0));
+    }
+
+    public void passPositionTo(C child) {
+        if (child.getParent() != null)
+            child.getParent().removeChild(child);
+
+        // noinspection unchecked
+        child.setParent((ComponentHolder<Component>) this);
+        child.updatePosAndSize();
+    }
+
+    public void stretchXBetween(C child, C min, C max) {
         child.minX = min;
         child.maxX = max;
         passPositionTo(child);
     }
 
-    public void stretchYBetween(Component child, Component min, Component max) {
+    public void stretchYBetween(C child, C min, C max) {
         child.minY = min;
         child.maxY = max;
         passPositionTo(child);
-    }
-
-    public void passPositionTo(Component child, int percentFlag, Anchor anchor) {
-        passPositionTo(child, percentFlag, anchor, anchor);
-    }
-
-    public void removeChild(Component child) {
-        this.components.remove(child);
-        child.setRoot(null);
-        child.parent = null;
-    }
-
-    @Override
-    public void render(Vector2D mouse) {
-        components.forEach(c -> c.render(mouse));
     }
 }

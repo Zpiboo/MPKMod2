@@ -5,8 +5,10 @@ import io.github.kurrycat.mpkmod.util.Debug;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
-public abstract class Component {
-    protected Component parent = null;
+public class Component extends ComponentHolder<Component> {
+    protected ComponentHolder<Component> parent = null;
+    protected ComponentHolder<Component> root = null;
+
     /**
      * relative position, always positive, can be percentage
      */
@@ -37,7 +39,6 @@ public abstract class Component {
      * origin anchor for this
      */
     protected Anchor anchor = Anchor.TOP_LEFT;
-    protected Component root = null;
     protected boolean absolute = false;
     protected long lastUpdated = 0;
     protected Component minX = null;
@@ -45,12 +46,13 @@ public abstract class Component {
     protected Component maxX = null;
     protected Component maxY = null;
 
-    public Component getRoot() {
+    @Override
+    public ComponentHolder<Component> getRoot() {
         return root;
     }
 
-    public void setRoot(Component root) {
-        this.root = root;
+    public ComponentHolder<Component> getParent() {
+        return parent;
     }
 
     public boolean contains(Vector2D testPos) {
@@ -60,6 +62,7 @@ public abstract class Component {
                 testPos.isInRectBetween(getDisplayedPos(), getDisplayedPos().add(getDisplayedSize()));
     }
 
+    @Override
     protected long getLastUpdated() {
         if (rParent() == null) return lastUpdated;
         long updated = Math.max(lastUpdated, rParent().getLastUpdated());
@@ -70,18 +73,25 @@ public abstract class Component {
         return updated;
     }
 
+    @Override
     public Vector2D getDisplayedPos() {
-        if (parent != null && parent.getLastUpdated() > lastUpdated || getRoot() != null && getRoot().getLastUpdated() > lastUpdated)
+        if (parent != null && parent.getLastUpdated() > lastUpdated)
             updatePosAndSize();
         return this.cpos;
+    }
+
+    @Override
+    public Vector2D getDisplayedSize() {
+        if (parent != null && parent.getLastUpdated() > lastUpdated)
+            updatePosAndSize();
+        return this.csize;
     }
 
     /**
      * Updates size and pos based on parent size.
      */
     public void updatePosAndSize() {
-        if (parent != null) setRoot(parent.root);
-        Component p = rParent();
+        ComponentHolder<Component> p = rParent();
         if (p == null || p == this) {
             this.csize.set(this.size);
             this.cpos.set(this.pos);
@@ -150,14 +160,8 @@ public abstract class Component {
         lastUpdated = System.nanoTime();
     }
 
-    protected Component rParent() {
-        return absolute ? root : parent;
-    }
-
-    public Vector2D getDisplayedSize() {
-        if (parent != null && parent.getLastUpdated() > lastUpdated || root != null && root.getLastUpdated() > lastUpdated)
-            updatePosAndSize();
-        return this.csize;
+    protected ComponentHolder<Component> rParent() {
+        return absolute ? getRoot() : getParent();
     }
 
     public void setSize(Vector2D size) {
@@ -222,13 +226,39 @@ public abstract class Component {
         updatePosAndSize();
     }
 
-    public void setParent(Component parent) {
-        root = parent.root;
+    public void setParent(ComponentHolder<Component> parent) {
+        if (this.parent == parent) return;
+
         this.parent = parent;
+        this.root = (parent == null) ? this : parent.getRoot();
+
+        for (Component c : getChildren())
+            c.setParent(this);
     }
 
     public void setAbsolute(boolean absolute) {
         this.absolute = absolute;
+    }
+
+    public <C extends Component> C setPercentFlag(int percentFlag) {
+        this.percentFlag = percentFlag;
+        return (C) this;
+    }
+
+    public <C extends Component> C setAnchor(Anchor anchor) {
+        this.anchor = anchor;
+        return (C) this;
+    }
+
+    public <C extends Component> C setParentAnchor(Anchor parentAnchor) {
+        this.parentAnchor = parentAnchor;
+        return (C) this;
+    }
+
+    public <C extends Component> C setAnchors(Anchor anchor) {
+        return this
+                .setAnchor(anchor)
+                .setParentAnchor(anchor);
     }
 
     @SuppressWarnings("unused")
@@ -284,6 +314,4 @@ public abstract class Component {
             return flag;
         }
     }
-
-    public abstract void render(Vector2D mouse);
 }

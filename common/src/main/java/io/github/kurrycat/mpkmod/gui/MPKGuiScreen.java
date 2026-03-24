@@ -2,16 +2,25 @@ package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
-import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.ComponentHolder;
+import io.github.kurrycat.mpkmod.gui.components.Pane;
 import io.github.kurrycat.mpkmod.gui.components.PopupMenu;
+import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
+import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
+import io.github.kurrycat.mpkmod.gui.interfaces.MouseScrollListener;
+import io.github.kurrycat.mpkmod.util.ItrUtil;
+import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("unused")
-public abstract class MPKGuiScreen extends ComponentHolder {
+public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListener, MouseScrollListener {
+    private final GuiScreenRoot<Component> guiRoot = new GuiScreenRoot<>();
+
     public ArrayList<Pane<?>> openPanes = new ArrayList<>();
     private boolean initialized = false;
     private String id = null;
@@ -27,12 +36,18 @@ public abstract class MPKGuiScreen extends ComponentHolder {
     }
 
     public Vector2D getScreenSize() {
-        return getDisplayedSize();
+        return Renderer2D.getScaledSize();
+    }
+
+    public GuiScreenRoot<Component> getGuiRoot() {
+        return guiRoot;
+    }
+
+    protected List<Component> getComponents() {
+        return getGuiRoot().getChildren();
     }
 
     public final void onInit() {
-        setSize(Renderer2D.getScaledSize());
-        setRoot(this);
         if (!initialized || resetOnOpen())
             onGuiInit();
         initialized = true;
@@ -42,43 +57,101 @@ public abstract class MPKGuiScreen extends ComponentHolder {
         return true;
     }
 
-    public void onGuiInit() {
-    }
-
     public boolean isInitialized() {
         return initialized;
     }
 
-    public void onGuiClosed() {
+    public void onGuiInit() {
+        getGuiRoot().clearChildren();
     }
-
+    public void onGuiClosed() {}
+    public void onGuiResized(Vector2D screenSize) {}
     public final void onResize(int width, int height) {
-        setSize(new Vector2D(width, height));
-        onGuiResized(size);
-    }
-
-    public void onGuiResized(Vector2D screenSize) {
-    }
-
-    public void onKeyEvent(int keyCode, int scanCode, int modifiers, boolean pressed) {
-    }
-
-    public void onMouseClicked(Vector2D mouse, int mouseButton) {
-    }
-
-    public void onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {
-    }
-
-    public void onMouseReleased(Vector2D mouse, int mouseButton) {
+        onGuiResized(getScreenSize());
     }
 
     /**
-     * @param mousePos Mouse position when scrolled
-     * @param delta    number of lines to scroll (one scroll tick = 3 per default)<br>
-     *                 delta {@literal <} 0: scrolled down<br>
-     *                 delta {@literal >} 0: scrolled up
+     * @param keyCode key that triggered the event
+     * @param scanCode scan code of the key that triggered the event (hardware-level)
+     * @param modifiers active key modifiers
+     * @param isCharTyped whether the key pressed types a character
+     * @return whether the event was consumed
      */
-    public void onMouseScroll(Vector2D mousePos, int delta) {
+    public boolean onKeyEvent(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
+        return handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
+    }
+
+    /**
+     * @param mouse mouse position when clicked
+     * @param mouseButton mouse button that was pressed
+     * @return whether the event was consumed
+     */
+    public boolean onMouseClicked(Vector2D mouse, int mouseButton) {
+        return handleMouseInput(Mouse.State.DOWN, mouse, Mouse.Button.fromInt(mouseButton));
+    }
+
+    /**
+     * @param mouse mouse position
+     * @param mouseButton mouse button that is held
+     * @param timeSinceLastClick time elapsed since last click in nanoseconds
+     * @return whether the event was consumed
+     */
+    public boolean onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {
+        return handleMouseInput(Mouse.State.DRAG, mouse, Mouse.Button.fromInt(mouseButton));
+    }
+
+    /**
+     * @param mouse mouse position when released
+     * @param mouseButton mouse button that was released
+     * @return whether the event was consumed
+     */
+    public boolean onMouseReleased(Vector2D mouse, int mouseButton) {
+        return handleMouseInput(Mouse.State.UP, mouse, Mouse.Button.fromInt(mouseButton));
+    }
+
+    /**
+     * @param mouse mouse position when scrolled
+     * @param delta number of lines to scroll (one scroll tick = 3 per default)<br>
+     *                delta {@literal <} 0: scrolled down<br>
+     *                delta {@literal >} 0: scrolled up
+     * @return whether the event was consumed
+     */
+    public boolean onMouseScroll(Vector2D mouse, int delta) {
+        return handleMouseScroll(mouse, delta);
+    }
+
+    // TODO: move pane checks to somewhere else (give them their own root?)
+    @Override
+    public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
+        if (!openPanes.isEmpty())
+            openPanes.get(openPanes.size() - 1).handleKeyInput(keyCode, scanCode, modifiers, isCharTyped);
+        return ItrUtil.orMap(
+                ItrUtil.getAllOfType(KeyInputListener.class, getComponents()),
+                b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
+        );
+    }
+
+    @Override
+    public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
+        if (!openPanes.isEmpty()) {
+            Pane<?> topPane = openPanes.get(openPanes.size() - 1);
+            topPane.handleMouseInput(state, mousePos, button);
+            if (topPane.isLoaded()) return true;
+        }
+        return ItrUtil.orMap(
+                ItrUtil.getAllOfType(MouseInputListener.class, getComponents()),
+                b -> b.handleMouseInput(state, mousePos, button)
+        );
+    }
+
+    @Override
+    public boolean handleMouseScroll(Vector2D mousePos, int delta) {
+        if (!openPanes.isEmpty())
+            openPanes.get(openPanes.size() - 1).handleMouseScroll(mousePos, delta);
+        return ItrUtil.orMap(
+                ItrUtil.getAllOfType(MouseScrollListener.class, getComponents()),
+                b -> b.handleMouseScroll(mousePos, delta)
+        );
     }
 
     public final void drawScreen(Vector2D mouse, float partialTicks) {
@@ -101,12 +174,11 @@ public abstract class MPKGuiScreen extends ComponentHolder {
     }
 
     public void renderScreen(Vector2D mouse, float partialTicks) {
-        for (Component c : components)
-            c.render(mouse);
+        getGuiRoot().render(mouse);
     }
 
     public final void drawDefaultBackground() {
-        Renderer2D.drawRect(Vector2D.ZERO, size.add(2), new Color(16, 16, 16, 140));
+        Renderer2D.drawRect(Vector2D.ZERO, getScreenSize().add(2), new Color(16, 16, 16, 140));
     }
 
     public boolean shouldCreateKeyBind() {
@@ -124,21 +196,13 @@ public abstract class MPKGuiScreen extends ComponentHolder {
     @SuppressWarnings("unchecked")
     public <T extends MPKGuiScreen> void openPane(Pane<T> p) {
         openPanes.add(p);
-        p.setPaneHolder((T) this);
+        p.setScreen((T) this);
         p.setLoaded(true);
     }
 
     public <T extends MPKGuiScreen> void closePane(Pane<T> p) {
         openPanes.remove(p);
         p.setLoaded(false);
-    }
-
-    public void addComponent(Component c) {
-        components.add(c);
-    }
-
-    public void removeComponent(Component c) {
-        components.remove(c);
     }
 
     public <T extends MPKGuiScreen> void openPane(Pane<T> p, Vector2D pos) {
@@ -149,6 +213,32 @@ public abstract class MPKGuiScreen extends ComponentHolder {
     public final void closeAllPanes() {
         for (int i = openPanes.size() - 1; i >= 0; i--) {
             openPanes.get(i).close();
+        }
+    }
+
+    public class GuiScreenRoot<C extends Component> extends ComponentHolder<C> {
+        public MPKGuiScreen getScreen() {
+            return MPKGuiScreen.this;
+        }
+
+        @Override
+        public long getLastUpdated() {
+            return Long.MAX_VALUE;
+        }  // TODO: replace lastUpdated with dirty flag
+
+        @Override
+        public Vector2D getDisplayedPos() {
+            return Vector2D.ZERO;
+        }
+
+        @Override
+        public Vector2D getDisplayedSize() {
+            return getScreenSize();
+        }
+
+        @Override
+        public ComponentHolder<C> getRoot() {
+            return this;
         }
     }
 }
