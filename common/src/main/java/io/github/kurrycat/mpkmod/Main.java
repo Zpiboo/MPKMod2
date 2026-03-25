@@ -137,14 +137,9 @@ public class Main implements MPKModule {
                     if (!displayOverlay) return;
                     if (Minecraft.isF3Enabled()) return;
 
-                            Profiler.startSection("components");
+                            Profiler.startSection("hud");
                             if (mainGUI != null) {
-                                mainGUI.getHudRoot().render(new Vector2D(-1, -1));
-//                                for (HudComponent c : mainGUI.movableComponents) {
-//                                    Profiler.startSection(c.getClass().getSimpleName());
-//                                    c.render(new Vector2D(-1, -1));
-//                                    Profiler.endSection();
-//                                }
+                                mainGUI.renderHud();
                             }
                             Profiler.endSection();
                         }

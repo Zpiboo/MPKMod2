@@ -43,6 +43,12 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
         return hudRoot;
     }
 
+    public void renderHud() {
+        getHudRoot().updateTree();
+        getHudRoot().layoutTree();
+        getHudRoot().render(Vector2D.OFFSCREEN);
+    }
+
     @Override
     public boolean shouldCreateKeyBind() {
         return true;
