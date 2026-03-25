@@ -14,6 +14,8 @@ import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -21,8 +23,15 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
     private final GuiScreenRoot<Component> guiRoot = new GuiScreenRoot<>();
     private final GuiScreenRoot<Pane<?>> panesRoot = new GuiScreenRoot<>();
 
+    private final List<GuiScreenRoot<?>> roots = new ArrayList<>();
+
     private String id = null;
     private boolean initialized = false;
+
+    public MPKGuiScreen() {
+        addRoot(panesRoot);
+        addRoot(guiRoot);
+    }
 
     public final String getID() {
         return id;
@@ -36,6 +45,14 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
 
     public Vector2D getScreenSize() {
         return Renderer2D.getScaledSize();
+    }
+
+    protected List<GuiScreenRoot<?>> getRoots() {
+        return Collections.unmodifiableList(roots);
+    }
+
+    protected void addRoot(GuiScreenRoot<?> root) {
+        roots.add(root);
     }
 
     public GuiScreenRoot<Component> getGuiRoot() {
@@ -157,7 +174,17 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
         );
     }
 
+    private void updateTree() {
+        getRoots().forEach(GuiScreenRoot::updateTree);
+    }
+    private void layoutTree() {
+        getRoots().forEach(GuiScreenRoot::layoutTree);
+    }
+
     public final void drawScreen(Vector2D mouse, float partialTicks) {
+        updateTree();
+        layoutTree();
+
         if (getOpenPanes().isEmpty() || getOpenPanes().get(getOpenPanes().size() - 1) instanceof PopupMenu) drawDefaultBackground();
         Vector2D hoverMousePos = getOpenPanes().isEmpty() ? mouse : new Vector2D(-1, -1);
 
@@ -225,9 +252,13 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
         }
 
         @Override
-        public long getLastUpdated() {
-            return Long.MAX_VALUE;
-        }  // TODO: replace lastUpdated with dirty flag
+        public void updateTree() {
+            getChildren().forEach(Component::updateTree);
+        }
+        @Override
+        public void layoutTree() {
+            getChildren().forEach(Component::layoutTree);
+        }
 
         @Override
         public Vector2D getDisplayedPos() {

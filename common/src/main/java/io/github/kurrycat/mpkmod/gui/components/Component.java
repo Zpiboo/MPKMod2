@@ -5,9 +5,11 @@ import io.github.kurrycat.mpkmod.util.Debug;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
-public class Component extends ComponentHolder<Component> {
+public abstract class Component extends ComponentHolder<Component> {
     protected ComponentHolder<Component> parent = null;
     protected ComponentHolder<Component> root = null;
+
+    protected boolean dirty = true;
 
     /**
      * relative position, always positive, can be percentage
@@ -40,7 +42,6 @@ public class Component extends ComponentHolder<Component> {
      */
     protected Anchor anchor = Anchor.TOP_LEFT;
     protected boolean absolute = false;
-    protected long lastUpdated = 0;
     protected Component minX = null;
     protected Component minY = null;
     protected Component maxX = null;
@@ -62,41 +63,57 @@ public class Component extends ComponentHolder<Component> {
                 testPos.isInRectBetween(getDisplayedPos(), getDisplayedPos().add(getDisplayedSize()));
     }
 
-    @Override
-    protected long getLastUpdated() {
-        if (rParent() == null) return lastUpdated;
-        long updated = Math.max(lastUpdated, rParent().getLastUpdated());
-        if (minX != null) updated = Math.max(updated, minX.getLastUpdated());
-        if (maxX != null) updated = Math.max(updated, maxX.getLastUpdated());
-        if (minY != null) updated = Math.max(updated, minY.getLastUpdated());
-        if (maxY != null) updated = Math.max(updated, maxY.getLastUpdated());
-        return updated;
+    public void markDirty() {
+        if (dirty) return;
+
+        dirty = true;
+        getChildren().forEach(Component::markDirty);
+        if (parent instanceof Component)
+            ((Component) parent).markDirty();
     }
 
     @Override
     public Vector2D getDisplayedPos() {
-        if (parent != null && parent.getLastUpdated() > lastUpdated)
-            updatePosAndSize();
         return this.cpos;
     }
 
     @Override
     public Vector2D getDisplayedSize() {
-        if (parent != null && parent.getLastUpdated() > lastUpdated)
-            updatePosAndSize();
         return this.csize;
     }
+
+    @Override
+    public void updateTree() {
+        update();
+        getChildren().forEach(Component::updateTree);
+    }
+    @Override
+    public void layoutTree() {
+        if (dirty) layout();
+
+        getChildren().forEach(Component::layoutTree);
+
+        if (dirty) {
+            postLayout();
+            dirty = false;
+        }
+    }
+
+    protected void update() {}
+    protected void layout() {
+        updatePosAndSize();
+    }
+    protected void postLayout() {}
 
     /**
      * Updates size and pos based on parent size.
      */
-    public void updatePosAndSize() {
+    protected void updatePosAndSize() {
         ComponentHolder<Component> p = rParent();
         if (p == null || p == this) {
             this.csize.set(this.size);
             this.cpos.set(this.pos);
 
-            lastUpdated = System.nanoTime();
             return;
         }
 
@@ -122,10 +139,8 @@ public class Component extends ComponentHolder<Component> {
         );
 
         //return if no stretch limits
-        if(minX == null && maxX == null && minY == null && maxY == null) {
-            lastUpdated = System.nanoTime();
+        if (minX == null && maxX == null && minY == null && maxY == null)
             return;
-        }
 
         //calculate x stretch limits
         if (minX != null || maxX != null) {
@@ -156,8 +171,6 @@ public class Component extends ComponentHolder<Component> {
                         + this.pos.getY() * (PERCENT.HAS_POS_Y(percentFlag) ? pH : 1) * parentAnchor.multiplier.getY()
                         - anchor.origin.getY() * this.csize.getY()
         );
-
-        lastUpdated = System.nanoTime();
     }
 
     protected ComponentHolder<Component> rParent() {
@@ -170,21 +183,21 @@ public class Component extends ComponentHolder<Component> {
                 PERCENT.HAS_SIZE_X(percentFlag) ? MathUtil.constrain01(size.getX()) : size.getX(),
                 PERCENT.HAS_SIZE_Y(percentFlag) ? MathUtil.constrain01(size.getY()) : size.getY()
         );
-        updatePosAndSize();
+        markDirty();
     }
 
     public void setHeight(double h, boolean percent) {
         if (this.size.getY() == h && percent == PERCENT.HAS_SIZE_Y(percentFlag)) return;
         percentFlag = PERCENT.SET_SIZE_Y(percentFlag, percent);
         this.size.setY(PERCENT.HAS_SIZE_Y(percentFlag) ? MathUtil.constrain01(h) : h);
-        updatePosAndSize();
+        markDirty();
     }
 
     public void setWidth(double w, boolean percent) {
         if (this.size.getX() == w && percent == PERCENT.HAS_SIZE_X(percentFlag)) return;
         percentFlag = PERCENT.SET_SIZE_X(percentFlag, percent);
         this.size.setX(PERCENT.HAS_SIZE_X(percentFlag) ? MathUtil.constrain01(w) : w);
-        updatePosAndSize();
+        markDirty();
     }
 
     public void addSize(Vector2D offset) {
@@ -209,8 +222,10 @@ public class Component extends ComponentHolder<Component> {
         this.setPos(this.pos.add(transformed));
     }
 
+    // TODO: remove?
     public void setCPos(Vector2D pos) {
         this.cpos.set(pos);
+        markDirty();
     }
 
     public void setPos(Vector2D pos) {
@@ -223,7 +238,7 @@ public class Component extends ComponentHolder<Component> {
                 PERCENT.HAS_POS_X(percentFlag) ? MathUtil.constrain01(pos.getX()) : pos.getX(),
                 PERCENT.HAS_POS_Y(percentFlag) ? MathUtil.constrain01(pos.getY()) : pos.getY()
         );
-        updatePosAndSize();
+        markDirty();
     }
 
     public void setParent(ComponentHolder<Component> parent) {
@@ -232,26 +247,32 @@ public class Component extends ComponentHolder<Component> {
         this.parent = parent;
         this.root = (parent == null) ? this : parent.getRoot();
 
+        markDirty();
+
         for (Component c : getChildren())
             c.setParent(this);
     }
 
     public void setAbsolute(boolean absolute) {
         this.absolute = absolute;
+        markDirty();
     }
 
     public <C extends Component> C setPercentFlag(int percentFlag) {
         this.percentFlag = percentFlag;
+        markDirty();
         return (C) this;
     }
 
     public <C extends Component> C setAnchor(Anchor anchor) {
         this.anchor = anchor;
+        markDirty();
         return (C) this;
     }
 
     public <C extends Component> C setParentAnchor(Anchor parentAnchor) {
         this.parentAnchor = parentAnchor;
+        markDirty();
         return (C) this;
     }
 

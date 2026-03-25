@@ -34,6 +34,11 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
     private HudComponent lastClicked = null;
     private Vector2D holdingSetPosOffset = null;
 
+    public MainGuiScreen() {
+        super();
+        addRoot(hudRoot);
+    }
+
     public GuiScreenRoot<HudComponent> getHudRoot() {
         return hudRoot;
     }
@@ -87,17 +92,14 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
         optionsPane = new OptionsPane(Vector2D.ZERO, new Vector2D(3 / 5D, 3 / 5D))
                 .setPercentFlag(PERCENT.ALL)
                 .setAnchors(Anchor.CENTER);
-        getGuiRoot().passPositionTo(optionsPane);
 
         loadConfigPane = new LoadConfigPane(Vector2D.ZERO, new Vector2D(3 / 5D, 1))
                 .setPercentFlag(PERCENT.ALL)
                 .setAnchors(Anchor.CENTER);
-        getGuiRoot().passPositionTo(loadConfigPane);
 
         saveConfigPane = new SaveConfigPane(Vector2D.ZERO, new Vector2D(3 / 5D, 1))
                 .setPercentFlag(PERCENT.ALL)
                 .setAnchors(Anchor.CENTER);
-        getGuiRoot().passPositionTo(saveConfigPane);
     }
 
     @Override
@@ -126,7 +128,6 @@ public class MainGuiScreen extends MPKGuiScreen implements MessageReceiver {
         getHudRoot().getChildren().forEach(c -> c.setHighlighted(highlighted.contains(c)));
 
         for (HudComponent component : getHudRoot().getChildren()) {
-            component.updatePosAndSize();
             if (holding.contains(component)) {
                 Vector2D offset = component.getRenderOffset();
                 component.setRenderOffset(Vector2D.ZERO);

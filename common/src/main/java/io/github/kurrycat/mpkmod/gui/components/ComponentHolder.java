@@ -9,7 +9,8 @@ import java.util.List;
 public abstract class ComponentHolder<C extends Component> {
     protected final List<C> children = new ArrayList<>();
 
-    protected abstract long getLastUpdated();
+    public abstract void updateTree();
+    public abstract void layoutTree();
 
     public abstract Vector2D getDisplayedPos();
     public abstract Vector2D getDisplayedSize();
@@ -32,7 +33,7 @@ public abstract class ComponentHolder<C extends Component> {
     public void removeChild(C child) {
         this.children.remove(child);
         child.setParent(null);
-        child.updatePosAndSize();
+        child.markDirty();
     }
 
     public void clearChildren() {
@@ -46,7 +47,7 @@ public abstract class ComponentHolder<C extends Component> {
 
         // noinspection unchecked
         child.setParent((ComponentHolder<Component>) this);
-        child.updatePosAndSize();
+        child.markDirty();
     }
 
     public void stretchXBetween(C child, C min, C max) {
