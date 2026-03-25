@@ -1,4 +1,4 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_11.network;
+package io.github.kurrycat.mpkmod.compatibility.fabric_26_1.network;
 
 import io.github.kurrycat.mpknetapi.common.MPKNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
@@ -25,12 +25,12 @@ public record DataCustomPayload(byte[] data) implements CustomPacketPayload {
     }
 
     public static Type<DataCustomPayload> registerClientboundPayload() {
-        PayloadTypeRegistry.playS2C().register(MPK_ID, DataCustomPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(MPK_ID, DataCustomPayload.CODEC);
         return MPK_ID;
     }
 
     public static Type<DataCustomPayload> registerServerboundPayload() {
-        PayloadTypeRegistry.playC2S().register(MPK_ID, DataCustomPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(MPK_ID, DataCustomPayload.CODEC);
         return MPK_ID;
     }
 }

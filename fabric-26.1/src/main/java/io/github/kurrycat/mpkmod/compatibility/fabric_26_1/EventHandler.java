@@ -1,10 +1,10 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_21_11;
+package io.github.kurrycat.mpkmod.compatibility.fabric_26_1;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
-import io.github.kurrycat.mpkmod.compatibility.fabric_1_21_11.mixin.KeyMappingAccessor;
+import io.github.kurrycat.mpkmod.compatibility.fabric_26_1.mixin.KeyMappingAccessor;
 import io.github.kurrycat.mpkmod.ticks.ButtonMS;
 import io.github.kurrycat.mpkmod.ticks.ButtonMSList;
 import io.github.kurrycat.mpkmod.util.BoundingBox3D;
@@ -14,18 +14,16 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.util.Util;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Map;
-import java.util.Optional;
 
 public class EventHandler {
     private static final ButtonMSList timeQueue = new ButtonMSList();
@@ -114,7 +112,7 @@ public class EventHandler {
         }
     }
 
-    public void onInGameOverlayRender(GuiGraphics drawContext, DeltaTracker renderTickCounter) {
+    public void onInGameOverlayRender(GuiGraphicsExtractor drawContext, DeltaTracker renderTickCounter) {
         drawContext.pose().pushMatrix();
         API.<FunctionCompatibility>getFunctionHolder().drawContext = drawContext;
         API.Events.onRenderOverlay();
