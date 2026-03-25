@@ -42,12 +42,6 @@ public class Plot extends ResizableComponent {
         return this;
     }
 
-    @Override
-    public void updatePosAndSize() {
-        super.updatePosAndSize();
-        updateRenderPoints();
-    }
-
     public void updateRenderPoints() {
         if (dataPoints == null) return;
         Vector2D min = getDisplayedPos().add(AXIS_MARGIN, 2);
@@ -61,13 +55,23 @@ public class Plot extends ResizableComponent {
     }
 
     @Override
+    protected void update() {
+        super.update();
+        if (dataSupplier == null) return;
+
+        List<List<Double>> data = dataSupplier.get();
+        if (data != null) setData(data);
+    }
+
+    @Override
+    protected void postLayout() {
+        super.postLayout();
+        updateRenderPoints();
+    }
+
+    @Override
     public void render(Vector2D mouse) {
         Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1, selected ? selectedColor : backgroundColor, edgeColor);
-
-        if (dataSupplier != null) {
-            List<List<Double>> data = dataSupplier.get();
-            if (data != null) setData(data);
-        }
 
         if (renderPoints != null && renderPoints.size() > 1) {
             Renderer2D.drawLines(
@@ -91,7 +95,6 @@ public class Plot extends ResizableComponent {
                 );
             }
         }
-        updateRenderPoints();
     }
 
     private void drawXAxis() {

@@ -41,8 +41,12 @@ public class InfoLabel extends Label implements TickThread.Tickable {
     }
 
     @Override
-    public void render(Vector2D mouse) {
+    protected void update() {
         setSize(getTextSize());
+    }
+
+    @Override
+    public void render(Vector2D mouse) {
         drawDefaultSelectedBackground();
         FontRenderer.drawString(getFormattedText(), getDisplayedPos(), color, fontSize, true);
         //CUSTOM FONT - FontManager.testArialFont.drawStringWithShadow(getFormattedText(), getDisplayedPos().getX(), getDisplayedPos().getY(), color.getRGB());

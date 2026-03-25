@@ -25,6 +25,8 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
     protected Deque<Vector2D> renderPoints;
     protected long lastTick = -1;
     private boolean fullScreen;
+    private boolean isInMainGui;
+    private boolean isShiftPressed;
 
     private long displayTime = 0;
     private long startTime = 0;
@@ -48,12 +50,6 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
         }
 
         this.fullScreen = fullScreen;
-    }
-
-    @Override
-    public void updatePosAndSize() {
-        super.updatePosAndSize();
-        reloadRenderPoints();
     }
 
     protected void reloadRenderPoints() {
@@ -108,9 +104,24 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
     }
 
     @Override
+    protected void update() {
+        isInMainGui = Objects.equals(Minecraft.getCurrentGuiScreen(), "main_gui");
+        isShiftPressed = Keyboard.getPressedButtons().contains(InputConstants.KEY_LSHIFT);
+
+        if (lastTick != API.tickTime) {
+            updateDataPoints();
+            lastTick = API.tickTime;
+        }
+    }
+
+    @Override
+    protected void postLayout() {
+        super.postLayout();
+        reloadRenderPoints();
+    }
+
+    @Override
     public void render(Vector2D mouse) {
-        updateDataPoints();
-        boolean isInMainGui = Objects.equals(Minecraft.getCurrentGuiScreen(), "main_gui");
         if (!fullScreen || isInMainGui) {
             Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1,
                     selected ? selectedColor : Theme.lightBackground, Theme.lightEdge);
@@ -132,7 +143,7 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
 
         if (renderPoints != null && renderPoints.size() > 1) {
             boolean shouldScissor = !fullScreen && mode != Mode.X_Y &&
-                    !(isInMainGui && Keyboard.getPressedButtons().contains(InputConstants.KEY_LSHIFT));
+                    !(isInMainGui && isShiftPressed);
             if (shouldScissor)
                 Renderer2D.enableScissor(getDisplayedPos().getX() + 1, getDisplayedPos().getY() + 1,
                         getDisplayedSize().getX() - 2, getDisplayedSize().getY() - 2);
@@ -148,8 +159,6 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
     }
 
     protected void updateDataPoints() {
-        if (lastTick == API.tickTime) return;
-
         Player p = Player.getLatest();
         Player bp = Player.getBeforeLatest();
 
@@ -190,8 +199,6 @@ public class AnglePath extends ResizableComponent implements MouseScrollListener
         dataPoints.addFirst(dataPoint);
         for (Vector2D v : dataToRenderPoint(dataPoint))
             renderPoints.addFirst(v);
-
-        lastTick = API.tickTime;
     }
 
 

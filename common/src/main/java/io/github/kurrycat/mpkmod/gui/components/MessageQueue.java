@@ -45,12 +45,15 @@ public class MessageQueue extends ResizableComponent {
     }
 
     @Override
+    protected void update() {
+        messages = messages.stream().filter(Message::isAlive).collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    @Override
     public void render(Vector2D mouse) {
         Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1, selected ? selectedColor : backgroundColor, edgeColor);
         //Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);
         if (highlighted) Renderer2D.drawDottedRect(getDisplayedPos(), getDisplayedSize(), 1, 1, 1, Color.BLACK);
-
-        messages = messages.stream().filter(Message::isAlive).collect(Collectors.toCollection(ArrayList::new));
 
         double lineHeight = 10;
         for (int i = 0; i < messages.size() && (i + 1) * lineHeight <= getDisplayedSize().getY() - 2; i++) {

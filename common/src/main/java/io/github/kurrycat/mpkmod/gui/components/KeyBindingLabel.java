@@ -26,9 +26,11 @@ public class KeyBindingLabel extends ResizableComponent {
     public Color selectedColor = new Color(255, 170, 0, 100);
     @JsonProperty("name")
     private String name;
+    private KeyBinding keyBinding;
     @JsonProperty("displayName")
     private String displayName;
-    private KeyBinding keyBinding;
+    private boolean keyDown;
+    private Color renderColor;
 
     public KeyBindingLabel(Vector2D pos, Vector2D size, String name) {
         this.setPos(pos);
@@ -55,12 +57,15 @@ public class KeyBindingLabel extends ResizableComponent {
     }
 
     @Override
+    protected void update() {
+        keyDown = keyBinding != null && keyBinding.isKeyDown();
+        renderColor = selected ? selectedColor : (keyDown ? keyDownColor : keyUpColor);
+    }
+
+    @Override
     public void render(Vector2D mouse) {
-        String displayName = this.displayName;
-        boolean keyDown = keyBinding != null && keyBinding.isKeyDown();
-        Color c = selected ? selectedColor : keyDown ? keyDownColor : keyUpColor;
         if (highlighted) Renderer2D.drawDottedRect(getDisplayedPos(), getDisplayedSize(), 1, 1, 1, Color.BLACK);
-        Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), c);
+        Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), renderColor);
 
         FontRenderer.drawCenteredString(
                 displayName,
