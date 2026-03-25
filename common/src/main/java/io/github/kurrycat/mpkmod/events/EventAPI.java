@@ -117,7 +117,7 @@ public class EventAPI {
         private final Consumer<T> runnable;
         private final Event.EventType type;
 
-        public EventListener(Consumer<T> runnable, Event.EventType type) {
+        protected EventListener(Consumer<T> runnable, Event.EventType type) {
             this.runnable = runnable;
             this.type = type;
         }
@@ -132,6 +132,38 @@ public class EventAPI {
 
         public static EventListener<OnRenderOverlayEvent> onRenderOverlay(Consumer<OnRenderOverlayEvent> runnable) {
             return new EventListener<>(runnable, Event.EventType.RENDER_OVERLAY);
+        }
+
+        public static EventListener<OnRenderWorldOverlayEvent> onRenderWorldOverlay(Consumer<OnRenderWorldOverlayEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.RENDER_WORLD_OVERLAY);
+        }
+
+        public static EventListener<OnServerConnect> onServerConnect(Consumer<OnServerConnect> runnable) {
+            return new EventListener<>(runnable, Event.EventType.SERVER_CONNECT);
+        }
+
+        public static EventListener<OnServerDisconnect> onServerDisconnect(Consumer<OnServerDisconnect> runnable) {
+            return new EventListener<>(runnable, Event.EventType.SERVER_DISCONNECT);
+        }
+
+        public static EventListener<OnKeyInputEvent> onKeyInput(Consumer<OnKeyInputEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.KEY_INPUT);
+        }
+
+        public static EventListener<OnMouseInputEvent> onMouseInput(Consumer<OnMouseInputEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.MOUSE_INPUT);
+        }
+
+        public static EventListener<OnKeybindEvent> onKeybind(Consumer<OnKeybindEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.KEYBIND);
+        }
+
+        public static EventListener<OnPluginMessageEvent> onPluginMessage(Consumer<OnPluginMessageEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.PLUGIN_MESSAGE);
+        }
+
+        public static EventListener<OnModuleMessageEvent> onModuleMessage(Consumer<OnModuleMessageEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.MODULE_MESSAGE);
         }
 
         public Event.EventType getType() {

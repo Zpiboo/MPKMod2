@@ -94,7 +94,7 @@ public class Main implements MPKModule {
         TickThread.startThread();
 
         EventAPI.addListener(
-                new EventAPI.EventListener<OnKeyInputEvent>(event -> {
+                EventAPI.EventListener.onKeyInput(event -> {
                     if (Keyboard.getPressedButtons().contains(InputConstants.KEY_F3)) {
                         if (event.keyCode == InputConstants.KEY_M) {
                             if (Keyboard.getPressedButtons().contains(InputConstants.KEY_LSHIFT)) {
@@ -116,27 +116,27 @@ public class Main implements MPKModule {
                             );
                         }
                     }
-                }, Event.EventType.KEY_INPUT));
+                })
+        );
 
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> API.tickTime++));
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> {
             TickThread.setTickables(
-                    ItrUtil.getAllOfType(TickThread.Tickable.class, mainGUI.getHudRoot().getChildren())
+                ItrUtil.getAllOfType(TickThread.Tickable.class, mainGUI.getHudRoot().getChildren())
             );
         }));
 
         EventAPI.addListener(
-                new EventAPI.EventListener<OnMouseInputEvent>(e -> {
+                EventAPI.EventListener.onMouseInput(e -> {
                     if (e.dx != 0 || e.dy != 0)
                         mouseMovements.add(new Vector2D(e.dx, e.dy));
-                }, Event.EventType.MOUSE_INPUT)
+                })
         );
 
         EventAPI.addListener(
-                EventAPI.EventListener.onRenderOverlay(
-                        e -> {
-                            if (!displayOverlay) return;
-                            if (Minecraft.isF3Enabled()) return;
+                EventAPI.EventListener.onRenderOverlay(e -> {
+                    if (!displayOverlay) return;
+                    if (Minecraft.isF3Enabled()) return;
 
                             Profiler.startSection("components");
                             if (mainGUI != null) {
@@ -153,51 +153,46 @@ public class Main implements MPKModule {
         );
 
         EventAPI.addListener(
-                new EventAPI.EventListener<OnRenderWorldOverlayEvent>(
-                        e -> {
-                            if (!highlightLandingBlocks) return;
+                EventAPI.EventListener.onRenderWorldOverlay(e -> {
+                    if (!highlightLandingBlocks) return;
 
-                            Profiler.startSection("renderLBOverlays");
-                            LandingBlockGuiScreen.lbs.forEach(lb -> {
-                                        if (lb.enabled || lb.highlight && lb.boundingBox != null)
-                                            Renderer3D.drawBox(
-                                                    lb.boundingBox.expand(0.005D),
-                                                    lb.highlight ?
-                                                            new Color(98, 255, 74, 157) :
-                                                            new Color(255, 68, 68, 157),
-                                                    e.partialTicks
-                                            );
-                                    }
-                            );
-                            Profiler.endSection();
-                        },
-                        Event.EventType.RENDER_WORLD_OVERLAY
-                )
+                    Profiler.startSection("renderLBOverlays");
+                    LandingBlockGuiScreen.lbs.forEach(lb -> {
+                                if (lb.enabled || lb.highlight && lb.boundingBox != null)
+                                    Renderer3D.drawBox(
+                                            lb.boundingBox.expand(0.005D),
+                                            lb.highlight ?
+                                                    new Color(98, 255, 74, 157) :
+                                                    new Color(255, 68, 68, 157),
+                                            e.partialTicks
+                                    );
+                            }
+                    );
+                    Profiler.endSection();
+                })
         );
 
         EventAPI.addListener(
-                EventAPI.EventListener.onTickEnd(
-                        e -> {
-                            Profiler.startSection("calculateLBOffsets");
-                            LandingBlockGuiScreen.calculateLBOffsets()
-                                    .forEach(offset -> {
-                                        if (mainGUI != null)
-                                            mainGUI.postMessage(
-                                                    "offset",
-                                                    MathUtil.formatDecimals(offset.getX(), 5, false) +
-                                                            ", " + MathUtil.formatDecimals(offset.getZ(), 5, false),
-                                                    offset.getX() > 0 && offset.getZ() > 0
-                                            );
-                                    });
-                            Profiler.endSection();
-                            Profiler.startSection("tickInputHistories");
-                            for (HudComponent component : mainGUI.getHudRoot().getChildren()) {
-                                if (!(component instanceof InputHistory)) continue;
-                                ((InputHistory) component).onTick();
-                            }
-                            Profiler.endSection();
-                        }
-                )
+                EventAPI.EventListener.onTickEnd(e -> {
+                    Profiler.startSection("calculateLBOffsets");
+                    LandingBlockGuiScreen.calculateLBOffsets()
+                            .forEach(offset -> {
+                                if (mainGUI != null)
+                                    mainGUI.postMessage(
+                                            "offset",
+                                            MathUtil.formatDecimals(offset.getX(), 5, false) +
+                                                    ", " + MathUtil.formatDecimals(offset.getZ(), 5, false),
+                                            offset.getX() > 0 && offset.getZ() > 0
+                                    );
+                            });
+                    Profiler.endSection();
+                    Profiler.startSection("tickInputHistories");
+                    for (HudComponent component : mainGUI.getHudRoot().getChildren()) {
+                        if (!(component instanceof InputHistory)) continue;
+                        ((InputHistory) component).onTick();
+                    }
+                    Profiler.endSection();
+                })
         );
 
         /*EventAPI.addListener(
