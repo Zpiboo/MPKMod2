@@ -3,6 +3,7 @@ package io.github.kurrycat.mpkmod.compatibility;
 import io.github.kurrycat.mpkmod.Main;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.FunctionHolder;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.discord.DiscordRPC;
 import io.github.kurrycat.mpkmod.events.*;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
@@ -13,10 +14,7 @@ import io.github.kurrycat.mpkmod.modules.ModuleFinder;
 import io.github.kurrycat.mpkmod.modules.ModuleManager;
 import io.github.kurrycat.mpkmod.network.impl.MPKPacketListenerClientImpl;
 import io.github.kurrycat.mpkmod.save.Serializer;
-import io.github.kurrycat.mpkmod.util.ClassUtil;
-import io.github.kurrycat.mpkmod.util.JSONConfig;
-import io.github.kurrycat.mpkmod.util.Mouse;
-import io.github.kurrycat.mpkmod.util.Procedure;
+import io.github.kurrycat.mpkmod.util.*;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 import io.github.kurrycat.mpknetapi.common.network.packet.impl.clientbound.MPKPacketListenerClient;
 import io.github.kurrycat.mpknetapi.common.network.packet.impl.serverbound.MPKPacketRegister;
@@ -134,6 +132,8 @@ public class API {
     }
 
     public static class Events {
+        private static Vector2D lastScaledSize = Vector2D.ZERO.copy();
+
         public static void onTickStart() {
             EventAPI.postEvent(new OnTickStartEvent());
         }
@@ -143,6 +143,12 @@ public class API {
         }
 
         public static void onRenderOverlay() {
+            Vector2D newScaledSize = Renderer2D.getScaledSize();
+            if (!lastScaledSize.equals(newScaledSize)) {
+                EventAPI.postEvent(new OnScaledResizeEvent(newScaledSize));
+                lastScaledSize = newScaledSize;
+            }
+
             EventAPI.postEvent(new OnRenderOverlayEvent());
         }
 

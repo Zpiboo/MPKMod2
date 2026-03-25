@@ -130,6 +130,10 @@ public class EventAPI {
             return new EventListener<>(runnable, Event.EventType.TICK_END);
         }
 
+        public static EventListener<OnScaledResizeEvent> onScaledResize(Consumer<OnScaledResizeEvent> runnable) {
+            return new EventListener<>(runnable, Event.EventType.SCALED_RESIZE);
+        }
+
         public static EventListener<OnRenderOverlayEvent> onRenderOverlay(Consumer<OnRenderOverlayEvent> runnable) {
             return new EventListener<>(runnable, Event.EventType.RENDER_OVERLAY);
         }

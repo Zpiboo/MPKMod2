@@ -14,6 +14,7 @@ public abstract class Event {
     public enum EventType {
         TICK_START(OnTickStartEvent.class),
         TICK_END(OnTickEndEvent.class),
+        SCALED_RESIZE(OnScaledResizeEvent.class),
         RENDER_OVERLAY(OnRenderOverlayEvent.class),
         RENDER_WORLD_OVERLAY(OnRenderWorldOverlayEvent.class),
         SERVER_CONNECT(OnServerConnect.class),
