@@ -5,6 +5,7 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.*;
 import io.github.kurrycat.mpkmod.discord.DiscordRPC;
 import io.github.kurrycat.mpkmod.events.EventAPI;
 import io.github.kurrycat.mpkmod.gui.TickThread;
+import io.github.kurrycat.mpkmod.gui.components.Component;
 import io.github.kurrycat.mpkmod.gui.components.HudComponent;
 import io.github.kurrycat.mpkmod.gui.components.InputHistory;
 import io.github.kurrycat.mpkmod.gui.infovars.InfoString;
@@ -133,17 +134,22 @@ public class Main implements MPKModule {
         );
 
         EventAPI.addListener(
+                EventAPI.EventListener.onScaledResize(e -> {
+                    mainGUI.getHudRoot().getChildren()
+                        .forEach(Component::markDirty);
+                })
+        );
+        EventAPI.addListener(
                 EventAPI.EventListener.onRenderOverlay(e -> {
                     if (!displayOverlay) return;
                     if (Minecraft.isF3Enabled()) return;
 
-                            Profiler.startSection("hud");
-                            if (mainGUI != null) {
-                                mainGUI.renderHud();
-                            }
-                            Profiler.endSection();
-                        }
-                )
+                    Profiler.startSection("hud");
+                    if (mainGUI != null) {
+                        mainGUI.renderHud();
+                    }
+                    Profiler.endSection();
+                })
         );
 
         EventAPI.addListener(
