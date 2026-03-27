@@ -9,10 +9,14 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +35,9 @@ public class MPKMod implements ModInitializer {
         API.preInit(getClass());
         registerKeybindingsFromGUIs();
 
-        HudRenderCallback.EVENT.register(eventHandler::onInGameOverlayRender);
+        HudLayerRegistrationCallback.EVENT.register(layeredDrawer ->
+                layeredDrawer.attachLayerBefore(IdentifiedLayer.PLAYER_LIST, Identifier.of(API.MODID, "hud_layer"), eventHandler::onInGameOverlayRender)
+        );
         ClientTickEvents.START_CLIENT_TICK.register(eventHandler::onClientTickStart);
         ClientTickEvents.END_CLIENT_TICK.register(eventHandler::onClientTickEnd);
         ClientPlayConnectionEvents.JOIN.register(eventHandler::onServerConnect);

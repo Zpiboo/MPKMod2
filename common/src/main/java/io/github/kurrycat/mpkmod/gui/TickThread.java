@@ -2,51 +2,63 @@ package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class TickThread implements Runnable {
-    private static final AtomicReference<List<Tickable>> tickables = new AtomicReference<>();
-    private static final AtomicBoolean changed = new AtomicBoolean(false);
+    private static final Object lock = new Object();
+
+    private static final List<Tickable> tickables = new ArrayList<>();
+    private static boolean changed = false;
 
     public static void startThread() {
         Thread t = new Thread(
                 new TickThread(),
                 API.MODID + " GUI Tick Thread"
         );
+        t.setDaemon(true);
         t.start();
     }
 
     public static void setTickables(List<Tickable> tickables) {
-        TickThread.tickables.set(tickables);
-        TickThread.changed.set(true);
+        synchronized (lock) {
+            TickThread.tickables.clear();
+            TickThread.tickables.addAll(tickables);
+            changed = true;
+
+            lock.notify();
+        }
     }
 
     @Override
     public void run() {
         API.LOGGER.info("Started GuiTickThread");
-        while (!Thread.currentThread().isInterrupted()) {
-            if (!changed.get()) continue;
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                List<Tickable> tickablesSnapshot;
 
-            for (Tickable tickable : tickables.get()) {
-                try {
-                    tickable.runTick();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                synchronized (lock) {
+                    while (!changed) {
+                        lock.wait();
+                    }
+                    changed = false;
+                    tickablesSnapshot = new ArrayList<>(tickables);
+                }
+
+                for (Tickable tickable : tickablesSnapshot) {
+                    try {
+                        tickable.tick();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            TickThread.changed.set(false);
+        } catch (InterruptedException ignore) {
+            Thread.currentThread().interrupt();
         }
     }
 
     public interface Tickable {
-        default void runTick() {
-            synchronized (this) {
-                tick();
-            }
-        }
-
         void tick();
     }
 }
