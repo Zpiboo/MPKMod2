@@ -1,6 +1,7 @@
 package io.github.kurrycat.mpkmod.compatibility.fabric_1_20_6;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
 import io.github.kurrycat.mpkmod.compatibility.fabric_1_20_6.mixin.KeyBindingAccessor;
 import io.github.kurrycat.mpkmod.ticks.ButtonMS;
@@ -152,6 +153,14 @@ public class EventHandler {
                     .setKeyMSList(timeQueue)
                     .buildAndSave();
             timeQueue.clear();
+        }
+
+        //TODO: Dirty fix for getting the player ping in the right thread
+        ClientPlayNetworkHandler nh = MinecraftClient.getInstance().getNetworkHandler();
+        if (nh != null) {
+            nh.getListedPlayerListEntries().stream()
+                    .filter(playerInfo -> mcPlayer != null && playerInfo.getProfile().getId().equals(mcPlayer.getUuid()))
+                    .findFirst().ifPresent(playerInfo -> Minecraft.ping = playerInfo.getLatency());
         }
 
         API.Events.onTickEnd();

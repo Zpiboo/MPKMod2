@@ -18,6 +18,7 @@ public class Minecraft {
     public static WorldState worldState = WorldState.MENU;
     public static PlayState playState = PlayState.ACTIVE;
     public static boolean sprintToggled = false;
+    public static int ping = -1;
 
     @InfoString.Getter
     public static String getIp() {
@@ -39,6 +40,11 @@ public class Minecraft {
             API.LOGGER.info(API.COMPATIBILITY_MARKER, "Failed to get FPS, are you playing on an unsupported minecraft version?");
             return "Error";
         });
+    }
+
+    @InfoString.Getter
+    public static int getPing() {
+        return ping;
     }
 
     @InfoString.Getter
