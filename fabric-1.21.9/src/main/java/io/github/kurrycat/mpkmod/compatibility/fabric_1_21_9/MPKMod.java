@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding.Category;
@@ -34,7 +35,7 @@ public class MPKMod implements ModInitializer {
         API.preInit(getClass());
         registerKeybindingsFromGUIs();
 
-        HudElementRegistry.addLast(Identifier.of(API.MODID, "hud_layer"), eventHandler::onInGameOverlayRender);
+        HudElementRegistry.attachElementBefore(VanillaHudElements.PLAYER_LIST, Identifier.of(API.MODID, "hud_layer"), eventHandler::onInGameOverlayRender);
         ClientTickEvents.START_CLIENT_TICK.register(eventHandler::onClientTickStart);
         ClientTickEvents.END_CLIENT_TICK.register(eventHandler::onClientTickEnd);
         ClientPlayConnectionEvents.JOIN.register(eventHandler::onServerConnect);
