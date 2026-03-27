@@ -1,7 +1,6 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.kurrycat.mpkmod.Main;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.FontRenderer;
@@ -17,8 +16,8 @@ import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class InfoLabel extends Label implements TickThread.Tickable {
@@ -42,6 +41,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
     }
 
     public void render(Vector2D mouse) {
+        setSize(getTextSize());
         drawDefaultSelectedBackground();
         FontRenderer.drawString(getFormattedText(), getDisplayedPos(), color, fontSize, true);
         //CUSTOM FONT - FontManager.testArialFont.drawStringWithShadow(getFormattedText(), getDisplayedPos().getX(), getDisplayedPos().getY(), color.getRGB());
@@ -58,7 +58,6 @@ public class InfoLabel extends Label implements TickThread.Tickable {
 
     public void tick() {
         formattedText = infoString.get();
-        setSize(getTextSize());
     }
 
     @Override
