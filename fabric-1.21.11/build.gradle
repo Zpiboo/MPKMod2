@@ -1,0 +1,51 @@
+plugins {
+    id 'fabric-loom' version "1.14-SNAPSHOT"
+
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+}
+
+loom.runs.client.runDir = "../runs/run"
+
+repositories {
+    maven { url = "https://repo.viaversion.com" }
+    maven { url = "https://maven.lenni0451.net/everything" }
+    maven { url = "https://maven.terraformersmc.com/" }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    modImplementation "com.terraformersmc:modmenu:17.0.0-beta.1"
+
+    implementation "com.github.MPKMod.MPKNetworkAPI:common:${project.networkApiVersion}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = ""
+    type = STABLE
+    version = project.version
+    modLoaders.add("fabric")
+
+    modrinth {
+        projectId = "412tAvWq"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add("1.21.11")
+    }
+    /*github {
+        repository = "MPKMod/MPKMod2"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = "main"
+    }*/
+}
