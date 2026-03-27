@@ -7,8 +7,6 @@ import io.github.kurrycat.mpkmod.save.Serializer;
 import io.github.kurrycat.mpkmod.util.FileUtil;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,15 +30,17 @@ public class TimingStorage {
         patterns = Serializer.deserializeAny(stratFile, new TypeReference<HashMap<String, Timing>>() {
         });
 
+        if (patterns == null) return;
+
         File file = new File(stratFileName);
         if (!file.exists()) {
             //Make an empty json file if it doesn't exist
             FileUtil.createFile(stratFileName, "{}");
         }
 
-        //TODO: Fix potential null pointer issue
-        patterns.putAll(Serializer.deserializeAny(file, new TypeReference<HashMap<String, Timing>>() {}));
-        if (patterns == null) return;
+        HashMap<String, Timing> timingMap = Serializer.deserializeAny(file, new TypeReference<HashMap<String, Timing>>() {});
+        if (timingMap != null)
+            patterns.putAll(timingMap);
 
         API.LOGGER.info(API.CONFIG_MARKER, "{} Timings loaded from {}", patterns.size(), stratFileName);
     }
@@ -49,6 +49,10 @@ public class TimingStorage {
         List<Timing.Match> matches = new ArrayList<>();
         for (Map.Entry<String, Timing> entry : patterns.entrySet()) {
             Timing.Match match = entry.getValue().match(inputList);
+
+            if (match == null && entry.getValue().isSymmetrical()) {
+                match = entry.getValue().getMirrored().match(inputList);
+            }
             if (match != null) {
                 matches.add(match);
             }

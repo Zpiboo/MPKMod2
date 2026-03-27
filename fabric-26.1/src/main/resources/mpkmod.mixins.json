@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "io.github.kurrycat.mpkmod.compatibility.fabric_26_1.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+  ],
+  "client": [
+    "LevelRendererMixin",
+    "KeyMappingAccessor",
+    "KeyboardHandlerMixin",
+    "MinecraftMixin",
+    "MouseHandlerMixin",
+    "ToggleSprintKeyMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

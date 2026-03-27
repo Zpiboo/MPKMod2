@@ -110,11 +110,22 @@ configure(
     if (project.name != "common") {
         project.afterEvaluate {
 
-            remapJar {
-                inputFile.set project.jar.archiveFile
-                destinationDirectory = file("${rootProject.buildDir}/libs")
-                dependsOn project.jar
-                archiveFileName = project.jar.archiveFileName
+            if (project.tasks.findByName('remapJar')) {
+                remapJar {
+                    inputFile.set project.jar.archiveFile
+                    destinationDirectory = file("${rootProject.buildDir}/libs")
+                    dependsOn project.jar
+                    archiveFileName = project.jar.archiveFileName
+                }
+            } else {
+                jar {
+                    doLast {
+                        copy {
+                            from archiveFile.get().asFile
+                            into "${rootProject.buildDir}/libs"
+                        }
+                    }
+                }
             }
 
             // Fix unimined runs bug

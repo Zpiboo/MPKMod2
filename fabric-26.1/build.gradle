@@ -1,0 +1,56 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version "1.15-SNAPSHOT"
+
+    id "me.modmuss50.mod-publish-plugin" version "1.1.0"
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/mpkmod.classtweaker")
+
+    runs.client.runDir = "../runs/run"
+}
+
+repositories {
+    maven { url = "https://repo.viaversion.com" }
+    maven { url = "https://maven.lenni0451.net/everything" }
+    maven { url = "https://maven.terraformersmc.com/" }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation include("net.fabricmc:fabric-loader:${project.loader_version}")
+
+    implementation include("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
+
+    compileOnly "com.viaversion:viafabricplus-api:4.4.8"
+    compileOnly "com.terraformersmc:modmenu:18.0.0-alpha.6"
+
+    implementation "com.github.MPKMod.MPKNetworkAPI:common:${project.networkApiVersion}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+publishMods {
+    file = jar.archiveFile
+    changelog = ""
+    type = STABLE
+    version = project.version
+    modLoaders.add("fabric")
+
+    modrinth {
+        projectId = "412tAvWq"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add("26.1")
+    }
+    /*github {
+        repository = "MPKMod/MPKMod2"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = "main"
+    }*/
+}
