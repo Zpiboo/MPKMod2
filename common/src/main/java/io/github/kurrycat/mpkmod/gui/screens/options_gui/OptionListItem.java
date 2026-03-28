@@ -56,7 +56,7 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
 
     protected abstract void updateDisplayValue();
 
-    public void update() {
+    public void updateValue() {
         option.setValue(value);
     }
 
@@ -66,7 +66,7 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
     }
 
     @Override
-    public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
+    public void render(Vector2D mouse) {
         Renderer2D.drawRectWithEdge(pos, size, 1, optionListColorBg, optionListColorItemEdge);
 
         helpHover.render(mouse);
@@ -78,7 +78,7 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
                 false
         );
 
-        renderTypeSpecific(index, pos, size, mouse);
+        renderTypeSpecific(mouse);
 
         if (resetButton != null) {
             resetButton.enabled = !option.getDefaultValue().equals(value);
@@ -97,5 +97,5 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
         }
     }
 
-    protected abstract void renderTypeSpecific(int index, Vector2D pos, Vector2D size, Vector2D mouse);
+    protected abstract void renderTypeSpecific(Vector2D mouse);
 }

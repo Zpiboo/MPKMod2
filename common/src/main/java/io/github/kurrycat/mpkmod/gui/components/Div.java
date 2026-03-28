@@ -1,5 +1,6 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
+import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.FontRenderer;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
@@ -25,16 +26,26 @@ public class Div extends Component implements MouseInputListener, MouseScrollLis
     private boolean hasSetSizeX = false;
     private boolean hasSetSizeY = false;
 
+    private final boolean hideOverflow;
+
     public Div() {
+        this.hideOverflow = false;
     }
 
     public Div(Vector2D pos, Vector2D size) {
         this.setPos(pos);
         this.setSize(size);
+        this.hideOverflow = false;
+    }
+
+    public Div(Vector2D pos, Vector2D size, boolean hideOverflow) {
+        this.setPos(pos);
+        this.setSize(size);
+        this.hideOverflow = hideOverflow;
     }
 
     @Override
-    public void updatePosAndSize() {
+    protected void updatePosAndSize() {
         super.updatePosAndSize();
         if (text != null) {
             if (!hasSetSizeX) lines = new String[]{text};
@@ -155,7 +166,17 @@ public class Div extends Component implements MouseInputListener, MouseScrollLis
                 pos.addYInPlace(FontRenderer.getStringSize(line).getY());
             }
         }
+
+        if (hideOverflow)
+            Renderer2D.enableScissor(
+                    getDisplayedPos().getX(), getDisplayedPos().getY(),
+                    getDisplayedSize().getX(), getDisplayedSize().getY()
+            );
+
         super.render(mouse);
+
+        if (hideOverflow)
+            Renderer2D.disableScissor();
     }
 
     @Override

@@ -6,7 +6,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
 
-public class PopupMenu extends Pane<MainGuiScreen> {
+public class PopupMenu extends Pane<MainGuiScreen> {  // TODO: this should not inherit Pane
     public ArrayList<PopupMenu> subMenus = new ArrayList<>();
     private PopupMenu currentlyActive = null;
 
