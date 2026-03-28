@@ -1,13 +1,15 @@
 package io.github.kurrycat.mpkmod.gui.components;
 
+import io.github.kurrycat.mpkmod.compatibility.API;
+import io.github.kurrycat.mpkmod.gui.screens.LandingBlockGuiScreen;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class ComponentHolder<C extends Component> {
-    protected final List<C> children = new ArrayList<>();
+public abstract class ComponentHolder<C extends Component<?>> {
+    protected final Roo<C> children = new ArrayList<>();
 
     public abstract void updateTree();
     public abstract void layoutTree();
@@ -15,7 +17,7 @@ public abstract class ComponentHolder<C extends Component> {
     public abstract Vector2D getDisplayedPos();
     public abstract Vector2D getDisplayedSize();
 
-    public abstract ComponentHolder<C> getRoot();
+    public abstract ComponentHolder<?> getRoot();
 
     public void render(Vector2D mousePos) {
         children.forEach(c -> c.render(mousePos));
@@ -42,11 +44,13 @@ public abstract class ComponentHolder<C extends Component> {
     }
 
     public void passPositionTo(C child) {
+        if (child.getParent() == this) return;
+
         if (child.getParent() != null)
             child.getParent().removeChild(child);
 
         // noinspection unchecked
-        child.setParent((ComponentHolder<Component>) this);
+        child.setParent(this);
         child.markDirty();
     }
 

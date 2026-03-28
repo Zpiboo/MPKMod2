@@ -112,18 +112,18 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         }
 
         public void updateSearchFilter(String searchString) {
-            items.clear();
+            clearItems();
             for (InfoVarListItem item : allItems) {
                 if (item.containsSearchString(searchString))
-                    items.add(item);
+                    addItem(item);
             }
         }
 
-        @Override
-        public void render(Vector2D mouse) {
-            super.render(mouse);
-            renderComponents(mouse);
-        }
+//        @Override
+//        public void render(Vector2D mouse) {
+//            super.render(mouse);
+//            renderComponents(mouse);
+//        }
     }
 
     private static class InfoVarListItem extends ScrollableListItem<InfoVarListItem> {
@@ -139,7 +139,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         }
 
         @Override
-        public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
+        public void render(Vector2D mouse) {
             infoVarComponent.render(mouse);
         }
 
@@ -312,10 +312,10 @@ public class InfoLabel extends Label implements TickThread.Tickable {
             addChild(button.setPercentFlag(PERCENT.SIZE));
         }
 
-        @Override
-        public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
-            renderComponents(mouse);
-        }
+//        @Override
+//        public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
+//            renderComponents(mouse);
+//        }
     }
 
     public class EditPane extends Pane<MainGuiScreen> {

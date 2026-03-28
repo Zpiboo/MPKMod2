@@ -21,12 +21,6 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
         this.setSize(new Vector2D(parent.getDisplayedSize().getX(), 50));
     }
 
-    public abstract void render(int index, Vector2D pos, Vector2D size, Vector2D mouse);
-
-    public final void renderComponents(Vector2D mouse) {
-        this.children.forEach(c -> c.render(mouse));
-    }
-
     public final void renderDefaultBorder(Vector2D pos, Vector2D size) {
         Renderer2D.drawHollowRect(pos.add(1), size.sub(2), 1, defaultEdgeColor);
     }

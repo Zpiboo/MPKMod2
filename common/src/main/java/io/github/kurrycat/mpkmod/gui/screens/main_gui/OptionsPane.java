@@ -118,9 +118,9 @@ public class OptionsPane extends Pane<MainGuiScreen> {
         }
 
         @Override
-        public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
-            renderDefaultBorder(pos, size);
-            renderComponents(mouse);
+        public void render(Vector2D mouse) {
+            renderDefaultBorder(getDisplayedPos(), getDisplayedSize());
+            super.render(mouse);
         }
     }
 }

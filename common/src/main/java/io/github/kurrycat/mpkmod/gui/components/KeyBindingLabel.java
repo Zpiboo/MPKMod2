@@ -247,31 +247,31 @@ public class KeyBindingLabel extends ResizableComponent {
             }
 
             @Override
-            public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
+            public void render(Vector2D mouse) {
                 if (collapsed) {
-                    Renderer2D.drawRectWithEdge(pos, size, 1, new Color(31, 31, 31, 150), new Color(31, 31, 31, 150));
-                    FontRenderer.drawCenteredString(modName, pos.add(size.div(2)), Color.WHITE, false);
+                    Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1, new Color(31, 31, 31, 150), new Color(31, 31, 31, 150));
+                    FontRenderer.drawCenteredString(modName, getDisplayedPos().add(getDisplayedSize().div(2)), Color.WHITE, false);
                 } else {
-                    Renderer2D.drawRectWithEdge(pos,
-                            new Vector2D(size.getX(), keyItemHeight),
+                    Renderer2D.drawRectWithEdge(getDisplayedPos(),
+                            new Vector2D(getDisplayedSize().getX(), keyItemHeight),
                             1, new Color(31, 31, 31, 150),
                             new Color(31, 31, 31, 150));
                     Renderer2D.drawRect(
-                            pos.add(0, keyItemHeight),
-                            size.sub(0, keyItemHeight),
+                            getDisplayedPos().add(0, keyItemHeight),
+                            getDisplayedSize().sub(0, keyItemHeight),
                             new Color(31, 31, 31, 150));
-                    FontRenderer.drawCenteredString(modName, pos.add(size.getX() / 2, keyItemHeight / 2D), Color.WHITE, false);
+                    FontRenderer.drawCenteredString(modName, getDisplayedPos().add(getDisplayedSize().getX() / 2, keyItemHeight / 2D), Color.WHITE, false);
 
                     for (int i = 0; i < keyNames.size(); i++) {
                         FontRenderer.drawCenteredString(
                                 keyNames.get(i),
-                                pos.add(size.getX() / 2, keyItemHeight * 1.5D + 12 * i),
+                                getDisplayedPos().add(getDisplayedSize().getX() / 2, keyItemHeight * 1.5D + 12 * i),
                                 Color.WHITE, false
                         );
                     }
                 }
 
-                renderComponents(mouse);
+                super.render(mouse);
             }
         }
     }

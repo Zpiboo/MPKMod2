@@ -271,7 +271,7 @@ public abstract class MPKGuiScreen implements KeyInputListener, MouseInputListen
         }
 
         @Override
-        public ComponentHolder<C> getRoot() {
+        public ComponentHolder<?> getRoot() {
             return this;
         }
     }

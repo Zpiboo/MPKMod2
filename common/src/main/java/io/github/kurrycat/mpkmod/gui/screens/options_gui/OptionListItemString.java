@@ -28,7 +28,7 @@ public class OptionListItemString extends OptionListItem {
     }
 
     @Override
-    protected void renderTypeSpecific(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
+    protected void renderTypeSpecific(Vector2D mouse) {
         inputField.render(mouse);
     }
 }

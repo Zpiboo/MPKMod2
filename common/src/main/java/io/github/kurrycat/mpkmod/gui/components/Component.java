@@ -5,9 +5,9 @@ import io.github.kurrycat.mpkmod.util.Debug;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
-public abstract class Component extends ComponentHolder<Component> {
-    protected ComponentHolder<Component> parent = null;
-    protected ComponentHolder<Component> root = null;
+public abstract class Component extends ComponentHolder<Com> {
+    protected ComponentHolder<Component<C>> parent = null;
+    protected ComponentHolder<?> root = null;
 
     protected boolean dirty = true;
 
@@ -42,17 +42,17 @@ public abstract class Component extends ComponentHolder<Component> {
      */
     protected Anchor anchor = Anchor.TOP_LEFT;
     protected boolean absolute = false;
-    protected Component minX = null;
-    protected Component minY = null;
-    protected Component maxX = null;
-    protected Component maxY = null;
+    protected Component<?> minX = null;
+    protected Component<?> minY = null;
+    protected Component<?> maxX = null;
+    protected Component<?> maxY = null;
 
     @Override
-    public ComponentHolder<Component> getRoot() {
+    public ComponentHolder<?> getRoot() {
         return root;
     }
 
-    public ComponentHolder<Component> getParent() {
+    public ComponentHolder<Component<C>> getParent() {
         return parent;
     }
 
@@ -69,7 +69,7 @@ public abstract class Component extends ComponentHolder<Component> {
         dirty = true;
         getChildren().forEach(Component::markDirty);
         if (parent instanceof Component)
-            ((Component) parent).markDirty();
+            ((Component<?>) parent).markDirty();
     }
 
     @Override
@@ -109,7 +109,7 @@ public abstract class Component extends ComponentHolder<Component> {
      * Updates size and pos based on parent size.
      */
     protected void updatePosAndSize() {
-        ComponentHolder<Component> p = rParent();
+        ComponentHolder<?> p = rParent();
         if (p == null || p == this) {
             this.csize.set(this.size);
             this.cpos.set(this.pos);
@@ -173,7 +173,7 @@ public abstract class Component extends ComponentHolder<Component> {
         );
     }
 
-    protected ComponentHolder<Component> rParent() {
+    protected ComponentHolder<?> rParent() {
         return absolute ? getRoot() : getParent();
     }
 
@@ -241,7 +241,7 @@ public abstract class Component extends ComponentHolder<Component> {
         markDirty();
     }
 
-    public void setParent(ComponentHolder<Component> parent) {
+    public void setParent(ComponentHolder<Component<C>> parent) {
         if (this.parent == parent) return;
 
         this.parent = parent;
@@ -249,8 +249,8 @@ public abstract class Component extends ComponentHolder<Component> {
 
         markDirty();
 
-        for (Component c : getChildren())
-            c.setParent(this);
+        for (C c : getChildren())
+            c.setParent(this.asComponentHolder());
     }
 
     public void setAbsolute(boolean absolute) {
@@ -258,25 +258,25 @@ public abstract class Component extends ComponentHolder<Component> {
         markDirty();
     }
 
-    public <C extends Component> C setPercentFlag(int percentFlag) {
+    public <T extends Component<C>> T setPercentFlag(int percentFlag) {
         this.percentFlag = percentFlag;
         markDirty();
-        return (C) this;
+        return (T) this;
     }
 
-    public <C extends Component> C setAnchor(Anchor anchor) {
+    public <T extends Component<C>> T setAnchor(Anchor anchor) {
         this.anchor = anchor;
         markDirty();
-        return (C) this;
+        return (T) this;
     }
 
-    public <C extends Component> C setParentAnchor(Anchor parentAnchor) {
+    public <T extends Component<C>> T setParentAnchor(Anchor parentAnchor) {
         this.parentAnchor = parentAnchor;
         markDirty();
-        return (C) this;
+        return (T) this;
     }
 
-    public <C extends Component> C setAnchors(Anchor anchor) {
+    public <T extends Component<C>> T setAnchors(Anchor anchor) {
         return this
                 .setAnchor(anchor)
                 .setParentAnchor(anchor);

@@ -78,7 +78,7 @@ public class OptionsGuiScreen extends MPKGuiScreen {
             this.setPos(pos);
             this.setSize(size);
             this.setTitle("Options");
-            items.clear();
+            clearItems();
             for (Option option : options) {
                 if(!option.shouldShowInOptionList()) continue;
 
@@ -96,26 +96,25 @@ public class OptionsGuiScreen extends MPKGuiScreen {
                     default:
                         item = new OptionListItemDefault(this, option);
                 }
-                items.add(item);
+                addItem(item);
             }
-            this.scrollBar.constrainScrollAmountToScreen();
         }
 
-        @Override
-        public void render(Vector2D mouse) {
-            super.render(mouse);
-            renderComponents(mouse);
-        }
+//        @Override
+//        public void render(Vector2D mouse) {
+//            super.render(mouse);
+//            renderComponents(mouse);
+//        }
 
         public void resetAllToDefault() {
-            for (OptionListItem item : items) {
+            for (OptionListItem item : getItems()) {
                 item.loadDefaultValue();
             }
         }
 
         public void updateAll() {
-            for (OptionListItem item : items) {
-                item.update();
+            for (OptionListItem item : getItems()) {
+                item.updateValue();
             }
         }
     }

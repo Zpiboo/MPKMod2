@@ -16,10 +16,10 @@ public class OptionListItemDefault extends OptionListItem {
     }
 
     @Override
-    protected void renderTypeSpecific(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
+    protected void renderTypeSpecific(Vector2D mouse) {
         FontRenderer.drawRightCenteredString(
                 value,
-                pos.add(5, size.getY() / 2),
+                getDisplayedPos().add(5, getDisplayedSize().getY() / 2),
                 Color.WHITE,
                 false
         );

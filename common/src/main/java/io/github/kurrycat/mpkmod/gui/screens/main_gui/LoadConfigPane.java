@@ -119,8 +119,8 @@ public class LoadConfigPane extends Pane<MainGuiScreen> {
             this.setSize(size);
             this.configurationMap = configurationMap;
             reloadItems();
-            items.clear();
-            items.addAll(allItems);
+            clearItems();
+            allItems.forEach(this::addItem);
         }
 
         public void reloadItems() {
@@ -136,10 +136,10 @@ public class LoadConfigPane extends Pane<MainGuiScreen> {
         }
 
         public void updateItems() {
-            items.clear();
+            clearItems();
             for (ConfigFileListItem item : allItems)
                 if (item.file.toLowerCase().contains(filename.content.toLowerCase()))
-                    items.add(item);
+                    addItem(item);
         }
     }
 
@@ -165,11 +165,11 @@ public class LoadConfigPane extends Pane<MainGuiScreen> {
         }
 
         @Override
-        public void render(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
-            Renderer2D.drawHollowRect(pos.add(1), size.sub(2), 1, edgeColor);
-            FontRenderer.drawLeftCenteredString(this.file, pos.add(5, size.getY() / 2), Color.WHITE, true);
+        public void render(Vector2D mouse) {
+            Renderer2D.drawHollowRect(getDisplayedPos().add(1), getDisplayedSize().sub(2), 1, edgeColor);
+            FontRenderer.drawLeftCenteredString(this.file, getDisplayedPos().add(5, getDisplayedSize().getY() / 2), Color.WHITE, true);
 
-            renderComponents(mouse);
+            super.render(mouse);
         }
     }
 }
