@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ScrollableList<I extends ScrollableListItem<I>> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
+public class ScrollableList<I extends ScrollableListItem<I>> extends Container implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
     public final List<I> items = new CopyOnWriteArrayList<>();
     private final TextRectangle titleComponent;
     public Color backgroundColor = Theme.darkBackground;

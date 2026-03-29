@@ -5,8 +5,12 @@ import io.github.kurrycat.mpkmod.util.Debug;
 import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
+import java.util.Collections;
+import java.util.List;
+
 public abstract class Component {
-    protected Component parent = null;
+    private Component parent = null;
+    private Component root = null;
     /**
      * relative position, always positive, can be percentage
      */
@@ -37,7 +41,6 @@ public abstract class Component {
      * origin anchor for this
      */
     protected Anchor anchor = Anchor.TOP_LEFT;
-    protected Component root = null;
     protected boolean absolute = false;
     protected long lastUpdated = 0;
     protected Component minX = null;
@@ -47,10 +50,6 @@ public abstract class Component {
 
     public Component getRoot() {
         return root;
-    }
-
-    public void setRoot(Component root) {
-        this.root = root;
     }
 
     public boolean contains(Vector2D testPos) {
@@ -80,7 +79,7 @@ public abstract class Component {
      * Updates size and pos based on parent size.
      */
     public void updatePosAndSize() {
-        if (parent != null) setRoot(parent.root);
+        if (parent != null) root = parent.root;
         Component p = rParent();
         if (p == null || p == this) {
             this.csize.set(this.size);
@@ -223,12 +222,36 @@ public abstract class Component {
     }
 
     public void setParent(Component parent) {
-        root = parent.root;
+        if (this.parent == parent) return;
+
         this.parent = parent;
+        this.root = (parent == null) ? this : parent.getRoot();
     }
 
-    public void setAbsolute(boolean absolute) {
+    public Component setAbsolute(boolean absolute) {
         this.absolute = absolute;
+        return this;
+    }
+
+    public Component setPercentFlag(int percentFlag) {
+        this.percentFlag = percentFlag;
+        return this;
+    }
+
+    public Component setThisAnchor(Anchor anchor) {
+        this.anchor = anchor;
+        return this;
+    }
+
+    public Component setParentAnchor(Anchor parentAnchor) {
+        this.parentAnchor = parentAnchor;
+        return this;
+    }
+
+    public Component setAnchors(Anchor anchor) {
+        return this
+                .setThisAnchor(anchor)
+                .setParentAnchor(anchor);
     }
 
     @SuppressWarnings("unused")

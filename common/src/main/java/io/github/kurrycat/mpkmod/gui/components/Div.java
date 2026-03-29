@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Div extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Div extends Container implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = null;
     public Color borderColor = null;
     public Color textColor = null;

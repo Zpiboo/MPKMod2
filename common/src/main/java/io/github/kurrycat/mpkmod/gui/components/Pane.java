@@ -13,7 +13,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Pane<T extends MPKGuiScreen> extends ComponentHolder implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Pane<T extends MPKGuiScreen> extends Container implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = Theme.darkBackground;
 
     public T paneHolder = null;

@@ -3,30 +3,22 @@ package io.github.kurrycat.mpkmod.gui.components;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class ComponentHolder extends Component {
-    protected ArrayList<Component> components = new ArrayList<>();
+public abstract class Container extends Component {
+    private final List<Component> children = new ArrayList<>();
 
-    public void addChild(Component child) {
-        addChild(child, PERCENT.NONE, Anchor.TOP_LEFT);
-    }
-
-    public void addChild(Component child, int percentFlag) {
-        addChild(child, percentFlag, Anchor.TOP_LEFT);
+    public List<Component> getChildren() {
+        return Collections.unmodifiableList(children);
     }
 
     /**
-     * @param child       child component to add to parent
-     * @param percentFlag flag built of {@link PERCENT} fields that determines which fields of posX, posY, sizeX and sizeY should be treated as a percentage of the parent
-     * @param anchor      {@link Anchor}point of both the parent and child
+     * @param child child component to add to parent
      */
-    public void addChild(Component child, int percentFlag, Anchor anchor) {
-        addChild(child, percentFlag, anchor, anchor);
-    }
-
-    public void addChild(Component child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
-        passPositionTo(child, percentFlag, anchor, parentAnchor);
-        this.components.add(child);
+    public void addChild(Component child) {
+        children.add(child);
+        child.setParent(this);
     }
 
     public void passPositionTo(Component child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
@@ -62,13 +54,20 @@ public abstract class ComponentHolder extends Component {
     }
 
     public void removeChild(Component child) {
-        this.components.remove(child);
-        child.setRoot(null);
-        child.parent = null;
+        children.remove(child);
+        child.setParent(null);
+    }
+
+    @Override
+    public void setParent(Component parent) {
+        super.setParent(parent);
+
+        for (Component c : getChildren())
+            c.setParent(this);
     }
 
     @Override
     public void render(Vector2D mouse) {
-        components.forEach(c -> c.render(mouse));
+        children.forEach(c -> c.render(mouse));
     }
 }

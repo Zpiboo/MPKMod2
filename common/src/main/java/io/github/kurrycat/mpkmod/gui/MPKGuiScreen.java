@@ -4,6 +4,7 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.components.Component;
+import io.github.kurrycat.mpkmod.gui.components.Container;
 import io.github.kurrycat.mpkmod.gui.components.PopupMenu;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
@@ -11,7 +12,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 @SuppressWarnings("unused")
-public abstract class MPKGuiScreen extends ComponentHolder {
+public abstract class MPKGuiScreen extends Container {
     public ArrayList<Pane<?>> openPanes = new ArrayList<>();
     private boolean initialized = false;
     private String id = null;
