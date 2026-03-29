@@ -2,15 +2,23 @@ package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
+import io.github.kurrycat.mpkmod.gui.components.Component;
 import io.github.kurrycat.mpkmod.gui.components.Container;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
+
 @SuppressWarnings("unused")
-public abstract class MPKGuiScreen extends Container {
+public abstract class MPKGuiScreen {
+    private final Container guiRoot = new GuiScreenRoot();
+
     private boolean initialized = false;
     private String id = null;
+
+    public Container getGuiRoot() {
+        return guiRoot;
+    }
 
     public final String getID() {
         return id;
@@ -23,59 +31,46 @@ public abstract class MPKGuiScreen extends Container {
     }
 
     public Vector2D getScreenSize() {
-        return getDisplayedSize();
+        return Renderer2D.getScaledSize();
     }
 
+
+    public void addGuiComponent(Component component) {
+        getGuiRoot().addChild(component);
+    }
+
+    public void removeGuiComponent(Component component) {
+        getGuiRoot().removeChild(component);
+    }
+
+
     public final void onInit() {
-        setSize(Renderer2D.getScaledSize());
-        setRoot(this);
         if (!initialized || resetOnOpen())
             onGuiInit();
         initialized = true;
+    }
+
+    public final void onResize(int width, int height) {
+        onGuiResized(getScreenSize());
     }
 
     public boolean resetOnOpen() {
         return true;
     }
 
-    public void onGuiInit() {
-    }
-
     public boolean isInitialized() {
         return initialized;
     }
 
-    public void onGuiClosed() {
+
+    public void onGuiInit() {
+        getGuiRoot().clearChildren();
     }
 
-    public final void onResize(int width, int height) {
-        setSize(new Vector2D(width, height));
-        onGuiResized(size);
-    }
+    public void onGuiClosed() {}
 
-    public void onGuiResized(Vector2D screenSize) {
-    }
+    public void onGuiResized(Vector2D screenSize) {}
 
-    public void onKeyEvent(int keyCode, int scanCode, int modifiers, boolean pressed) {
-    }
-
-    public void onMouseClicked(Vector2D mouse, int mouseButton) {
-    }
-
-    public void onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {
-    }
-
-    public void onMouseReleased(Vector2D mouse, int mouseButton) {
-    }
-
-    /**
-     * @param mousePos Mouse position when scrolled
-     * @param delta    number of lines to scroll (one scroll tick = 3 per default)<br>
-     *                 delta {@literal <} 0: scrolled down<br>
-     *                 delta {@literal >} 0: scrolled up
-     */
-    public void onMouseScroll(Vector2D mousePos, int delta) {
-    }
 
     public final void drawScreen(Vector2D mouse, float partialTicks) {
         render(mouse, partialTicks);
@@ -83,11 +78,13 @@ public abstract class MPKGuiScreen extends Container {
     }
 
     public void render(Vector2D mouse, float partialTicks) {
+        getGuiRoot().render(mouse);
     }
 
     public final void drawDefaultBackground() {
-        Renderer2D.drawRect(Vector2D.ZERO, size.add(2), new Color(16, 16, 16, 140));
+        Renderer2D.drawRect(Vector2D.ZERO, getScreenSize().add(2), new Color(16, 16, 16, 140));
     }
+
 
     public boolean shouldCreateKeyBind() {
         return false;
@@ -99,5 +96,45 @@ public abstract class MPKGuiScreen extends Container {
 
     public final void close() {
         Minecraft.displayGuiScreen(null);
+    }
+
+
+    public void onKeyEvent(int keyCode, int scanCode, int modifiers, boolean pressed) {}
+
+    public void onMouseClicked(Vector2D mouse, int mouseButton) {}
+
+    public void onMouseClickMove(Vector2D mouse, int mouseButton, long timeSinceLastClick) {}
+
+    public void onMouseReleased(Vector2D mouse, int mouseButton) {}
+
+    /**
+     * @param mousePos Mouse position when scrolled
+     * @param delta    number of lines to scroll (one scroll tick = 3 per default)<br>
+     *                 delta {@literal <} 0: scrolled down<br>
+     *                 delta {@literal >} 0: scrolled up
+     */
+    public void onMouseScroll(Vector2D mousePos, int delta) {}
+
+
+    public class GuiScreenRoot extends Container {
+        @Override
+        public Vector2D getDisplayedPos() {
+            return Vector2D.ZERO;
+        }
+
+        @Override
+        public Vector2D getDisplayedSize() {
+            return getScreenSize();
+        }
+
+        @Override
+        public void setPos(Vector2D pos) {
+            throw new UnsupportedOperationException("Root cannot have its position set");
+        }
+
+        @Override
+        public void setSize(Vector2D size) {
+            throw new UnsupportedOperationException("Root cannot have its size set");
+        }
     }
 }

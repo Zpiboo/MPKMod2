@@ -20,8 +20,6 @@ public abstract class HudComponent extends Container {
     public HudComponent() {
     }
 
-    public abstract void render(Vector2D mouse);
-
     @SuppressWarnings("UnusedReturnValue")
     public HudComponent setRenderOffset(Vector2D renderOffset) {
         this.renderOffset = renderOffset.copy();
@@ -72,6 +70,7 @@ public abstract class HudComponent extends Container {
         return menu;
     }
 
+    @Override
     public boolean contains(Vector2D testPos) {
         if (testPos == null) return false;
         if (getDisplayedPos() == null) return false;
