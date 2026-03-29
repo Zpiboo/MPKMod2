@@ -6,9 +6,9 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
 
-public abstract class ComponentHolder {
+public abstract class Container {
     protected ArrayList<HudComponent> components = new ArrayList<>();
-    protected ComponentHolder parent = null;
+    protected Container parent = null;
     protected boolean absolute = false;
     protected long lastUpdated = 0;
     /**
@@ -41,9 +41,9 @@ public abstract class ComponentHolder {
      * origin anchor for this
      */
     protected Anchor anchor = Anchor.TOP_LEFT;
-    private ComponentHolder root = null;
+    private Container root = null;
 
-    private ComponentHolder minX = null, minY = null, maxX = null, maxY = null;
+    private Container minX = null, minY = null, maxX = null, maxY = null;
 
     private long getLastUpdated() {
         if (rParent() == null) return lastUpdated;
@@ -55,11 +55,11 @@ public abstract class ComponentHolder {
         return updated;
     }
 
-    public ComponentHolder getRoot() {
+    public Container getRoot() {
         return root;
     }
 
-    public void setRoot(ComponentHolder root) {
+    public void setRoot(Container root) {
         this.root = root;
     }
 
@@ -74,7 +74,7 @@ public abstract class ComponentHolder {
      */
     public void updatePosAndSize() {
         if (parent != null) root = parent.root;
-        ComponentHolder p = rParent();
+        Container p = rParent();
         if (p == null || p == this) {
             this.csize.set(this.size);
             this.cpos.set(this.pos);
@@ -143,7 +143,7 @@ public abstract class ComponentHolder {
         lastUpdated = System.nanoTime();
     }
 
-    protected ComponentHolder rParent() {
+    protected Container rParent() {
         return absolute ? root : parent;
     }
 
@@ -241,40 +241,40 @@ public abstract class ComponentHolder {
         this.components.add(child);
     }
 
-    public void passPositionTo(ComponentHolder child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
+    public void passPositionTo(Container child, int percentFlag, Anchor anchor, Anchor parentAnchor) {
         child.parentAnchor = parentAnchor;
         child.anchor = anchor;
         passPositionTo(child, percentFlag);
     }
 
-    public void passPositionTo(ComponentHolder child, int percentFlag) {
+    public void passPositionTo(Container child, int percentFlag) {
         child.percentFlag = percentFlag;
         passPositionTo(child);
     }
 
-    public void passPositionTo(ComponentHolder child) {
+    public void passPositionTo(Container child) {
         child.setParent(this);
         child.updatePosAndSize();
     }
 
-    public void setParent(ComponentHolder parent) {
+    public void setParent(Container parent) {
         root = parent.root;
         this.parent = parent;
     }
 
-    public void stretchXBetween(ComponentHolder child, ComponentHolder min, ComponentHolder max) {
+    public void stretchXBetween(Container child, Container min, Container max) {
         child.minX = min;
         child.maxX = max;
         passPositionTo(child);
     }
 
-    public void stretchYBetween(ComponentHolder child, ComponentHolder min, ComponentHolder max) {
+    public void stretchYBetween(Container child, Container min, Container max) {
         child.minY = min;
         child.maxY = max;
         passPositionTo(child);
     }
 
-    public void passPositionTo(ComponentHolder child, int percentFlag, Anchor anchor) {
+    public void passPositionTo(Container child, int percentFlag, Anchor anchor) {
         passPositionTo(child, percentFlag, anchor, anchor);
     }
 
