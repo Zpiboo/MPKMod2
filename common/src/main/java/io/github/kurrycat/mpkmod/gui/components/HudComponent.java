@@ -10,7 +10,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
         use = JsonTypeInfo.Id.CLASS,
         include = JsonTypeInfo.As.PROPERTY
 )
-public abstract class HudComponent extends ComponentHolder {
+public abstract class HudComponent extends Container {
     public boolean selected = false;
     public boolean highlighted = false;
 

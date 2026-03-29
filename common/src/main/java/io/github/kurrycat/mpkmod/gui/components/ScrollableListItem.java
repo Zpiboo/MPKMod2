@@ -11,7 +11,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extends ComponentHolder implements MouseInputListener, KeyInputListener, MouseScrollListener, HoverComponent {
+public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extends Container implements MouseInputListener, KeyInputListener, MouseScrollListener, HoverComponent {
     public static final Color defaultEdgeColor = new Color(255, 255, 255, 95);
     protected ScrollableList<I> parent;
 

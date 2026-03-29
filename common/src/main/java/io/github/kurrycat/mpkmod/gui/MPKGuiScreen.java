@@ -2,13 +2,13 @@ package io.github.kurrycat.mpkmod.gui;
 
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
-import io.github.kurrycat.mpkmod.gui.components.ComponentHolder;
+import io.github.kurrycat.mpkmod.gui.components.Container;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
 @SuppressWarnings("unused")
-public abstract class MPKGuiScreen extends ComponentHolder {
+public abstract class MPKGuiScreen extends Container {
     private boolean initialized = false;
     private String id = null;
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.kurrycat.mpkmod.gui.components.Anchor;
-import io.github.kurrycat.mpkmod.gui.components.ComponentHolder;
+import io.github.kurrycat.mpkmod.gui.components.Container;
 
 public class JSONPos2D {
     private final Anchor anchor;
@@ -28,7 +28,7 @@ public class JSONPos2D {
             this.y = Math.abs(y);
             this.anchor = Anchor.fromPos(new Vector2D(x,y));
             this.parentAnchor = this.anchor;
-            this.percentFlag = ComponentHolder.PERCENT.NONE;
+            this.percentFlag = Container.PERCENT.NONE;
         } else {
             this.x = x;
             this.y = y;
