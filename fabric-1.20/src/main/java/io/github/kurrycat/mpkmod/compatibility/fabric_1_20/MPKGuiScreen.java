@@ -76,11 +76,11 @@ public class MPKGuiScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
         eventReceiver.onMouseScroll(
                 new Vector2D(mouseX, mouseY),
-                (int) (MathUtil.constrain(verticalAmount, -1, 1) * 7)
+                (int) (MathUtil.constrain(amount, -1, 1) * 7)
         );
-        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+        return super.mouseScrolled(mouseX, mouseY, amount);
     }
 }
