@@ -40,6 +40,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         infoString = new InfoString(text);
     }
 
+    @Override
     public void render(Vector2D mouse) {
         setSize(getTextSize());
         drawDefaultSelectedBackground();
@@ -56,6 +57,7 @@ public class InfoLabel extends Label implements TickThread.Tickable {
         return FontRenderer.getStringSize(getFormattedText(), fontSize);
     }
 
+    @Override
     public void tick() {
         formattedText = infoString.get();
     }

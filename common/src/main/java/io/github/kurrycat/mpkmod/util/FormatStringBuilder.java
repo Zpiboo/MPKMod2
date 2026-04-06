@@ -22,6 +22,7 @@ public class FormatStringBuilder {
         return this;
     }
 
+    @Override
     public String toString() {
         return formatString;
     }

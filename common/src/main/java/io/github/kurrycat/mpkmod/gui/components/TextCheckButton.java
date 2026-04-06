@@ -16,6 +16,7 @@ public class TextCheckButton extends CheckButton {
         this.text = text;
     }
 
+    @Override
     public void render(Vector2D mouse) {
         Renderer2D.drawRectWithEdge(getDisplayedPos(), checkboxSize, 1, normalColor, normalColor);
 
@@ -38,11 +39,13 @@ public class TextCheckButton extends CheckButton {
         return this;
     }
 
+    @Override
     public Vector2D getDisplayedSize() {
         Vector2D fontSize = FontRenderer.getStringSize(text);
         return new Vector2D(fontSize.getX() + 3 + checkboxSize.getX(), Math.max(fontSize.getY(), checkboxSize.getY()));
     }
 
+    @Override
     public Vector2D getSizeForJson() {
         Vector2D fontSize = FontRenderer.getStringSize(text);
         return new Vector2D(fontSize.getX() + 3 + checkboxSize.getX(), Math.max(fontSize.getY(), checkboxSize.getY()));

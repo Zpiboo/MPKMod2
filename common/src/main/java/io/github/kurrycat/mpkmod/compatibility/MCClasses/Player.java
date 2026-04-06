@@ -443,6 +443,7 @@ public class Player {
             this.pos = pos;
         }
 
+        @Override
         public String formatDecimals(int decimals, boolean keepZeros) {
             return "[" +
                     chainedBlips + ", " +
@@ -524,6 +525,7 @@ public class Player {
             return k;
         }
 
+        @Override
         public String toString() {
             return "{W:" + forward + ", A:" + left + ", S:" + back + ", D:" + right + ", N:" + sneak + ", P:" + sprint + ", J:" + jump + "}";
         }

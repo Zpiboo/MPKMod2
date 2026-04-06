@@ -48,6 +48,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link SoundManager.Interface}
      */
+    @Override
     public void playButtonSound() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
     }
@@ -55,6 +56,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link WorldInteraction.Interface}
      */
+    @Override
     public List<BoundingBox3D> getCollisionBoundingBoxes(Vector3D blockPosVec) {
         BlockPos blockPos = new BlockPos(blockPosVec.getX(), blockPosVec.getY(), blockPosVec.getZ());
         World world = Minecraft.getMinecraft().world;
@@ -69,6 +71,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link WorldInteraction.Interface}
      */
+    @Override
     public Vector3D getLookingAt() {
         BlockPos blockPos = Minecraft.getMinecraft().player.rayTrace(20, 0).getBlockPos();
         if (blockPos == null) return null;
@@ -78,6 +81,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.WorldInteraction.Interface WorldInteraction.Interface}
      */
+    @Override
     public String getBlockName(Vector3D blockPos) {
         String blockName = "";
         //if (Minecraft.getMinecraft().objectMouseOver != null && Minecraft.getMinecraft().objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && Minecraft.getMinecraft().objectMouseOver.getBlockPos() != null && !(Minecraft.getMinecraft().thePlayer.hasReducedDebug() || Minecraft.getMinecraft().gameSettings.reducedDebugInfo)) {
@@ -91,6 +95,7 @@ public class FunctionCompatibility implements FunctionHolder,
         return blockName;
     }
 
+    @Override
     public HashMap<String, String> getBlockProperties(Vector3D blockPos) {
         HashMap<String, String> properties = new HashMap<>();
         BlockPos blockpos = new BlockPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
@@ -108,6 +113,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Renderer3D.Interface}
      */
+    @Override
     public void drawBox(BoundingBox3D bb, Color color, float partialTicks) {
         int r = color.getRed(), g = color.getGreen(), b = color.getBlue(), a = color.getAlpha();
 
@@ -174,6 +180,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Renderer2D.Interface}
      */
+    @Override
     public void drawRect(Vector2D pos, Vector2D size, Color color) {
         int r = color.getRed(), g = color.getGreen(), b = color.getBlue(), a = color.getAlpha();
         double x = pos.getX(), y = pos.getY(), w = size.getX(), h = size.getY();
@@ -197,6 +204,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Renderer2D.Interface}
      */
+    @Override
     public void drawLines(Collection<Vector2D> points, Color color) {
         if (points.size() < 2) {
             Debug.stacktrace("At least two points expected, got: " + points.size());
@@ -234,6 +242,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Renderer2D.Interface}
      */
+    @Override
     public Vector2D getScaledSize() {
         ScaledResolution r = new ScaledResolution(Minecraft.getMinecraft());
         return new Vector2D(
@@ -242,10 +251,12 @@ public class FunctionCompatibility implements FunctionHolder,
         );
     }
 
+    @Override
     public Vector2D getScreenSize() {
         return new Vector2D(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
     }
 
+    @Override
     public void enableScissor(double x, double y, double w, double h) {
         ScissorBox box;
         if (scissorStack.isEmpty()) box = new ScissorBox(x, y, w, h);
@@ -261,12 +272,14 @@ public class FunctionCompatibility implements FunctionHolder,
         setScissor(box);
     }
 
+    @Override
     public void disableScissor() {
         if (!scissorStack.isEmpty()) scissorStack.pop();
         if (scissorStack.isEmpty()) setScissor(null);
         else setScissor(scissorStack.peek());
     }
 
+    @Override
     public void clearScissors() {
         scissorStack.clear();
         setScissor(null);
@@ -289,6 +302,7 @@ public class FunctionCompatibility implements FunctionHolder,
         }
     }
 
+    @Override
     public boolean scissorContains(Vector2D point) {
         return scissorStack.isEmpty() || scissorStack.peek().contains(point);
     }
@@ -296,6 +310,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link FontRenderer.Interface}
      */
+    @Override
     public void drawString(String text, double x, double y, Color color, double fontSize, boolean shadow) {
         GlStateManager.enableBlend();
         GlStateManager.pushMatrix();
@@ -311,6 +326,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link FontRenderer.Interface}
      */
+    @Override
     public Vector2D getStringSize(String text, double fontSize) {
         double scale = fontSize / (Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT * 1F);
         return new Vector2D(
@@ -322,6 +338,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.Interface Minecraft.Interface}
      */
+    @Override
     public String getIP() {
         ServerData d = Minecraft.getMinecraft().getCurrentServerData();
         if (d == null) return "Multiplayer";
@@ -331,10 +348,12 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.Interface Minecraft.Interface}
      */
+    @Override
     public String getFPS() {
         return String.valueOf(Minecraft.getDebugFPS());
     }
 
+    @Override
     public int getPing() {
         return Minecraft.getMinecraft().getConnection().getPlayerInfo(Minecraft.getMinecraft().player.getUniqueID()).getResponseTime();
     }
@@ -342,6 +361,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.Interface Minecraft.Interface}
      */
+    @Override
     public void displayGuiScreen(io.github.kurrycat.mpkmod.gui.MPKGuiScreen screen) {
         Minecraft.getMinecraft().addScheduledTask(() ->
                 Minecraft.getMinecraft().displayGuiScreen(
@@ -351,6 +371,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.Interface Minecraft.Interface}
      */
+    @Override
     public String getCurrentGuiScreen() {
         GuiScreen curr = Minecraft.getMinecraft().currentScreen;
         if (curr == null) return null;
@@ -365,25 +386,30 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.Interface Minecraft.Interface}
      */
+    @Override
     public String getUserName() {
         if (Minecraft.getMinecraft().player == null) return null;
         return Minecraft.getMinecraft().player.getName();
     }
 
+    @Override
     public void copyToClipboard(String content) {
         StringSelection selection = new StringSelection(content);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(selection, selection);
     }
 
+    @Override
     public boolean isF3Enabled() {
         return Minecraft.getMinecraft().gameSettings.showDebugInfo;
     }
 
+    @Override
     public void sendPacket(MPKPacket packet) {
         MPKMod.FORGE_NETWORKING.sendPacket(packet);
     }
 
+    @Override
     public boolean setInputs(Float yaw, boolean relYaw, Float pitch, boolean relPitch, int pressedInputs, int releasedInputs, int L, int R) {
         if (!io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft.isSingleplayer()) return false;
         EntityPlayerSP player = Minecraft.getMinecraft().player;
@@ -436,6 +462,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Keyboard.Interface Keyboard.Interface}
      */
+    @Override
     public List<Integer> getPressedButtons() {
         List<Integer> keysDown = new ArrayList<>();
         for (int i = 0; i < Keyboard.getKeyCount(); i++)
@@ -447,6 +474,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Profiler.Interface}
      */
+    @Override
     public void startSection(String name) {
         Minecraft.getMinecraft().profiler.startSection(name);
     }
@@ -454,6 +482,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Profiler.Interface}
      */
+    @Override
     public void endStartSection(String name) {
         Minecraft.getMinecraft().profiler.endStartSection(name);
     }
@@ -461,6 +490,7 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link Profiler.Interface}
      */
+    @Override
     public void endSection() {
         Minecraft.getMinecraft().profiler.endSection();
     }

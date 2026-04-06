@@ -69,6 +69,7 @@ public class OptionsGuiScreen extends ComponentScreen {
     }
 
 
+    @Override
     public void render(Vector2D mouse, float partialTicks) {
         super.render(mouse, partialTicks);
         optionList.renderHover(mouse);

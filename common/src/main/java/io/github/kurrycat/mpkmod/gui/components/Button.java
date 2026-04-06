@@ -59,6 +59,7 @@ public class Button extends Component implements MouseInputListener {
         isBeingPressed = pressed;
     }
 
+    @Override
     public void render(Vector2D mouse) {
         Color bg = !enabled ? disabledColor :
                 isBeingPressed ? pressedColor :
@@ -88,6 +89,7 @@ public class Button extends Component implements MouseInputListener {
         return this;
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (!enabled) return false;
         if (contains(mousePos)) {

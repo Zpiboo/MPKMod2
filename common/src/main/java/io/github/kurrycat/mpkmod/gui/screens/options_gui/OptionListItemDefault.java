@@ -11,9 +11,11 @@ public class OptionListItemDefault extends OptionListItem {
         super(parent, option);
     }
 
+    @Override
     protected void updateDisplayValue() {
     }
 
+    @Override
     protected void renderTypeSpecific(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
         FontRenderer.drawRightCenteredString(
                 value,

@@ -54,6 +54,7 @@ public class KeyBindingLabel extends ResizableComponent {
             this.displayName = displayName;
     }
 
+    @Override
     public void render(Vector2D mouse) {
         String displayName = this.displayName;
         boolean keyDown = keyBinding != null && keyBinding.isKeyDown();

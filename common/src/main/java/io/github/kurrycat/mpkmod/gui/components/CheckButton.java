@@ -46,6 +46,7 @@ public class CheckButton extends Component implements MouseInputListener {
         isChecked = checked;
     }
 
+    @Override
     public void render(Vector2D mouse) {
         Color color = enabled ? normalColor : disabledColor;
         Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1, color, color);
@@ -59,6 +60,7 @@ public class CheckButton extends Component implements MouseInputListener {
             );
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (state == Mouse.State.DOWN) {
             if (contains(mousePos)) {

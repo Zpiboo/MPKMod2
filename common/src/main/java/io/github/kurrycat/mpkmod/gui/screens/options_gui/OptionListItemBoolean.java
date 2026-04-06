@@ -19,12 +19,14 @@ public class OptionListItemBoolean extends OptionListItem {
         }
     }
 
+    @Override
     protected void updateDisplayValue() {
         if (checkButton.enabled) {
             checkButton.setChecked(Boolean.parseBoolean(value));
         }
     }
 
+    @Override
     protected void renderTypeSpecific(int index, Vector2D pos, Vector2D size, Vector2D mouse) {
         checkButton.render(mouse);
     }

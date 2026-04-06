@@ -109,6 +109,7 @@ public class Vector3D implements Copyable<Vector3D>, FormatDecimals {
         return "[" + x + ", " + y + ", " + z + "]";
     }
 
+    @Override
     public Vector3D copy() {
         return new Vector3D(this.x, this.y, this.z);
     }
@@ -143,6 +144,7 @@ public class Vector3D implements Copyable<Vector3D>, FormatDecimals {
         return new Vector3D(Math.abs(this.x), Math.abs(this.y), Math.abs(this.z));
     }
 
+    @Override
     public String formatDecimals(int decimals, boolean keepZeros) {
         return "[" + MathUtil.formatDecimals(this.x, decimals, keepZeros) + "," +
                 MathUtil.formatDecimals(this.y, decimals, keepZeros) + "," +

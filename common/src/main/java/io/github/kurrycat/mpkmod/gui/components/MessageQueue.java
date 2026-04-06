@@ -44,6 +44,7 @@ public class MessageQueue extends ResizableComponent {
         return queuesToSearch.stream().filter(messageQueue -> messageQueue.messageReceiverID.equals(receiverID)).findFirst().orElse(null);
     }
 
+    @Override
     public void render(Vector2D mouse) {
         Renderer2D.drawRectWithEdge(getDisplayedPos(), getDisplayedSize(), 1, selected ? selectedColor : backgroundColor, edgeColor);
         //Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);
