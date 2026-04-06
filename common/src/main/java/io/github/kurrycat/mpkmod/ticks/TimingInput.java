@@ -137,7 +137,7 @@ public class TimingInput implements Copyable<TimingInput> {
     }
 
     public boolean isStopTick() {
-        return inputVector.isStop() && !P && !N && G == GroundState.GROUNDED;
+        return inputVector.isStop() && G == GroundState.GROUNDED;
     }
 
     @Override
