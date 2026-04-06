@@ -45,6 +45,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
         this.setSize(new Vector2D(parent.getDisplayedSize().getX(), height));
     }
 
+    @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(MouseInputListener.class, components),
@@ -52,6 +53,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
         );
     }
 
+    @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(MouseScrollListener.class, components),
@@ -59,6 +61,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
         );
     }
 
+    @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         return ItrUtil.orMap(
                 ItrUtil.getAllOfType(KeyInputListener.class, components),
@@ -66,6 +69,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
         );
     }
 
+    @Override
     public void renderHover(Vector2D mouse) {
 
     }

@@ -78,6 +78,7 @@ public class LabelConfiguration implements Copyable<LabelConfiguration> {
         return new LabelConfiguration(file, components);
     }
 
+    @Override
     public LabelConfiguration copy() {
         if (components.isEmpty()) return new LabelConfiguration();
 

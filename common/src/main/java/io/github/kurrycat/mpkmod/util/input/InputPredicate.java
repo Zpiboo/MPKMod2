@@ -39,6 +39,7 @@ public final class InputPredicate extends InputPredicateBase {
         lastMatchedInput = null;
     }
 
+    @Override
     public boolean matches(InputVector input) {
         if (lastMatchedInput != null)
             return lastMatchedInput.equals(input);

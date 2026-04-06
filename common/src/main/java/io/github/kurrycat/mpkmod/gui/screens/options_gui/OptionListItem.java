@@ -60,6 +60,7 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
         option.setValue(value);
     }
 
+    @Override
     public int getHeight() {
         return 21;
     }
@@ -85,6 +86,7 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
         }
     }
 
+    @Override
     public void renderHover(Vector2D mouse) {
         if (mouse.isInRectBetweenPS(helpHover.getDisplayedPos(), helpHover.getDisplayedSize())) {
             hoverText.setCPos(

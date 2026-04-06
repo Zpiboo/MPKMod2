@@ -135,6 +135,7 @@ public class Vector2D implements Copyable<Vector2D>, FormatDecimals {
         return new Vector2D(this.x - v.x, this.y - v.y);
     }
 
+    @Override
     public Vector2D copy() {
         return new Vector2D(this.x, this.y);
     }
@@ -229,6 +230,7 @@ public class Vector2D implements Copyable<Vector2D>, FormatDecimals {
         return new Vector2D(Math.abs(this.x), Math.abs(this.y));
     }
 
+    @Override
     public String formatDecimals(int decimals, boolean keepZeros) {
         return "[" + MathUtil.formatDecimals(this.x, decimals, keepZeros) + "," +
                 MathUtil.formatDecimals(this.y, decimals, keepZeros) + "]";
