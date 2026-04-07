@@ -55,7 +55,12 @@ public final class Timing {
         Match result = null;
         for (int i = 0; i < inputList.size() - 1; i++) {
             if (inputList.get(i).isStopTick() && !inputList.get(i + 1).isStopTick()) {
-                Match match = startsWithMatch(inputList.subList(i + 1, inputList.size()));
+                List<TimingInput> inputSubList = inputList.subList(i + 1, inputList.size());
+                Match match = startsWithMatch(inputSubList);
+
+                if (match == null && isSymmetrical())
+                    match = getMirrored().startsWithMatch(inputSubList);
+
                 if (match != null)
                     result = match;
             }

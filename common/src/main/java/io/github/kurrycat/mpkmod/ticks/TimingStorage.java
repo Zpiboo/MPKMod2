@@ -49,13 +49,8 @@ public class TimingStorage {
         List<Timing.Match> matches = new ArrayList<>();
         for (Map.Entry<String, Timing> entry : patterns.entrySet()) {
             Timing.Match match = entry.getValue().match(inputList);
-
-            if (match == null && entry.getValue().isSymmetrical()) {
-                match = entry.getValue().getMirrored().match(inputList);
-            }
-            if (match != null) {
+            if (match != null)
                 matches.add(match);
-            }
         }
 
         if (matches.isEmpty())
