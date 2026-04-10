@@ -7,6 +7,7 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.WorldInteraction;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.components.*;
 import io.github.kurrycat.mpkmod.gui.components.Button;
+import io.github.kurrycat.mpkmod.gui.components.Component.PERCENT;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
 import io.github.kurrycat.mpkmod.landingblock.LandingBlock;
@@ -47,15 +48,14 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                 new Vector2D(0, 0.05),
                 new Vector2D(3 / 5D, 0.9)
         );
-        addChild(lbList, PERCENT.ALL, Anchor.TOP_CENTER);
+        lbList.setPercentFlag(PERCENT.ALL).setAnchors(Anchor.TOP_CENTER);
         lbList.topCover.addChild(
                 new Button(
                         "Delete All",
                         new Vector2D(20, 1),
                         new Vector2D(50, 11),
                         mouseButton -> this.openPane(deletePane)
-                ),
-                PERCENT.NONE, Anchor.CENTER_RIGHT
+                ).setAnchors(Anchor.CENTER_RIGHT)
         );
         lbList.topCover.addChild(
                 new Button(
@@ -63,12 +63,12 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                         new Vector2D(5, 1),
                         new Vector2D(11, 11),
                         mouseButton -> close()
-                ),
-                PERCENT.NONE, Anchor.CENTER_RIGHT
+                ).setAnchors(Anchor.CENTER_RIGHT)
         );
+        addGuiComponent(lbList);
 
         deletePane = new DeletePane();
-        passPositionTo(deletePane, PERCENT.ALL, Anchor.CENTER);
+        getGuiRoot().passPositionTo(deletePane, PERCENT.ALL, Anchor.CENTER);
     }
 
     @Override
@@ -102,9 +102,11 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                     items.add(new LBListItem(this, lbs.get(lbs.size() - 1)));
                 }
             });
+            addLB.setAnchors(Anchor.CENTER);
+
             bottomCover.setHeight(24, false);
             bottomCover.backgroundColor = null;
-            bottomCover.addChild(addLB, PERCENT.NONE, Anchor.CENTER);
+            bottomCover.addChild(addLB);
         }
 
         public void updateList() {
@@ -124,7 +126,7 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
             if (p != null)
                 p.first.landingBlock.highlight = true;
 
-            components.forEach(c -> c.render(mouse));
+            getChildren().forEach(c -> c.render(mouse));
         }
 
         @Override
@@ -294,8 +296,7 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                             "Are you sure you want to",
                             null,
                             Color.WHITE
-                    ),
-                    PERCENT.NONE, Anchor.TOP_CENTER
+                    ).setAnchors(Anchor.TOP_CENTER)
             );
 
             addChild(
@@ -305,8 +306,7 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                             "delete all landing blocks?",
                             null,
                             Color.WHITE
-                    ),
-                    PERCENT.NONE, Anchor.TOP_CENTER
+                    ).setAnchors(Anchor.TOP_CENTER)
             );
 
             addChild(
@@ -315,8 +315,7 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                             new Vector2D(20, 10),
                             new Vector2D(60, 17),
                             mouseButton -> this.close()
-                    ),
-                    PERCENT.NONE, Anchor.BOTTOM_LEFT
+                    ).setAnchors(Anchor.BOTTOM_LEFT)
             );
 
             addChild(
@@ -329,8 +328,7 @@ public class LandingBlockGuiScreen extends MPKGuiScreen {
                                 LandingBlockGuiScreen.lbs.clear();
                                 this.close();
                             }
-                    ),
-                    PERCENT.NONE, Anchor.BOTTOM_RIGHT
+                    ).setAnchors(Anchor.BOTTOM_RIGHT)
             );
         }
     }
