@@ -4,14 +4,18 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Renderer2D;
 import io.github.kurrycat.mpkmod.gui.components.Component;
 import io.github.kurrycat.mpkmod.gui.components.Container;
+import io.github.kurrycat.mpkmod.gui.components.Pane;
+import io.github.kurrycat.mpkmod.gui.components.PaneHolder;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 @SuppressWarnings("unused")
-public abstract class MPKGuiScreen {
+public abstract class MPKGuiScreen implements PaneHolder {
     private final Container guiRoot = new GuiScreenRoot();
+    public ArrayList<Pane<?>> openPanes = new ArrayList<>();
 
     private boolean initialized = false;
     private String id = null;
@@ -114,6 +118,31 @@ public abstract class MPKGuiScreen {
      *                 delta {@literal >} 0: scrolled up
      */
     public void onMouseScroll(Vector2D mousePos, int delta) {}
+
+    @Override
+    public <T extends PaneHolder> void openPane(Pane<T> p, Vector2D pos) {
+        p.setPos(pos);
+        openPane(p);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends PaneHolder> void openPane(Pane<T> p) {
+        openPanes.add(p);
+        p.setPaneHolder((T) this);
+        p.setLoaded(true);
+    }
+
+    @Override
+    public <T extends PaneHolder> void closePane(Pane<T> p) {
+        openPanes.remove(p);
+        p.setLoaded(false);
+    }
+
+    public final void closeAllPanes() {
+        for (int i = openPanes.size() - 1; i >= 0; i--) {
+            openPanes.get(i).close();
+        }
+    }
 
 
     public class GuiScreenRoot extends Container {
