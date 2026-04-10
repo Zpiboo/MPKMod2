@@ -62,7 +62,7 @@ public abstract class HudComponent extends Container {
         menu.addComponent(
                 new Button("Delete", Vector2D.OFFSCREEN, new Vector2D(30, 11), mouseButton -> {
                     if (Mouse.Button.LEFT.equals(mouseButton)) {
-                        menu.paneHolder.removeComponent(this);
+                        menu.paneHolder.removeHudComponent(this);
                         menu.close();
                     }
                 })

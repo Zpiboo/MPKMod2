@@ -1,18 +1,15 @@
 package io.github.kurrycat.mpkmod.gui.screens.options_gui;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
-import io.github.kurrycat.mpkmod.gui.ComponentScreen;
+import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.components.Anchor;
 import io.github.kurrycat.mpkmod.gui.components.Button;
 import io.github.kurrycat.mpkmod.gui.components.ScrollableList;
-import io.github.kurrycat.mpkmod.save.Serializer;
-import io.github.kurrycat.mpkmod.util.JSONConfig;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class OptionsGuiScreen extends ComponentScreen {
+public class OptionsGuiScreen extends MPKGuiScreen {
     private OptionList optionList;
 
     @Override

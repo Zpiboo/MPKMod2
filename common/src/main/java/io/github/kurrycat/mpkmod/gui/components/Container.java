@@ -5,6 +5,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class Container extends Component {
     private final List<Component> children = new ArrayList<>();

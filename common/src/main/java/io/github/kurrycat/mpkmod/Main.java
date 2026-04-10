@@ -121,7 +121,7 @@ public class Main implements MPKModule {
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> API.tickTime++));
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> {
             TickThread.setTickables(
-                    ItrUtil.getAllOfType(TickThread.Tickable.class, mainGUI.movableComponents)
+                    ItrUtil.getAllOfType(TickThread.Tickable.class, mainGUI.getHudComponents())
             );
         }));
 
@@ -140,7 +140,7 @@ public class Main implements MPKModule {
 
                             Profiler.startSection("components");
                             if (mainGUI != null) {
-                                for (HudComponent c : mainGUI.movableComponents) {
+                                for (HudComponent c : mainGUI.getHudComponents()) {
                                     Profiler.startSection(c.getClass().getSimpleName());
                                     c.render(new Vector2D(-1, -1));
                                     Profiler.endSection();
@@ -190,7 +190,7 @@ public class Main implements MPKModule {
                                     });
                             Profiler.endSection();
                             Profiler.startSection("tickInputHistories");
-                            for (HudComponent component : mainGUI.movableComponents) {
+                            for (HudComponent component : mainGUI.getHudComponents()) {
                                 if (!(component instanceof InputHistory)) continue;
                                 ((InputHistory) component).onTick();
                             }
