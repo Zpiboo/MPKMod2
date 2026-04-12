@@ -81,6 +81,8 @@ public class Main implements MPKModule {
     public void loaded() {
         LabelConfiguration.init();
         EventAPI.init();
+        Minecraft.initAngleLogic();
+        API.LOGGER.info("loaded");
 
         API.LOGGER.info(API.DISCORD_RPC_MARKER, "Starting DiscordRPC...");
         try {
@@ -111,8 +113,8 @@ public class Main implements MPKModule {
                                     p.pos.getX() + " " +
                                             p.pos.getY() + " " +
                                             p.pos.getZ() + " " +
-                                            p.trueYaw + " " +
-                                            p.truePitch
+                                            p.yaw.trueAngle + " " +
+                                            p.pitch.trueAngle
                             );
                         }
                     }

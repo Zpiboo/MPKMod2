@@ -129,6 +129,10 @@ public class Minecraft {
         sprintToggled = !sprintToggled;
     }
 
+    public static void initAngleLogic() {
+        Interface.get().ifPresent(Interface::initAngleLogic);
+    }
+
 
     public enum WorldState {
         MENU,
@@ -163,6 +167,8 @@ public class Minecraft {
         boolean setInputs(Float yaw, boolean relYaw, Float pitch, boolean relPitch, int pressedInputs, int releasedInputs, int L, int R);
 
         boolean isF3Enabled();
+
+        void initAngleLogic();
 
         void sendPacket(MPKPacket packet);
     }

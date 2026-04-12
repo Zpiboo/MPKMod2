@@ -1,5 +1,6 @@
 package io.github.kurrycat.mpkmod.compatibility.forge_1_8;
 
+import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.*;
 import io.github.kurrycat.mpkmod.util.*;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
@@ -31,8 +32,10 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FunctionCompatibility implements FunctionHolder,
@@ -379,6 +382,24 @@ public class FunctionCompatibility implements FunctionHolder,
 
     public boolean isF3Enabled() {
         return Minecraft.getMinecraft().gameSettings.showDebugInfo;
+    }
+
+    public void initAngleLogic() {
+        API.LOGGER.info("initAngleLogic 1.8.9 impl");
+        try {
+            Field sinTableField = MathHelper.class.getDeclaredField("field_76144_a");
+            sinTableField.setAccessible(true);
+            float[] SIN_TABLE = (float[]) sinTableField.get(null);
+
+            Function<Double, Integer> sinIndexGetter = angle ->
+                    (int) (angle.floatValue() * 10430.378F) & 65535;
+            Function<Double, Integer> cosIndexGetter = angle ->
+                    (int) (angle.floatValue() * 10430.378F + 16384.0F) & 65535;
+
+            MathUtil.initAngleLogic(SIN_TABLE, sinIndexGetter, cosIndexGetter);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void sendPacket(MPKPacket packet) {

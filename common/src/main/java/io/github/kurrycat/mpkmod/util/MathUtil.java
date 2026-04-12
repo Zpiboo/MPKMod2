@@ -1,10 +1,43 @@
 package io.github.kurrycat.mpkmod.util;
 
+import io.github.kurrycat.mpkmod.compatibility.API;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
+import java.util.function.Function;
 
 public class MathUtil {
+    private static float[] SIN_TABLE;
+    private static Function<Double, Integer> sinIndexGetter, cosIndexGetter;
+
+    public static void initAngleLogic(
+            float[] SIN_TABLE,
+            Function<Double, Integer> sinIndexGetter,
+            Function<Double, Integer> cosIndexGetter
+    ) {
+        API.LOGGER.info("initAngleLogic MathUtil");
+        if (MathUtil.SIN_TABLE != null)
+            throw new IllegalStateException("Angle logic cannot be initialized multiple times");
+
+        if (SIN_TABLE.length != 65536)
+            throw new IllegalArgumentException("SIN_TABLE must contain exactly 65536 values");
+        MathUtil.SIN_TABLE = SIN_TABLE;
+
+        MathUtil.sinIndexGetter = sinIndexGetter;
+        MathUtil.cosIndexGetter = cosIndexGetter;
+    }
+
+    public static int getSinIndex(double angle) {
+        return sinIndexGetter.apply(angle);
+    }
+    public static int getCosIndex(double angle) {
+        return cosIndexGetter.apply(angle);
+    }
+    public static float getSinForIndex(int index) {
+        return SIN_TABLE[index];
+    }
+
     public static String formatDecimals(double value, int decimals, boolean keepZeros) {
         if (keepZeros) {
             return String.format(Locale.US, "%." + decimals + "f", value);

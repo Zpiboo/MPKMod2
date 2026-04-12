@@ -31,14 +31,16 @@ public class Player {
     public PosAndAngle lastJump = null;
     @InfoString.Field
     public Blip lastBlip = null;
+    @InfoString.Field
+    public Angle yaw = null;
+    @InfoString.Field
+    public Angle pitch = null;
 
     public TimingInput timingInput = TimingInput.stopTick();
     public KeyInput keyInput = null;
     public ButtonMSList keyMSList = null;
     public Vector3D pos = null;
     public Vector3D lastPos = null;
-    public Float trueYaw = null;
-    public Float truePitch = null;
     public Vector3D motion = null;
     public boolean onGround = false;
     public Float deltaYaw = null;
@@ -124,36 +126,14 @@ public class Player {
 
     @InfoString.Getter
     public String getFacing() {
-        double yaw = getYaw();
+        double yaw = this.yaw.angle;
         int xz = (int) Math.floor(Math.abs(yaw / 45));
         return Arrays.asList(0, 3, 4).contains(xz) ? "Z" : "X";
     }
 
-    @InfoString.Getter
-    public Float getYaw() {
-        if (trueYaw == null) return null;
-        else return MathUtil.wrapDegrees(trueYaw);
-    }
-
-    @InfoString.Getter
-    public Float getTrueYaw() {
-        return trueYaw;
-    }
-
-    @InfoString.Getter
-    public Float getTruePitch() {
-        return truePitch;
-    }
-
-    @InfoString.Getter
-    public Float getPitch() {
-        if (truePitch == null) return null;
-        else return MathUtil.wrapDegrees(truePitch);
-    }
-
     public Player setRotation(Float yaw, Float pitch) {
-        this.trueYaw = yaw;
-        this.truePitch = pitch;
+        this.yaw = new Angle(yaw);
+        this.pitch = new Angle(pitch);
         return this;
     }
 
@@ -252,13 +232,13 @@ public class Player {
             jumpCooldown = 0;
         }
 
-        lastLanding = landTick ? new PosAndAngle(prev.pos, trueYaw, truePitch) : prev.lastLanding;
-        lastHit = prev.landTick ? new PosAndAngle(prev.pos, trueYaw, truePitch) : prev.lastHit;
-        lastJump = jumpTick ? new PosAndAngle(prev.pos, trueYaw, truePitch) : prev.lastJump;
+        lastLanding = landTick ? new PosAndAngle(prev.pos, yaw.trueAngle, pitch.trueAngle) : prev.lastLanding;
+        lastHit = prev.landTick ? new PosAndAngle(prev.pos, yaw.trueAngle, pitch.trueAngle) : prev.lastHit;
+        lastJump = jumpTick ? new PosAndAngle(prev.pos, yaw.trueAngle, pitch.trueAngle) : prev.lastJump;
 
-        deltaYaw = trueYaw - prev.trueYaw;
+        deltaYaw = yaw.trueAngle - prev.yaw.trueAngle;
         if (deltaYaw == 0) deltaYaw = null;
-        deltaPitch = truePitch - prev.truePitch;
+        deltaPitch = pitch.trueAngle - prev.pitch.trueAngle;
         if (deltaPitch == 0) deltaPitch = null;
 
         deltaMouseX = new int[Main.mouseMovements.size()];
@@ -457,20 +437,14 @@ public class Player {
         @InfoString.Field
         public final Vector3D pos;
         @InfoString.Field
-        public final float trueYaw;
+        public final Angle yaw;
         @InfoString.Field
-        public final float truePitch;
-        @InfoString.Field
-        public final float yaw;
-        @InfoString.Field
-        public final float pitch;
+        public final Angle pitch;
 
         public PosAndAngle(Vector3D pos, float trueYaw, float truePitch) {
             this.pos = pos;
-            this.trueYaw = trueYaw;
-            this.truePitch = truePitch;
-            this.yaw = MathUtil.wrapDegrees(trueYaw);
-            this.pitch = MathUtil.wrapDegrees(truePitch);
+            this.yaw = new Angle(trueYaw);
+            this.pitch = new Angle(truePitch);
         }
 
         @Override
@@ -481,10 +455,48 @@ public class Player {
         @Override
         public String formatDecimals(int decimals, boolean keepZeros) {
             return "[" +
-                    MathUtil.formatDecimals(yaw, decimals, keepZeros) + ", " +
-                    MathUtil.formatDecimals(pitch, decimals, keepZeros) + ", " +
+                    yaw.formatDecimals(decimals, keepZeros) + ", " +
+                    pitch.formatDecimals(decimals, keepZeros) + ", " +
                     pos.formatDecimals(decimals, keepZeros) +
                     "]";
+        }
+    }
+
+    @InfoString.DataClass
+    public static class Angle implements FormatDecimals {
+        @InfoString.Field
+        public final float trueAngle;
+        @InfoString.Field
+        public final float angle;
+
+        @InfoString.Field
+        public final int sinIndex;
+        @InfoString.Field
+        public final int cosIndex;
+        @InfoString.Field
+        public final float sin;
+        @InfoString.Field
+        public final float cos;
+
+        public Angle(float trueAngle) {
+            this.trueAngle = trueAngle;
+            this.angle = MathUtil.wrapDegrees(trueAngle);
+
+            double radians =
+            this.sinIndex = MathUtil.getSinIndex(angle);
+            this.cosIndex = MathUtil.getCosIndex(angle);
+            this.sin = MathUtil.getSinForIndex(sinIndex);
+            this.cos = MathUtil.getSinForIndex(cosIndex);
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(angle);
+        }
+
+        @Override
+        public String formatDecimals(int decimals, boolean keepZeros) {
+            return MathUtil.formatDecimals(angle, decimals, keepZeros);
         }
     }
 

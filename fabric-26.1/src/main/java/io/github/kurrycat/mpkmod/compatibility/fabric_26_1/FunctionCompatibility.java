@@ -7,10 +7,7 @@ import io.github.kurrycat.mpkmod.compatibility.MCClasses.*;
 import io.github.kurrycat.mpkmod.compatibility.fabric_26_1.mixin.KeyMappingAccessor;
 import io.github.kurrycat.mpkmod.compatibility.fabric_26_1.network.DataCustomPayload;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
-import io.github.kurrycat.mpkmod.util.BoundingBox3D;
-import io.github.kurrycat.mpkmod.util.Debug;
-import io.github.kurrycat.mpkmod.util.Vector2D;
-import io.github.kurrycat.mpkmod.util.Vector3D;
+import io.github.kurrycat.mpkmod.util.*;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.KeyMapping;
@@ -39,7 +36,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Function;
 
 public class FunctionCompatibility implements FunctionHolder,
         SoundManager.Interface,
@@ -405,6 +404,23 @@ public class FunctionCompatibility implements FunctionHolder,
 
     public boolean isF3Enabled() {
         return net.minecraft.client.Minecraft.getInstance().debugEntries.isOverlayVisible();
+    }
+
+    public void initAngleLogic() {
+        try {
+            Field sinTableField = Mth.class.getDeclaredField("SIN");
+            sinTableField.setAccessible(true);
+            float[] SIN_TABLE = (float[]) sinTableField.get(null);
+
+            Function<Double, Integer> sinIndexGetter = angle ->
+                    (int) ((long) (angle * 10430.378350470453) & 65535L);
+            Function<Double, Integer> cosIndexGetter = angle ->
+                    (int) ((long) (angle * 10430.378350470453 + (double) 16384.0F) & 65535L);
+
+            MathUtil.initAngleLogic(SIN_TABLE, sinIndexGetter, cosIndexGetter);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void sendPacket(MPKPacket packet) {
