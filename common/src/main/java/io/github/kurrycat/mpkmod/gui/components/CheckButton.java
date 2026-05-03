@@ -10,7 +10,7 @@ import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class CheckButton extends HudComponent implements MouseInputListener {
+public class CheckButton extends Component implements MouseInputListener {
     public CheckButtonCallback checkButtonCallback;
     @SuppressWarnings("unused")
     public Color checkedColor = Theme.lightBackground;

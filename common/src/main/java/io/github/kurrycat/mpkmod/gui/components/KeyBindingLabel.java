@@ -82,14 +82,14 @@ public class KeyBindingLabel extends ResizableComponent {
 
         menu.addComponent(new Button("Edit", mouseButton -> {
             if (Mouse.Button.LEFT.equals(mouseButton)) {
-                menu.paneHolder.passPositionTo(editPane, PERCENT.SIZE, Anchor.CENTER);
+                menu.paneHolder.getGuiRoot().passPositionTo(editPane, PERCENT.SIZE, Anchor.CENTER);
                 menu.paneHolder.openPane(editPane);
                 menu.close();
             }
         }));
         menu.addComponent(new Button("Delete", mouseButton -> {
             if (Mouse.Button.LEFT.equals(mouseButton)) {
-                menu.paneHolder.removeComponent(this);
+                menu.paneHolder.removeHudComponent(this);
                 menu.close();
             }
         }));
@@ -113,22 +113,22 @@ public class KeyBindingLabel extends ResizableComponent {
                     displayName,
                     keyUpColor,
                     Color.WHITE);
-            this.addChild(upKey, PERCENT.POS_X, Anchor.TOP_CENTER);
+            this.addChild(upKey.setPercentFlag(PERCENT.POS_X).setAnchors(Anchor.TOP_CENTER));
             this.downKey = new TextRectangle(
                     new Vector2D(1 / 6D, 5),
                     KeyBindingLabel.this.getDisplayedSize(),
                     displayName,
                     keyDownColor,
                     Color.BLACK);
-            this.addChild(downKey, PERCENT.POS_X, Anchor.TOP_CENTER);
+            this.addChild(downKey.setPercentFlag(PERCENT.POS_X).setAnchors(Anchor.TOP_CENTER));
 
             this.addChild(
-                    new ColorSelector(keyUpColor, new Vector2D(0.2, 0.4), color -> keyUpColor = color),
-                    PERCENT.POS, Anchor.TOP_LEFT
+                    new ColorSelector(keyUpColor, new Vector2D(0.2, 0.4), color -> keyUpColor = color)
+                            .setPercentFlag(PERCENT.POS).setAnchors(Anchor.TOP_LEFT)
             );
             this.addChild(
-                    new ColorSelector(keyDownColor, new Vector2D(0.2, 0.4), color -> keyDownColor = color),
-                    PERCENT.POS, Anchor.TOP_RIGHT
+                    new ColorSelector(keyDownColor, new Vector2D(0.2, 0.4), color -> keyDownColor = color)
+                            .setPercentFlag(PERCENT.POS).setAnchors(Anchor.TOP_RIGHT)
             );
 
 
@@ -137,8 +137,8 @@ public class KeyBindingLabel extends ResizableComponent {
                             .setOnContentChange(content -> {
                                 name = content.getContent();
                                 keyBinding = KeyBinding.getByName(name);
-                            }),
-                    PERCENT.X, Anchor.BOTTOM_CENTER
+                            })
+                            .setPercentFlag(PERCENT.X).setAnchors(Anchor.BOTTOM_CENTER)
             );
             this.addChild(
                     new InputField(displayName, new Vector2D(0, 5), 0.95D)
@@ -146,13 +146,13 @@ public class KeyBindingLabel extends ResizableComponent {
                                 displayName = content.getContent();
                                 this.downKey.setText(displayName);
                                 this.upKey.setText(displayName);
-                            }),
-                    PERCENT.X, Anchor.BOTTOM_CENTER
+                            })
+                            .setPercentFlag(PERCENT.X).setAnchors(Anchor.BOTTOM_CENTER)
             );
 
             KeySetList list = new KeySetList(new Vector2D(0.025, 10), new Vector2D(0.25, -20));
             list.setAbsolute(true);
-            this.addChild(list, PERCENT.POS_X | PERCENT.SIZE_X, Anchor.TOP_LEFT);
+            this.addChild(list.setPercentFlag(PERCENT.POS_X | PERCENT.SIZE_X).setAnchors(Anchor.TOP_LEFT));
 
             SortedSet<String> keyMap = new TreeSet<>(KeyBinding.getKeyMap().keySet());
             HashMap<String, ArrayList<String>> modMap = new HashMap<>();
@@ -220,7 +220,7 @@ public class KeyBindingLabel extends ResizableComponent {
                     collapseButton.setText(collapsed ? "v" : "^");
                     collapseButton.textOffset = collapsed ? Vector2D.ZERO : new Vector2D(0, 3);
                 });
-                addChild(collapseButton, PERCENT.NONE, Anchor.TOP_RIGHT);
+                addChild(collapseButton.setAnchors(Anchor.TOP_RIGHT));
             }
 
             @Override

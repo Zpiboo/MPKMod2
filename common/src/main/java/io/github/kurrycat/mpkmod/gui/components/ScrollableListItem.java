@@ -24,7 +24,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
     public abstract void render(int index, Vector2D pos, Vector2D size, Vector2D mouse);
 
     public final void renderComponents(Vector2D mouse) {
-        this.components.forEach(c -> c.render(mouse));
+        super.render(mouse);
     }
 
     public final void renderDefaultBorder(Vector2D pos, Vector2D size) {
@@ -48,7 +48,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
     @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         return ItrUtil.orMap(
-                ItrUtil.getAllOfType(MouseInputListener.class, components),
+                ItrUtil.getAllOfType(MouseInputListener.class, getChildren()),
                 b -> b.handleMouseInput(state, mousePos, button)
         );
     }
@@ -56,7 +56,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
     @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         return ItrUtil.orMap(
-                ItrUtil.getAllOfType(MouseScrollListener.class, components),
+                ItrUtil.getAllOfType(MouseScrollListener.class, getChildren()),
                 b -> b.handleMouseScroll(mousePos, delta)
         );
     }
@@ -64,7 +64,7 @@ public abstract class ScrollableListItem<I extends ScrollableListItem<I>> extend
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         return ItrUtil.orMap(
-                ItrUtil.getAllOfType(KeyInputListener.class, components),
+                ItrUtil.getAllOfType(KeyInputListener.class, getChildren()),
                 b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
         );
     }

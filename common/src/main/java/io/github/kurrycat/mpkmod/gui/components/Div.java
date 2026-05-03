@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class Div extends HudComponent implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Div extends Container implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = null;
     public Color borderColor = null;
     public Color textColor = null;
@@ -132,8 +132,8 @@ public class Div extends HudComponent implements MouseInputListener, MouseScroll
         return this;
     }
 
-    public void addChildBelow(HudComponent child) {
-        addChild(child, PERCENT.NONE, Anchor.TOP_LEFT);
+    public void addChildBelow(Component child) {
+        addChild(child.setAnchors(Anchor.TOP_LEFT));
         child.setPos(new Vector2D(1, getDisplayedSize().getY()));
         this.setSize(new Vector2D(
                 Math.max(child.getDisplayedSize().getX() + 2, this.getDisplayedSize().getX()),
@@ -155,13 +155,14 @@ public class Div extends HudComponent implements MouseInputListener, MouseScroll
                 pos.addYInPlace(FontRenderer.getStringSize(line).getY());
             }
         }
-        components.forEach(c -> c.render(mouse));
+
+        super.render(mouse);
     }
 
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         return ItrUtil.orMapAll(
-                ItrUtil.getAllOfType(KeyInputListener.class, components),
+                ItrUtil.getAllOfType(KeyInputListener.class, getChildren()),
                 e -> e.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
         );
     }
@@ -169,7 +170,7 @@ public class Div extends HudComponent implements MouseInputListener, MouseScroll
     @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         return ItrUtil.orMapAll(
-                ItrUtil.getAllOfType(MouseInputListener.class, components),
+                ItrUtil.getAllOfType(MouseInputListener.class, getChildren()),
                 e -> e.handleMouseInput(state, mousePos, button)
         );
     }
@@ -177,7 +178,7 @@ public class Div extends HudComponent implements MouseInputListener, MouseScroll
     @Override
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         return ItrUtil.orMapAll(
-                ItrUtil.getAllOfType(MouseScrollListener.class, components),
+                ItrUtil.getAllOfType(MouseScrollListener.class, getChildren()),
                 e -> e.handleMouseScroll(mousePos, delta)
         );
     }

@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponent implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
+public class ScrollableList<I extends ScrollableListItem<I>> extends Container implements MouseInputListener, MouseScrollListener, KeyInputListener, HoverComponent {
     public final List<I> items = new CopyOnWriteArrayList<>();
     private final TextRectangle titleComponent;
     public Color backgroundColor = Theme.darkBackground;
@@ -32,7 +32,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
                 new Vector2D(1, 1),
                 "", null, Color.WHITE
         );
-        topCover.addChild(titleComponent, PERCENT.SIZE);
+        topCover.addChild(titleComponent.setPercentFlag(PERCENT.SIZE));
 
         bottomCover = new Div(new Vector2D(0, 0), new Vector2D(1, 0));
         bottomCover.backgroundColor = backgroundColor;
@@ -58,9 +58,9 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
     }
 
     public void renderComponents(Vector2D mouse) {
-        components.forEach(c -> c.render(mouse));
-        topCover.components.forEach(c -> c.render(mouse));
-        bottomCover.components.forEach(c -> c.render(mouse));
+        getChildren().forEach(c -> c.render(mouse));
+        topCover.getChildren().forEach(c -> c.render(mouse));
+        bottomCover.getChildren().forEach(c -> c.render(mouse));
     }
 
     @Override
@@ -165,7 +165,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
 
         return itemClicked ||
                 ItrUtil.orMapAll(
-                        ItrUtil.getAllOfType(MouseInputListener.class, components, topCover.components, bottomCover.components),
+                        ItrUtil.getAllOfType(MouseInputListener.class, getChildren(), topCover.getChildren(), bottomCover.getChildren()),
                         e -> e.handleMouseInput(state, mousePos, button)
                 ) || contains(mousePos);
     }
@@ -185,7 +185,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
 
         if (itemClicked ||
                 ItrUtil.orMapAll(
-                        ItrUtil.getAllOfType(MouseScrollListener.class, components, topCover.components, bottomCover.components),
+                        ItrUtil.getAllOfType(MouseScrollListener.class, getChildren(), topCover.getChildren(), bottomCover.getChildren()),
                         e -> e.handleMouseScroll(mousePos, delta)
                 )
         ) return true;
@@ -205,7 +205,7 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
         }
         return itemClicked ||
                 ItrUtil.orMapAll(
-                        ItrUtil.getAllOfType(KeyInputListener.class, components, topCover.components, bottomCover.components),
+                        ItrUtil.getAllOfType(KeyInputListener.class, getChildren(), topCover.getChildren(), bottomCover.getChildren()),
                         e -> e.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
                 );
     }
@@ -213,11 +213,11 @@ public class ScrollableList<I extends ScrollableListItem<I>> extends HudComponen
     @Override
     public void renderHover(Vector2D mouse) {
         getItems().forEach(i -> i.renderHover(mouse));
-        ItrUtil.getAllOfType(HoverComponent.class, components, topCover.components, bottomCover.components)
+        ItrUtil.getAllOfType(HoverComponent.class, getChildren(), topCover.getChildren(), bottomCover.getChildren())
                 .forEach(i -> i.renderHover(mouse));
     }
 
-    public static class ScrollBar<I extends ScrollableListItem<I>> extends HudComponent implements MouseInputListener {
+    public static class ScrollBar<I extends ScrollableListItem<I>> extends Component implements MouseInputListener {
         private final ScrollableList<I> parentList;
         public double barWidth = 11;
         public Color backgroundColor = Color.DARK_GRAY;

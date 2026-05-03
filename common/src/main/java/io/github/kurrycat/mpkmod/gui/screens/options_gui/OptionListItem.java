@@ -30,13 +30,13 @@ public abstract class OptionListItem extends ScrollableListItem<OptionListItem> 
                 loadDefaultValue();
             }
         });
-        addChild(resetButton, PERCENT.NONE, Anchor.CENTER_RIGHT);
+        addChild(resetButton.setAnchors(Anchor.CENTER_RIGHT));
 
         helpHover = new TextRectangle(
                 new Vector2D(0, 0),
                 new Vector2D(11, 11),
                 "?", null, Color.WHITE);
-        addChild(helpHover, PERCENT.NONE, Anchor.CENTER_RIGHT);
+        addChild(helpHover.setAnchors(Anchor.CENTER_RIGHT));
 
         hoverText = new Div();
         passPositionTo(hoverText, PERCENT.SIZE_X);

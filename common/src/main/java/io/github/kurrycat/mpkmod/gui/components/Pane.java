@@ -5,14 +5,14 @@ import io.github.kurrycat.mpkmod.gui.Theme;
 import io.github.kurrycat.mpkmod.gui.interfaces.KeyInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseInputListener;
 import io.github.kurrycat.mpkmod.gui.interfaces.MouseScrollListener;
-import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Colors;
+import io.github.kurrycat.mpkmod.util.ItrUtil;
 import io.github.kurrycat.mpkmod.util.Mouse;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 
 import java.awt.*;
 
-public class Pane<T extends PaneHolder> extends HudComponent implements MouseInputListener, MouseScrollListener, KeyInputListener {
+public class Pane<T extends PaneHolder> extends Container implements MouseInputListener, MouseScrollListener, KeyInputListener {
     public Color backgroundColor = Theme.darkBackground;
 
     public T paneHolder = null;
@@ -24,7 +24,7 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
         this.setSize(size);
         this.loaded = false;
 
-        this.addChild(createCloseButton(), PERCENT.NONE, Anchor.TOP_RIGHT);
+        this.addChild(createCloseButton().setAnchors(Anchor.TOP_RIGHT));
     }
 
     public Button createCloseButton() {
@@ -45,14 +45,14 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
     public void render(Vector2D mousePos) {
         Renderer2D.drawRect(getDisplayedPos(), getDisplayedSize(), backgroundColor);
 
-        components.forEach(c -> c.render(mousePos));
+        super.render(mousePos);
     }
 
     @Override
     public boolean handleMouseInput(Mouse.State state, Vector2D mousePos, Mouse.Button button) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
-                    ItrUtil.getAllOfType(MouseInputListener.class, components),
+                    ItrUtil.getAllOfType(MouseInputListener.class, getChildren()),
                     b -> b.handleMouseInput(state, mousePos, button)
             );
         }
@@ -63,7 +63,7 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
     public boolean handleMouseScroll(Vector2D mousePos, int delta) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
-                    ItrUtil.getAllOfType(MouseScrollListener.class, components),
+                    ItrUtil.getAllOfType(MouseScrollListener.class, getChildren()),
                     b -> b.handleMouseScroll(mousePos, delta)
             );
         }
@@ -90,14 +90,14 @@ public class Pane<T extends PaneHolder> extends HudComponent implements MouseInp
                 new Color(0, 0, 0, 0),
                 Color.WHITE
         );
-        addChild(titleRect, PERCENT.SIZE_X, Anchor.TOP_CENTER);
+        addChild(titleRect.setPercentFlag(PERCENT.SIZE_X).setAnchors(Anchor.TOP_CENTER));
     }
 
     @Override
     public boolean handleKeyInput(int keyCode, int scanCode, int modifiers, boolean isCharTyped) {
         if (this.loaded) {
             return ItrUtil.orMapAll(
-                    ItrUtil.getAllOfType(KeyInputListener.class, components),
+                    ItrUtil.getAllOfType(KeyInputListener.class, getChildren()),
                     b -> b.handleKeyInput(keyCode, scanCode, modifiers, isCharTyped)
             );
         }

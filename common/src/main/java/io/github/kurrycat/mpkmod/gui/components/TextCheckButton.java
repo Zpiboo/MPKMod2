@@ -45,12 +45,6 @@ public class TextCheckButton extends CheckButton {
         return new Vector2D(fontSize.getX() + 3 + checkboxSize.getX(), Math.max(fontSize.getY(), checkboxSize.getY()));
     }
 
-    @Override
-    public Vector2D getSizeForJson() {
-        Vector2D fontSize = FontRenderer.getStringSize(text);
-        return new Vector2D(fontSize.getX() + 3 + checkboxSize.getX(), Math.max(fontSize.getY(), checkboxSize.getY()));
-    }
-
     public void setCheckboxSize(Vector2D checkboxSize) {
         this.checkboxSize = checkboxSize;
     }

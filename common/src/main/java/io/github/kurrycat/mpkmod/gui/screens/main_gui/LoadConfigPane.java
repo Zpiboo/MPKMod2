@@ -51,19 +51,19 @@ public class LoadConfigPane extends Pane<MainGuiScreen> {
                 new Vector2D(0.2 / 3, 0.05),
                 new Vector2D(0.4, 0.9));
         presets.setTitle("Presets");
-        addChild(presets, PERCENT.ALL, Anchor.TOP_LEFT);
+        addChild(presets.setPercentFlag(PERCENT.ALL).setAnchors(Anchor.TOP_LEFT));
 
         presets.bottomCover.setHeight(0.13, true);
         presets.bottomCover.backgroundColor = null;
-        presets.bottomCover.addChild(r, PERCENT.POS_Y | PERCENT.SIZE_X, Anchor.CENTER, Anchor.TOP_CENTER);
-        presets.bottomCover.addChild(filename, PERCENT.POS_Y | PERCENT.SIZE_X, Anchor.CENTER, Anchor.BOTTOM_CENTER);
+        presets.bottomCover.addChild(r.setPercentFlag(PERCENT.POS_Y | PERCENT.SIZE_X).setThisAnchor(Anchor.CENTER).setParentAnchor(Anchor.TOP_CENTER));
+        presets.bottomCover.addChild(filename.setPercentFlag(PERCENT.POS_Y | PERCENT.SIZE_X).setThisAnchor(Anchor.CENTER).setParentAnchor(Anchor.BOTTOM_CENTER));
 
         savedConfigs = new ConfigFileList(
                 LabelConfiguration.savedConfigs,
                 new Vector2D(0.2 / 3, 0.05),
                 new Vector2D(0.4, 0.9));
         savedConfigs.setTitle("Saved Configurations");
-        addChild(savedConfigs, PERCENT.ALL, Anchor.TOP_RIGHT);
+        addChild(savedConfigs.setPercentFlag(PERCENT.ALL).setAnchors(Anchor.TOP_RIGHT));
 
         Button reloadCurrent = new Button(
                 "Reload from file",
@@ -78,7 +78,7 @@ public class LoadConfigPane extends Pane<MainGuiScreen> {
 
         savedConfigs.bottomCover.setHeight(0.1, true);
         savedConfigs.bottomCover.backgroundColor = null;
-        savedConfigs.bottomCover.addChild(reloadCurrent, PERCENT.SIZE_X, Anchor.CENTER);
+        savedConfigs.bottomCover.addChild(reloadCurrent.setPercentFlag(PERCENT.SIZE_X).setAnchors(Anchor.CENTER));
 
         /*Div fileDiv = new Div(
                 new Vector2D(0.2 / 3, 0),
@@ -145,7 +145,7 @@ public class LoadConfigPane extends Pane<MainGuiScreen> {
                         paneHolder.reloadConfig();
                         close();
                     }
-            ), PERCENT.POS_Y, Anchor.CENTER_RIGHT);
+            ).setPercentFlag(PERCENT.POS_Y).setAnchors(Anchor.CENTER_RIGHT));
         }
 
         @Override
