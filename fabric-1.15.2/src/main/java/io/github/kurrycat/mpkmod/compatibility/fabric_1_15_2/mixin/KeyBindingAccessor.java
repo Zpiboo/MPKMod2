@@ -1,4 +1,4 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_16_5.mixin;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_15_2.mixin;
 
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;

@@ -1,4 +1,4 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_1_16_5;
+package io.github.kurrycat.mpkmod.compatibility.fabric_1_15_2;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpknetapi.common.MPKNetworking;
