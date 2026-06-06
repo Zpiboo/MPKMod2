@@ -6,7 +6,6 @@ import io.github.kurrycat.mpkmod.util.MathUtil;
 import io.github.kurrycat.mpkmod.util.Vector2D;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.TranslatableText;
 
 public class MPKGuiScreen extends Screen {
@@ -27,9 +26,8 @@ public class MPKGuiScreen extends Screen {
         eventReceiver.onResize(width, height);
     }
 
-    public void render(MatrixStack matrixStack, int mouseX, int mouseY, float delta) {
-        matrixStack.push();
-        API.<FunctionCompatibility>getFunctionHolder().matrixStack = matrixStack;
+    @Override
+    public void render(int mouseX, int mouseY, float delta) {
         Profiler.startSection(eventReceiver.getID() == null ? "mpk_gui" : eventReceiver.getID());
         try {
             eventReceiver.drawScreen(new Vector2D(mouseX, mouseY), delta);
@@ -37,7 +35,6 @@ public class MPKGuiScreen extends Screen {
             API.LOGGER.warn("Error in drawScreen with id: " + eventReceiver.getID(), e);
         }
         Profiler.endSection();
-        matrixStack.pop();
     }
 
     public void onClose() {

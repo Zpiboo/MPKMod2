@@ -27,11 +27,10 @@
   "mixins": [
     "mpkmod.mixins.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.17.3",
     "fabric": "*",
-    "minecraft": "=1.16.5",
+    "minecraft": "=1.15.2",
     "java": "=8"
   },
   "suggests": {}

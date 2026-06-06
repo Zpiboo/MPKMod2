@@ -12,8 +12,8 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.options.GameOptions;
+import net.minecraft.client.options.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Util;
@@ -34,16 +34,16 @@ public class EventHandler {
         GameOptions options = MinecraftClient.getInstance().options;
         long eventNanos = Util.getMeasuringTimeNano();
 
-        InputUtil.Key inputKey = InputUtil.fromKeyCode(key, scanCode);
+        InputUtil.KeyCode inputKey = InputUtil.getKeyCode(key, scanCode);
 
         int[] keys = {
-                ((KeyBindingAccessor) options.keyForward).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.keyLeft).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.keyBack).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.keyRight).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.keySprint).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.keySneak).getBoundKey().getCode(),
-                ((KeyBindingAccessor) options.keyJump).getBoundKey().getCode()
+                ((KeyBindingAccessor) options.keyForward).getKeyCode().getKeyCode(),
+                ((KeyBindingAccessor) options.keyLeft).getKeyCode().getKeyCode(),
+                ((KeyBindingAccessor) options.keyBack).getKeyCode().getKeyCode(),
+                ((KeyBindingAccessor) options.keyRight).getKeyCode().getKeyCode(),
+                ((KeyBindingAccessor) options.keySprint).getKeyCode().getKeyCode(),
+                ((KeyBindingAccessor) options.keySneak).getKeyCode().getKeyCode(),
+                ((KeyBindingAccessor) options.keyJump).getKeyCode().getKeyCode()
         };
 
         for (int i = 0; i < keys.length; i++) {
@@ -53,12 +53,19 @@ public class EventHandler {
         }
 
         if (action == 1) {
-            FunctionCompatibility.pressedButtons.add(inputKey.getCode());
+            FunctionCompatibility.pressedButtons.add(inputKey.getKeyCode());
         } else if (action == 0) {
-            FunctionCompatibility.pressedButtons.remove(inputKey.getCode());
+            FunctionCompatibility.pressedButtons.remove(inputKey.getKeyCode());
         }
 
-        API.Events.onKeyInput(key, inputKey.getLocalizedText().getString(), action == 1);
+        String name = InputUtil.getKeycodeName(key);
+        if (name == null) {
+            name = InputUtil.getScancodeName(scanCode);
+        }
+        if (name == null) {
+            name = InputUtil.getKeyCode(key, scanCode).getName();
+        }
+        API.Events.onKeyInput(key, /*dummyKeyBinding.getLocalizedName()*/name, action == 1);
 
         if (action != 0)
             checkKeyBinding(key);
@@ -99,26 +106,22 @@ public class EventHandler {
         if (MinecraftClient.getInstance().currentScreen != null) return;
 
         for (Map.Entry<String, KeyBinding> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
-            InputUtil.Key boundKey = ((KeyBindingAccessor) keyBindingEntry.getValue()).getBoundKey();
+            InputUtil.KeyCode boundKey = ((KeyBindingAccessor) keyBindingEntry.getValue()).getKeyCode();
             String keyBindId = keyBindingEntry.getKey();
 
-            if (boundKey.getCode() == keyCode) {
+            if (boundKey.getKeyCode() == keyCode) {
                 API.Events.onKeybind(keyBindId);
                 return;
             }
         }
     }
 
-    public void onInGameOverlayRender(MatrixStack matrixStack, float tickDelta) {
-        matrixStack.push();
-        API.<FunctionCompatibility>getFunctionHolder().matrixStack = matrixStack;
+    public void onInGameOverlayRender(float tickDelta) {
         API.Events.onRenderOverlay();
-        matrixStack.pop();
     }
 
     public void onRenderWorldOverlay(MatrixStack matrixStack, float tickDelta) {
         matrixStack.push();
-        API.<FunctionCompatibility>getFunctionHolder().matrixStack = matrixStack;
         Vec3d pos = MinecraftClient.getInstance().gameRenderer.getCamera().getPos();
         matrixStack.translate(-pos.x, -pos.y, -pos.z);
         API.Events.onRenderWorldOverlay(tickDelta);
@@ -141,11 +144,11 @@ public class EventHandler {
                     .setLastPos(new Vector3D(mcPlayer.prevX, mcPlayer.prevY, mcPlayer.prevZ))
                     .setMotion(new Vector3D(mcPlayer.getVelocity().x, mcPlayer.getVelocity().y, mcPlayer.getVelocity().z))
                     .setRotation(mcPlayer.getRotationClient().y, mcPlayer.getRotationClient().x)
-                    .setOnGround(mcPlayer.isOnGround())
+                    .setOnGround(mcPlayer.onGround)
                     .setSprinting(mcPlayer.isSprinting())
                     .setBoundingBox(new BoundingBox3D(
-                            new Vector3D(playerBB.minX, playerBB.minY, playerBB.minZ),
-                            new Vector3D(playerBB.maxX, playerBB.maxY, playerBB.maxZ)
+                            new Vector3D(playerBB.x1, playerBB.y1, playerBB.z1),
+                            new Vector3D(playerBB.x2, playerBB.y2, playerBB.z2)
                     ))
                     .setFlying(mcPlayer.abilities.flying)
                     .constructKeyInput()

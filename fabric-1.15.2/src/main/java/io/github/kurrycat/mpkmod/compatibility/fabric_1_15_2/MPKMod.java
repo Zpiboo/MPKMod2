@@ -1,6 +1,7 @@
 package io.github.kurrycat.mpkmod.compatibility.fabric_1_15_2;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding;
 import io.github.kurrycat.mpknetapi.common.MPKNetworking;
 import io.github.kurrycat.mpknetapi.common.network.packet.MPKPacket;
 import net.fabricmc.api.ModInitializer;
@@ -11,14 +12,13 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.SharedConstants;
 import net.minecraft.client.MinecraftClient;
-import io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding;
 import net.minecraft.util.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MPKMod implements ModInitializer {
-	public static Map<String, net.minecraft.client.option.KeyBinding> keyBindingMap = new HashMap<>();
+	public static Map<String, net.minecraft.client.options.KeyBinding> keyBindingMap = new HashMap<>();
 	public static final MPKMod INSTANCE = new MPKMod();
 	public final EventHandler eventHandler = new EventHandler();
 	public static final Identifier NETWORKING_IDENTIFIER = new Identifier(MPKNetworking.CHANNEL_NAMESPACE, MPKNetworking.CHANNEL_PATH);
@@ -57,7 +57,7 @@ public class MPKMod implements ModInitializer {
 	}
 
 	public void registerKeyBinding(String id) {
-		net.minecraft.client.option.KeyBinding keyBinding = new net.minecraft.client.option.KeyBinding(
+		net.minecraft.client.options.KeyBinding keyBinding = new net.minecraft.client.options.KeyBinding(
 				API.MODID + ".key." + id + ".desc",
 				-1,
 				API.KEYBINDING_CATEGORY
@@ -67,10 +67,10 @@ public class MPKMod implements ModInitializer {
 	}
 
 	private void registerKeyBindings() {
-		for(net.minecraft.client.option.KeyBinding k : MinecraftClient.getInstance().options.keysAll) {
+		for(net.minecraft.client.options.KeyBinding k : MinecraftClient.getInstance().options.keysAll) {
 			new io.github.kurrycat.mpkmod.compatibility.MCClasses.KeyBinding(
-					() -> k.getBoundKeyLocalizedText().getString(),
-					k.getTranslationKey(),
+                    k::getLocalizedName,
+					k.getId(),
 					k::isPressed
 			);
 		}
