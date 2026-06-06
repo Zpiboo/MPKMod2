@@ -75,6 +75,33 @@ public class Main implements MPKModule {
         API.registerGUIScreen("options_gui", new OptionsGuiScreen());
 
         API.registerKeyBinding("togglesprint", Minecraft::toggleSprint);
+
+        API.registerKeyBinding("reload_modules",
+                () -> {
+                    if (Keyboard.getPressedButtons().contains(InputConstants.KEY_LSHIFT)) {
+                        API.LOGGER.info("Closing all mpkmodules...");
+                        ModuleManager.closeAllModules();
+                    } else {
+                        API.LOGGER.info("Reloading mpkmodules...");
+                        ModuleManager.reloadAllModules();
+                    }
+                },
+                true
+        );
+        API.registerKeyBinding("copy_coordinates",
+                () -> {
+                    if (Player.getLatest() == null) return;
+                    Player p = Player.getLatest();
+                    Minecraft.copyToClipboard(
+                            p.pos.getX() + " " +
+                                    p.pos.getY() + " " +
+                                    p.pos.getZ() + " " +
+                                    p.trueYaw + " " +
+                                    p.truePitch
+                    );
+                },
+                true
+        );
     }
 
     @Override
@@ -92,31 +119,6 @@ public class Main implements MPKModule {
             discordRpcInitialized = false;
         }
         TickThread.startThread();
-
-        EventAPI.addListener(
-                new EventAPI.EventListener<OnKeyInputEvent>(event -> {
-                    if (Keyboard.getPressedButtons().contains(InputConstants.KEY_F3)) {
-                        if (event.keyCode == InputConstants.KEY_M) {
-                            if (Keyboard.getPressedButtons().contains(InputConstants.KEY_LSHIFT)) {
-                                API.LOGGER.info("Closing all mpkmodules...");
-                                ModuleManager.closeAllModules();
-                            } else {
-                                API.LOGGER.info("Reloading mpkmodules...");
-                                ModuleManager.reloadAllModules();
-                            }
-                        } else if (event.keyCode == InputConstants.KEY_C) {
-                            if (Player.getLatest() == null) return;
-                            Player p = Player.getLatest();
-                            Minecraft.copyToClipboard(
-                                    p.pos.getX() + " " +
-                                            p.pos.getY() + " " +
-                                            p.pos.getZ() + " " +
-                                            p.trueYaw + " " +
-                                            p.truePitch
-                            );
-                        }
-                    }
-                }, Event.EventType.KEY_INPUT));
 
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> API.tickTime++));
         EventAPI.addListener(EventAPI.EventListener.onTickEnd(e -> {
