@@ -2,11 +2,14 @@ package io.github.kurrycat.mpkmod.compatibility;
 
 import io.github.kurrycat.mpkmod.Main;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.FunctionHolder;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.InputConstants;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.Keyboard;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Minecraft;
 import io.github.kurrycat.mpkmod.discord.DiscordRPC;
 import io.github.kurrycat.mpkmod.events.*;
 import io.github.kurrycat.mpkmod.gui.MPKGuiScreen;
 import io.github.kurrycat.mpkmod.gui.screens.options_gui.Option;
+import io.github.kurrycat.mpkmod.input.MPKKeyBinding;
 import io.github.kurrycat.mpkmod.modules.MPKModule;
 import io.github.kurrycat.mpkmod.modules.MPKModuleImpl;
 import io.github.kurrycat.mpkmod.modules.ModuleFinder;
@@ -48,7 +51,7 @@ public class API {
     public static long tickTime = 0;
 
     public static Map<String, MPKGuiScreen> guiScreenMap = new HashMap<>();
-    public static Map<String, Procedure> keyBindingMap = new HashMap<>();
+    public static Map<String, MPKKeyBinding> keyBindingMap = new HashMap<>();
 
     public static HashMap<String, Option> optionsMap;
     private static FunctionHolder functionHolder;
@@ -99,7 +102,17 @@ public class API {
      * @param procedure procedure to be called when key event is received
      */
     public static void registerKeyBinding(String id, Procedure procedure) {
-        keyBindingMap.put(id, procedure);
+        registerKeyBinding(id, procedure, false);
+    }
+
+    /**
+     * Should be called in {@link #preInit(Class)}
+     *
+     * @param id        ID used to localize the key bind ({@link API#MODID} + ".key." + guiID + ".desc")
+     * @param procedure procedure to be called when key event is received
+     */
+    public static void registerKeyBinding(String id, Procedure procedure, boolean isDebug) {
+        keyBindingMap.put(id, new MPKKeyBinding(procedure, isDebug));
     }
 
     /**
@@ -181,8 +194,11 @@ public class API {
             MPKGuiScreen guiScreen = guiScreenMap.get(id);
             if (guiScreen != null) guiScreen.onKeybindPressed();
 
-            Procedure keyBinding = keyBindingMap.get(id);
-            if (keyBinding != null) keyBinding.run();
+            MPKKeyBinding keyBinding = keyBindingMap.get(id);
+            if (keyBinding != null) {
+                if (!keyBinding.isDebug || Keyboard.getPressedButtons().contains(InputConstants.KEY_F3))
+                    keyBinding.action.run();
+            }
 
             EventAPI.postEvent(new OnKeybindEvent(id));
         }

@@ -49,7 +49,7 @@ public class MPKMod {
                 registerKeyBinding(id);
         });
 
-        API.keyBindingMap.forEach((id, consumer) -> registerKeyBinding(id));
+        API.keyBindingMap.forEach((id, kb) -> registerKeyBinding(id));
 
         API.LOGGER.info(API.COMPATIBILITY_MARKER, "Registering compatibility functions...");
         API.registerFunctionHolder(new FunctionCompatibility());

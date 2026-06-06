@@ -74,7 +74,7 @@ public class MPKMod implements ModInitializer {
                 registerKeyBinding(id);
         });
 
-        API.keyBindingMap.forEach((id, consumer) -> registerKeyBinding(id));
+        API.keyBindingMap.forEach((id, kb) -> registerKeyBinding(id));
         keyBindingMap.forEach((id, key) -> KeyMappingHelper.registerKeyMapping(key));
     }
 
