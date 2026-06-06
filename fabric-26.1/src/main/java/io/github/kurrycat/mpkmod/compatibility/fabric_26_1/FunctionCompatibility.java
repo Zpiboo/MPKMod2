@@ -411,8 +411,8 @@ public class FunctionCompatibility implements FunctionHolder,
         ClientPlayNetworking.send(new DataCustomPayload(packet.getData()));
     }
 
-    public ArrayList<Integer> getPressedButtons() {
-        return new ArrayList<>(pressedButtons);
+    public Set<Integer> getPressedButtons() {
+        return Set.copyOf(pressedButtons);
     }
 
     public void startSection(String name) {

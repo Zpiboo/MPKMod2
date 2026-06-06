@@ -436,8 +436,8 @@ public class FunctionCompatibility implements FunctionHolder,
     /**
      * Is called in {@link io.github.kurrycat.mpkmod.compatibility.MCClasses.Keyboard.Interface Keyboard.Interface}
      */
-    public List<Integer> getPressedButtons() {
-        List<Integer> keysDown = new ArrayList<>();
+    public Set<Integer> getPressedButtons() {
+        Set<Integer> keysDown = new HashSet<>();
         for (int i = 0; i < Keyboard.getKeyCount(); i++)
             if (Keyboard.isKeyDown(i))
                 keysDown.add(InputConstants.convert(i));

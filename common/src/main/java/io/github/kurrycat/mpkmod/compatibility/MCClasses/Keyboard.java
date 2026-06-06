@@ -2,13 +2,13 @@ package io.github.kurrycat.mpkmod.compatibility.MCClasses;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 public class Keyboard {
-    public static List<Integer> getPressedButtons() {
-        return Interface.get().map(Interface::getPressedButtons).orElseGet(ArrayList::new);
+    public static Set<Integer> getPressedButtons() {
+        return Interface.get().map(Interface::getPressedButtons).orElseGet(HashSet::new);
     }
 
     public enum Modifier {
@@ -24,6 +24,6 @@ public class Keyboard {
             return API.getFunctionHolder(Interface.class);
         }
 
-        List<Integer> getPressedButtons();
+        Set<Integer> getPressedButtons();
     }
 }
