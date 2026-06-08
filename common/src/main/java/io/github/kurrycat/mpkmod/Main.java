@@ -86,6 +86,7 @@ public class Main implements MPKModule {
                         ModuleManager.reloadAllModules();
                     }
                 },
+                InputConstants.KEY_M,
                 true
         );
         API.registerKeyBinding("copy_coordinates",
@@ -100,6 +101,7 @@ public class Main implements MPKModule {
                                     p.truePitch
                     );
                 },
+                InputConstants.KEY_C,
                 true
         );
     }
