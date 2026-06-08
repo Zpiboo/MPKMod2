@@ -102,7 +102,7 @@ public class API {
      * @param action procedure to be called when key event is received
      */
     public static void registerKeyBinding(String id, Procedure action) {
-        registerKeyBinding(id, action, false);
+        registerKeyBinding(id, action, null);
     }
 
     /**
@@ -110,10 +110,22 @@ public class API {
      *
      * @param id ID used to localize the key bind ({@link API#MODID} + ".key." + guiID + ".desc")
      * @param action procedure to be called when key event is received
+     * @param defaultKeycode keycode of the default key for the keybinding
+     */
+    public static void registerKeyBinding(String id, Procedure action, Integer defaultKeycode) {
+        registerKeyBinding(id, action, defaultKeycode, false);
+    }
+
+    /**
+     * Should be called in {@link #preInit(Class)}
+     *
+     * @param id ID used to localize the key bind ({@link API#MODID} + ".key." + guiID + ".desc")
+     * @param action procedure to be called when key event is received
+     * @param defaultKeycode keycode of the default key for the keybinding
      * @param isDebug whether the keybinding is an F3 shortcut
      */
-    public static void registerKeyBinding(String id, Procedure action, boolean isDebug) {
-        keyBindingMap.put(id, new MPKKeyBinding(action, isDebug));
+    public static void registerKeyBinding(String id, Procedure action, int defaultKeycode, boolean isDebug) {
+        keyBindingMap.put(id, new MPKKeyBinding(action, defaultKeycode, isDebug));
     }
 
     /**

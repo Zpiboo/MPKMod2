@@ -71,17 +71,17 @@ public class MPKMod implements ModInitializer {
     private void registerKeybindingsFromGUIs() {
         API.guiScreenMap.forEach((id, guiScreen) -> {
             if (guiScreen.shouldCreateKeyBind())
-                registerKeyBinding(id);
+                registerKeyBinding(id, -1);
         });
 
-        API.keyBindingMap.forEach((id, kb) -> registerKeyBinding(id));
+        API.keyBindingMap.forEach((id, kb) -> registerKeyBinding(id, kb.defaultKeycode));
         keyBindingMap.forEach((id, key) -> KeyMappingHelper.registerKeyMapping(key));
     }
 
-    public void registerKeyBinding(String id) {
+    public void registerKeyBinding(String id, int defaultKeycode) {
         net.minecraft.client.KeyMapping keyBinding = new net.minecraft.client.KeyMapping(
                 API.MODID + ".key." + id + ".desc",
-                -1,
+                defaultKeycode,
                 KEYBINDING_CATEGORY
         );
 

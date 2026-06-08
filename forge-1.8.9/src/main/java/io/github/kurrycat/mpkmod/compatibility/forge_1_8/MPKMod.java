@@ -1,6 +1,7 @@
 package io.github.kurrycat.mpkmod.compatibility.forge_1_8;
 
 import io.github.kurrycat.mpkmod.compatibility.API;
+import io.github.kurrycat.mpkmod.compatibility.MCClasses.InputConstants;
 import io.github.kurrycat.mpkmod.compatibility.forge_1_8.network.MPKForgeNetworking;
 import io.github.kurrycat.mpkmod.compatibility.forge_1_8.overrides.SprintKeyBindingOverride;
 import net.minecraft.client.Minecraft;
@@ -46,10 +47,10 @@ public class MPKMod {
 
         API.guiScreenMap.forEach((id, guiScreen) -> {
             if (guiScreen.shouldCreateKeyBind())
-                registerKeyBinding(id);
+                registerKeyBinding(id, -1);
         });
 
-        API.keyBindingMap.forEach((id, kb) -> registerKeyBinding(id));
+        API.keyBindingMap.forEach((id, kb) -> registerKeyBinding(id, kb.defaultKeycode));
 
         API.LOGGER.info(API.COMPATIBILITY_MARKER, "Registering compatibility functions...");
         API.registerFunctionHolder(new FunctionCompatibility());
@@ -76,10 +77,10 @@ public class MPKMod {
         }
     }
 
-    public static void registerKeyBinding(String id) {
+    public static void registerKeyBinding(String id, int defaultKeycode) {
         KeyBinding keyBinding = new KeyBinding(
                 API.MODID + ".key." + id + ".desc",
-                Keyboard.KEY_NONE,
+                InputConstants.glfwToLwjgl(defaultKeycode),
                 API.KEYBINDING_CATEGORY
         );
         keyBindingMap.put(id, keyBinding);
