@@ -441,7 +441,7 @@ public class FunctionCompatibility implements FunctionHolder,
         Set<Integer> keysDown = new HashSet<>();
         for (int i = 0; i < Keyboard.getKeyCount(); i++)
             if (Keyboard.isKeyDown(i))
-                keysDown.add(InputConstants.convert(i));
+                keysDown.add(InputConstants.lwjglToGlfw(i));
         return keysDown;
     }
 

@@ -1,5 +1,9 @@
 package io.github.kurrycat.mpkmod.compatibility.MCClasses;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 @SuppressWarnings("unused")
 public class InputConstants {
     public static final int KEY_0 = 48;
@@ -128,262 +132,162 @@ public class InputConstants {
     public static final int CURSOR_DISABLED = 212995;
     public static final int CURSOR_NORMAL = 212993;*/
 
+    private static final Map<Integer, Integer> LWJGL_TO_GLFW;
+
+    static {
+        Map<Integer, Integer> lwjglToGlfw = new HashMap<>();
+
+        for (int lwjglKey = 0x02; lwjglKey <= 0x0A; lwjglKey++)
+            lwjglToGlfw.put(lwjglKey, lwjglKey - 0x02 + KEY_1);
+
+        lwjglToGlfw.put(0x01, KEY_ESCAPE);
+        lwjglToGlfw.put(0x0B, KEY_0);
+        lwjglToGlfw.put(0x0C, KEY_MINUS);
+        lwjglToGlfw.put(0x0D, KEY_EQUALS);
+        lwjglToGlfw.put(0x0E, KEY_BACKSPACE);
+        lwjglToGlfw.put(0x0F, KEY_TAB);
+        lwjglToGlfw.put(0x10, KEY_Q);
+        lwjglToGlfw.put(0x11, KEY_W);
+        lwjglToGlfw.put(0x12, KEY_E);
+        lwjglToGlfw.put(0x13, KEY_R);
+        lwjglToGlfw.put(0x14, KEY_T);
+        lwjglToGlfw.put(0x15, KEY_Y);
+        lwjglToGlfw.put(0x16, KEY_U);
+        lwjglToGlfw.put(0x17, KEY_I);
+        lwjglToGlfw.put(0x18, KEY_O);
+        lwjglToGlfw.put(0x19, KEY_P);
+        lwjglToGlfw.put(0x1A, KEY_LBRACKET);
+        lwjglToGlfw.put(0x1B, KEY_RBRACKET);
+        lwjglToGlfw.put(0x1C, KEY_RETURN); /* Enter on main keyboard */
+        lwjglToGlfw.put(0x1D, KEY_LCONTROL);
+        lwjglToGlfw.put(0x1E, KEY_A);
+        lwjglToGlfw.put(0x1F, KEY_S);
+        lwjglToGlfw.put(0x20, KEY_D);
+        lwjglToGlfw.put(0x21, KEY_F);
+        lwjglToGlfw.put(0x22, KEY_G);
+        lwjglToGlfw.put(0x23, KEY_H);
+        lwjglToGlfw.put(0x24, KEY_J);
+        lwjglToGlfw.put(0x25, KEY_K);
+        lwjglToGlfw.put(0x26, KEY_L);
+        lwjglToGlfw.put(0x27, KEY_SEMICOLON);
+        lwjglToGlfw.put(0x28, KEY_APOSTROPHE);
+        lwjglToGlfw.put(0x29, KEY_GRAVE); /* accent grave */
+        lwjglToGlfw.put(0x2A, KEY_LSHIFT);
+        lwjglToGlfw.put(0x2B, KEY_BACKSLASH);
+        lwjglToGlfw.put(0x2C, KEY_Z);
+        lwjglToGlfw.put(0x2D, KEY_X);
+        lwjglToGlfw.put(0x2E, KEY_C);
+        lwjglToGlfw.put(0x2F, KEY_V);
+        lwjglToGlfw.put(0x30, KEY_B);
+        lwjglToGlfw.put(0x31, KEY_N);
+        lwjglToGlfw.put(0x32, KEY_M);
+        lwjglToGlfw.put(0x33, KEY_COMMA);
+        lwjglToGlfw.put(0x34, KEY_PERIOD); /* . on main keyboard */
+        lwjglToGlfw.put(0x35, KEY_SLASH); /* / on main keyboard */
+        lwjglToGlfw.put(0x36, KEY_RSHIFT);
+        lwjglToGlfw.put(0x37, KEY_MULTIPLY); /* * on numeric keypad */
+        lwjglToGlfw.put(0x38, KEY_LALT); /* left Alt */
+        lwjglToGlfw.put(0x39, KEY_SPACE);
+        lwjglToGlfw.put(0x3A, KEY_CAPSLOCK);
+        lwjglToGlfw.put(0x3B, KEY_F1);
+        lwjglToGlfw.put(0x3C, KEY_F2);
+        lwjglToGlfw.put(0x3D, KEY_F3);
+        lwjglToGlfw.put(0x3E, KEY_F4);
+        lwjglToGlfw.put(0x3F, KEY_F5);
+        lwjglToGlfw.put(0x40, KEY_F6);
+        lwjglToGlfw.put(0x41, KEY_F7);
+        lwjglToGlfw.put(0x42, KEY_F8);
+        lwjglToGlfw.put(0x43, KEY_F9);
+        lwjglToGlfw.put(0x44, KEY_F10);
+        lwjglToGlfw.put(0x45, KEY_NUMLOCK);
+        lwjglToGlfw.put(0x46, KEY_SCROLLLOCK); /* Scroll Lock */
+        lwjglToGlfw.put(0x47, KEY_NUMPAD7);
+        lwjglToGlfw.put(0x48, KEY_NUMPAD8);
+        lwjglToGlfw.put(0x49, KEY_NUMPAD9);
+        lwjglToGlfw.put(0x4A, KEY_MINUS); /* - on numeric keypad */
+        lwjglToGlfw.put(0x4B, KEY_NUMPAD4);
+        lwjglToGlfw.put(0x4C, KEY_NUMPAD5);
+        lwjglToGlfw.put(0x4D, KEY_NUMPAD6);
+        lwjglToGlfw.put(0x4E, KEY_ADD); /* + on numeric keypad */
+        lwjglToGlfw.put(0x4F, KEY_NUMPAD1);
+        lwjglToGlfw.put(0x50, KEY_NUMPAD2);
+        lwjglToGlfw.put(0x51, KEY_NUMPAD3);
+        lwjglToGlfw.put(0x52, KEY_NUMPAD0);
+        lwjglToGlfw.put(0x53, KEY_NUMPADCOMMA); /* . on numeric keypad */
+        lwjglToGlfw.put(0x57, KEY_F11);
+        lwjglToGlfw.put(0x58, KEY_F12);
+        lwjglToGlfw.put(0x64, KEY_F13); /*                     (NEC PC98) */
+        lwjglToGlfw.put(0x65, KEY_F14); /*                     (NEC PC98) */
+        lwjglToGlfw.put(0x66, KEY_F15); /*                     (NEC PC98) */
+        lwjglToGlfw.put(0x67, KEY_F16); /* Extended Function keys - (Mac) */
+        lwjglToGlfw.put(0x68, KEY_F17);
+        lwjglToGlfw.put(0x69, KEY_F18);
+        /*lwjglToGlfw.put(0x70, KEY_KANA);*/ /* (Japanese keyboard)            */
+        lwjglToGlfw.put(0x71, KEY_F19); /* Extended Function keys - (Mac) */
+        /*lwjglToGlfw.put(0x79, KEY_CONVERT);*/ /* (Japanese keyboard)            */
+        /*lwjglToGlfw.put(0x7B, KEY_NOCONVERT);*/ /* (Japanese keyboard)            */
+        /*lwjglToGlfw.put(0x7D, KEY_YEN);*/ /* (Japanese keyboard)            */
+        lwjglToGlfw.put(0x8D, KEY_NUMPADEQUALS); /* = on numeric keypad (NEC PC98) */
+        /*lwjglToGlfw.put(0x90, KEY_CIRCUMFLEX);*/ /* (Japanese keyboard)            */
+        /*lwjglToGlfw.put(0x91, KEY_AT);*/ /*                     (NEC PC98) */
+        /*lwjglToGlfw.put(0x92, KEY_COLON);*/ /*                     (NEC PC98) */
+        /*lwjglToGlfw.put(0x93, KEY_UNDERLINE);*/ /*                     (NEC PC98) */
+        /*lwjglToGlfw.put(0x94, KEY_KANJI);*/ /* (Japanese keyboard)            */
+        /*lwjglToGlfw.put(0x95, KEY_STOP);*/ /*                     (NEC PC98) */
+        /*lwjglToGlfw.put(0x96, KEY_AX);*/ /*                     (Japan AX) */
+        /*lwjglToGlfw.put(0x97, KEY_UNLABELED);*/ /*                        (J3100) */
+        lwjglToGlfw.put(0x9C, KEY_NUMPADENTER); /* Enter on numeric keypad */
+        lwjglToGlfw.put(0x9D, KEY_RCONTROL);
+        /*lwjglToGlfw.put(0xA7, KEY_SECTION);*/ /* Section symbol (Mac) */
+        lwjglToGlfw.put(0xB3, KEY_NUMPADCOMMA); /* , on numeric keypad (NEC PC98) */
+        lwjglToGlfw.put(0xB5, KEY_SLASH); /* / on numeric keypad */
+        /* lwjglToGlfw.put(0xB7, KEY_SYSRQ);*/
+        lwjglToGlfw.put(0xB8, KEY_RALT); /* right Alt */
+        /*lwjglToGlfw.put(0xC4, KEY_FUNCTION);*/ /* Function (Mac) */
+        lwjglToGlfw.put(0xC5, KEY_PAUSE); /* Pause */
+        lwjglToGlfw.put(0xC7, KEY_HOME); /* Home on arrow keypad */
+        lwjglToGlfw.put(0xC8, KEY_UP); /* UpArrow on arrow keypad */
+        lwjglToGlfw.put(0xC9, KEY_PAGEUP); /* PgUp on arrow keypad */
+        lwjglToGlfw.put(0xCB, KEY_LEFT); /* LeftArrow on arrow keypad */
+        lwjglToGlfw.put(0xCD, KEY_RIGHT); /* RightArrow on arrow keypad */
+        lwjglToGlfw.put(0xCF, KEY_END); /* End on arrow keypad */
+        lwjglToGlfw.put(0xD0, KEY_DOWN); /* DownArrow on arrow keypad */
+        lwjglToGlfw.put(0xD1, KEY_PAGEDOWN); /* PgDn on arrow keypad */
+        lwjglToGlfw.put(0xD2, KEY_INSERT); /* Insert on arrow keypad */
+        lwjglToGlfw.put(0xD3, KEY_DELETE); /* Delete on arrow keypad */
+        /*lwjglToGlfw.put(0xDA, KEY_CLEAR);*/ /* Clear key (Mac) */
+        lwjglToGlfw.put(0xDB, KEY_LWIN); /* Left Windows/Option key */
+
+        lwjglToGlfw.put(0xDC, KEY_RWIN); /* Right Windows/Option key */
+
+        /*lwjglToGlfw.put(0xDD, KEY_APPS);*/ /* AppMenu key */
+        /*lwjglToGlfw.put(0xDE, KEY_POWER);*/
+        /*lwjglToGlfw.put(0xDF, KEY_SLEEP);*/
+
+        LWJGL_TO_GLFW = Collections.unmodifiableMap(lwjglToGlfw);
+    }
+
+    private static final Map<Integer, Integer> GLFW_TO_LWJGL;
+
+    static {
+        Map<Integer, Integer> glfwToLwjgl = new HashMap<>();
+        LWJGL_TO_GLFW.forEach((lwjgl, glfw) -> glfwToLwjgl.put(glfw, lwjgl));
+
+        GLFW_TO_LWJGL = Collections.unmodifiableMap(glfwToLwjgl);
+    }
+
+
     public static boolean isHoldingShift(int modifiers) {
         return (modifiers & 1) == 1;
     }
 
-    public static int convert(int lwjglKey) {
-        int key = 0;
+    public static int lwjglToGlfw(int lwjglKey) {
+        Integer glfw = LWJGL_TO_GLFW.get(lwjglKey);
+        return glfw == null ? -1 : glfw;
+    }
 
-        if (lwjglKey >= 0x02 && lwjglKey <= 0x0A)
-            return lwjglKey - 0x02 + KEY_1;
-
-        switch (lwjglKey) {
-            case 0x01:
-                return KEY_ESCAPE;
-            case 0x0B:
-                return KEY_0;
-            case 0x0C:
-                return KEY_MINUS;
-            case 0x0D:
-                return KEY_EQUALS;
-            case 0x0E:
-                return KEY_BACKSPACE;
-            case 0x0F:
-                return KEY_TAB;
-            case 0x10:
-                return KEY_Q;
-            case 0x11:
-                return KEY_W;
-            case 0x12:
-                return KEY_E;
-            case 0x13:
-                return KEY_R;
-            case 0x14:
-                return KEY_T;
-            case 0x15:
-                return KEY_Y;
-            case 0x16:
-                return KEY_U;
-            case 0x17:
-                return KEY_I;
-            case 0x18:
-                return KEY_O;
-            case 0x19:
-                return KEY_P;
-            case 0x1A:
-                return KEY_LBRACKET;
-            case 0x1B:
-                return KEY_RBRACKET;
-            case 0x1C:
-                return KEY_RETURN; /* Enter on main keyboard */
-            case 0x1D:
-                return KEY_LCONTROL;
-            case 0x1E:
-                return KEY_A;
-            case 0x1F:
-                return KEY_S;
-            case 0x20:
-                return KEY_D;
-            case 0x21:
-                return KEY_F;
-            case 0x22:
-                return KEY_G;
-            case 0x23:
-                return KEY_H;
-            case 0x24:
-                return KEY_J;
-            case 0x25:
-                return KEY_K;
-            case 0x26:
-                return KEY_L;
-            case 0x27:
-                return KEY_SEMICOLON;
-            case 0x28:
-                return KEY_APOSTROPHE;
-            case 0x29:
-                return KEY_GRAVE; /* accent grave */
-            case 0x2A:
-                return KEY_LSHIFT;
-            case 0x2B:
-                return KEY_BACKSLASH;
-            case 0x2C:
-                return KEY_Z;
-            case 0x2D:
-                return KEY_X;
-            case 0x2E:
-                return KEY_C;
-            case 0x2F:
-                return KEY_V;
-            case 0x30:
-                return KEY_B;
-            case 0x31:
-                return KEY_N;
-            case 0x32:
-                return KEY_M;
-            case 0x33:
-                return KEY_COMMA;
-            case 0x34:
-                return KEY_PERIOD; /* . on main keyboard */
-            case 0x35:
-                return KEY_SLASH; /* / on main keyboard */
-            case 0x36:
-                return KEY_RSHIFT;
-            case 0x37:
-                return KEY_MULTIPLY; /* * on numeric keypad */
-            case 0x38:
-                return KEY_LALT; /* left Alt */
-            case 0x39:
-                return KEY_SPACE;
-            case 0x3A:
-                return KEY_CAPSLOCK;
-            case 0x3B:
-                return KEY_F1;
-            case 0x3C:
-                return KEY_F2;
-            case 0x3D:
-                return KEY_F3;
-            case 0x3E:
-                return KEY_F4;
-            case 0x3F:
-                return KEY_F5;
-            case 0x40:
-                return KEY_F6;
-            case 0x41:
-                return KEY_F7;
-            case 0x42:
-                return KEY_F8;
-            case 0x43:
-                return KEY_F9;
-            case 0x44:
-                return KEY_F10;
-            case 0x45:
-                return KEY_NUMLOCK;
-            case 0x46:
-                return KEY_SCROLLLOCK; /* Scroll Lock */
-            case 0x47:
-                return KEY_NUMPAD7;
-            case 0x48:
-                return KEY_NUMPAD8;
-            case 0x49:
-                return KEY_NUMPAD9;
-            case 0x4A:
-                return KEY_MINUS; /* - on numeric keypad */
-            case 0x4B:
-                return KEY_NUMPAD4;
-            case 0x4C:
-                return KEY_NUMPAD5;
-            case 0x4D:
-                return KEY_NUMPAD6;
-            case 0x4E:
-                return KEY_ADD; /* + on numeric keypad */
-            case 0x4F:
-                return KEY_NUMPAD1;
-            case 0x50:
-                return KEY_NUMPAD2;
-            case 0x51:
-                return KEY_NUMPAD3;
-            case 0x52:
-                return KEY_NUMPAD0;
-            case 0x53:
-                return KEY_NUMPADCOMMA; /* . on numeric keypad */
-            case 0x57:
-                return KEY_F11;
-            case 0x58:
-                return KEY_F12;
-            case 0x64:
-                return KEY_F13; /*                     (NEC PC98) */
-            case 0x65:
-                return KEY_F14; /*                     (NEC PC98) */
-            case 0x66:
-                return KEY_F15; /*                     (NEC PC98) */
-            case 0x67:
-                return KEY_F16; /* Extended Function keys - (Mac) */
-            case 0x68:
-                return KEY_F17;
-            case 0x69:
-                return KEY_F18;
-            /*case 0x70:
-                return KEY_KANA;*/ /* (Japanese keyboard)            */
-            case 0x71:
-                return KEY_F19; /* Extended Function keys - (Mac) */
-            /*case 0x79:
-                return KEY_CONVERT;*/ /* (Japanese keyboard)            */
-            /*case 0x7B:
-                return KEY_NOCONVERT;*/ /* (Japanese keyboard)            */
-            /*case 0x7D:
-                return KEY_YEN;*/ /* (Japanese keyboard)            */
-            case 0x8D:
-                return KEY_NUMPADEQUALS; /* = on numeric keypad (NEC PC98) */
-            /*case 0x90:
-                return KEY_CIRCUMFLEX;*/ /* (Japanese keyboard)            */
-            /*case 0x91:
-                return KEY_AT;*/ /*                     (NEC PC98) */
-            /*case 0x92:
-                return KEY_COLON;*/ /*                     (NEC PC98) */
-            /*case 0x93:
-                return KEY_UNDERLINE;*/ /*                     (NEC PC98) */
-            /*case 0x94:
-                return KEY_KANJI;*/ /* (Japanese keyboard)            */
-            /*case 0x95:
-                return KEY_STOP;*/ /*                     (NEC PC98) */
-            /*case 0x96:
-                return KEY_AX;*/ /*                     (Japan AX) */
-            /*case 0x97:
-                return KEY_UNLABELED;*/ /*                        (J3100) */
-            case 0x9C:
-                return KEY_NUMPADENTER; /* Enter on numeric keypad */
-            case 0x9D:
-                return KEY_RCONTROL;
-            /*case 0xA7:
-                return KEY_SECTION;*/ /* Section symbol (Mac) */
-            case 0xB3:
-                return KEY_NUMPADCOMMA; /* , on numeric keypad (NEC PC98) */
-            case 0xB5:
-                return KEY_SLASH; /* / on numeric keypad */
-           /* case 0xB7:
-                return KEY_SYSRQ;*/
-            case 0xB8:
-                return KEY_RALT; /* right Alt */
-           /*case 0xC4:
-                return KEY_FUNCTION;*/ /* Function (Mac) */
-            case 0xC5:
-                return KEY_PAUSE; /* Pause */
-            case 0xC7:
-                return KEY_HOME; /* Home on arrow keypad */
-            case 0xC8:
-                return KEY_UP; /* UpArrow on arrow keypad */
-            case 0xC9:
-                return KEY_PAGEUP; /* PgUp on arrow keypad */
-            case 0xCB:
-                return KEY_LEFT; /* LeftArrow on arrow keypad */
-            case 0xCD:
-                return KEY_RIGHT; /* RightArrow on arrow keypad */
-            case 0xCF:
-                return KEY_END; /* End on arrow keypad */
-            case 0xD0:
-                return KEY_DOWN; /* DownArrow on arrow keypad */
-            case 0xD1:
-                return KEY_PAGEDOWN; /* PgDn on arrow keypad */
-            case 0xD2:
-                return KEY_INSERT; /* Insert on arrow keypad */
-            case 0xD3:
-                return KEY_DELETE; /* Delete on arrow keypad */
-            /*case 0xDA:
-                return KEY_CLEAR;*/ /* Clear key (Mac) */
-            case 0xDB:
-                return KEY_LWIN; /* Left Windows/Option key */
-
-            case 0xDC:
-                return KEY_RWIN; /* Right Windows/Option key */
-
-            /*case 0xDD:
-                return KEY_APPS;*/ /* AppMenu key */
-            /*case 0xDE:
-                return KEY_POWER;*/
-            /*case 0xDF:
-                return KEY_SLEEP;*/
-        }
-        return key;
+    public static int glfwToLwjgl(int glfwKey) {
+        Integer lwjgl = GLFW_TO_LWJGL.get(glfwKey);
+        return lwjgl == null ? 0 : lwjgl;
     }
 }

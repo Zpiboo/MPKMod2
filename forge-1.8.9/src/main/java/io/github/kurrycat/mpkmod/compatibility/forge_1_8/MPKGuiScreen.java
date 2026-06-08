@@ -69,7 +69,7 @@ public class MPKGuiScreen extends GuiScreen {
         super.keyTyped(typedChar, keyCode);
         char c = Keyboard.getEventCharacter();
 
-        eventReceiver.onKeyEvent(InputConstants.convert(Keyboard.getEventKey()), 0, createModifiers(), false);
+        eventReceiver.onKeyEvent(InputConstants.lwjglToGlfw(Keyboard.getEventKey()), 0, createModifiers(), false);
         if (c >= 32 && c != 127)
             eventReceiver.onKeyEvent(c, 0, createModifiers(), true);
     }

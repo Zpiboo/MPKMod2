@@ -61,7 +61,7 @@ public class EventListener {
                 timeQueue.add(ButtonMS.of(ButtonMS.Button.values()[i], Keyboard.getEventNanoseconds(), pressed));
 
 
-        API.Events.onKeyInput(InputConstants.convert(keyCode), key, pressed);
+        API.Events.onKeyInput(InputConstants.lwjglToGlfw(keyCode), key, pressed);
 
         if (pressed) {
             checkKeyBinding(keyCode);
