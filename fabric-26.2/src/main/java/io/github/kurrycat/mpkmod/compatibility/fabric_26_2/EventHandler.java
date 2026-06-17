@@ -1,10 +1,10 @@
-package io.github.kurrycat.mpkmod.compatibility.fabric_26_1;
+package io.github.kurrycat.mpkmod.compatibility.fabric_26_2;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.github.kurrycat.mpkmod.compatibility.API;
 import io.github.kurrycat.mpkmod.compatibility.MCClasses.Player;
-import io.github.kurrycat.mpkmod.compatibility.fabric_26_1.mixin.KeyMappingAccessor;
+import io.github.kurrycat.mpkmod.compatibility.fabric_26_2.mixin.KeyMappingAccessor;
 import io.github.kurrycat.mpkmod.ticks.ButtonMS;
 import io.github.kurrycat.mpkmod.ticks.ButtonMSList;
 import io.github.kurrycat.mpkmod.util.BoundingBox3D;
@@ -99,7 +99,7 @@ public class EventHandler {
     }
 
     private void checkKeyBinding(int keyCode) {
-        if (Minecraft.getInstance().screen != null) return;
+        if (Minecraft.getInstance().gui.screen() != null) return;
 
         for (Map.Entry<String, KeyMapping> keyBindingEntry : MPKMod.keyBindingMap.entrySet()) {
             InputConstants.Key boundKey = ((KeyMappingAccessor) keyBindingEntry.getValue()).getKey();
@@ -122,7 +122,7 @@ public class EventHandler {
     public void onRenderWorldOverlay(PoseStack matrixStack, float tickDelta) {
         MPKMod.INSTANCE.matrixStack = matrixStack;
         matrixStack.pushPose();
-        Vec3 pos = Minecraft.getInstance().gameRenderer.getMainCamera().position().reverse();
+        Vec3 pos = Minecraft.getInstance().gameRenderer.mainCamera().position().reverse();
         MPKMod.INSTANCE.matrixStack.translate(pos);
         API.Events.onRenderWorldOverlay(tickDelta);
         matrixStack.popPose();
