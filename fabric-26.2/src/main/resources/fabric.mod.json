@@ -19,10 +19,10 @@
   "environment": "client",
   "entrypoints": {
     "main": [
-        "io.github.kurrycat.mpkmod.compatibility.fabric_26_1.MPKMod"
+        "io.github.kurrycat.mpkmod.compatibility.fabric_26_2.MPKMod"
     ],
     "modmenu": [
-      "io.github.kurrycat.mpkmod.compatibility.fabric_26_1.MPKModMenu"
+      "io.github.kurrycat.mpkmod.compatibility.fabric_26_2.MPKModMenu"
     ]
   },
   "mixins": [
