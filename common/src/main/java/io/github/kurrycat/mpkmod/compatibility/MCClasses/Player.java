@@ -41,6 +41,7 @@ public class Player {
     public Float truePitch = null;
     public Vector3D motion = null;
     public boolean onGround = false;
+    public Float preturn = null;
     public Float deltaYaw = null;
     public Float deltaPitch = null;
     public int[] deltaMouseX = null;
@@ -168,6 +169,11 @@ public class Player {
                         (keyInput.sneak ? "N" : "") +
                         (keyInput.jump ? "J" : "")
                 );
+    }
+
+    @InfoString.Getter
+    public Float getPreturn() {
+        return preturn == null ? 0 : preturn;
     }
 
     @InfoString.Getter
@@ -325,6 +331,14 @@ public class Player {
             sidestep = prev.airtime;  // WAD
             wadStart = false;
         }
+
+        Player pprev = prev.getPrevious();
+        if (pprev == null) {
+            Player.updateDisplayInstance();
+            return this;
+        }
+
+        preturn = jumpTick ? pprev.deltaYaw : prev.preturn;
 
         Player.updateDisplayInstance();
         return this;
